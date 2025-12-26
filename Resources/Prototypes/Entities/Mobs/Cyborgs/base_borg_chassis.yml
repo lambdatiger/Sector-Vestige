@@ -305,6 +305,7 @@
     requiredMobState:
     - Critical
     - Dead
+  - type: BorgSwitchableSubtype
 
 - type: entity
   abstract: true
