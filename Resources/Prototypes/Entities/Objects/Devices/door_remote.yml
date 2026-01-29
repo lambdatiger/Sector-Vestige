@@ -204,6 +204,7 @@
   - type: Access
     groups:
     - Engineering
+    - External
 
 - type: entity
   parent: [DoorRemoteCanEletrifyDoors, BaseCommandContraband]
