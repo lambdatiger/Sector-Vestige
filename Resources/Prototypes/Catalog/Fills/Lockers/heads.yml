@@ -236,6 +236,7 @@
     - id: RubberStampCE
     - id: MetalFoamGrenade
     - id: ClothingEyesSunglassesEngineering # Vestige Change: Add Engineering Sunglasses to the CE
+    - id: BaseHandheldStationMapPowerCe # Vestige Change: Port Goob handheld power console
 
 # Hardsuit table, used for suit storage as well
 - type: entityTable
