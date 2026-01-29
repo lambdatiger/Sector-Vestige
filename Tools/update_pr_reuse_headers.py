@@ -229,14 +229,92 @@ def _parse_dep5_file(dep5_path: str = ".reuse/dep5") -> list[dict]:
 
     return entries
 
+
+def _parse_reuse_toml() -> list[dict]:
+    """
+    Parse REUSE.toml file and extract copyright information for file patterns.
+    Returns a list of dicts with keys: 'patterns', 'copyrights', 'license'
+    """
+    if _tomllib is None:
+        return []
+
+    reuse_toml_path = None
+    for candidate_path in (".reuse/REUSE.toml", "REUSE.toml"):
+        if os.path.exists(candidate_path):
+            reuse_toml_path = candidate_path
+            break
+
+    if not reuse_toml_path:
+        return []
+
+    entries = []
+    try:
+        with open(reuse_toml_path, "rb") as f:
+            toml_data = _tomllib.load(f)
+
+        annotations = toml_data.get("annotations", [])
+        if not isinstance(annotations, list):
+            return []
+
+        for entry in annotations:
+            if not isinstance(entry, dict):
+                continue
+
+            # Get path(s)
+            path_val = entry.get("path", "")
+            if isinstance(path_val, str):
+                paths = [path_val]
+            elif isinstance(path_val, list):
+                paths = [str(p) for p in path_val]
+            else:
+                continue
+
+            # Get copyright text(s)
+            copyright_val = entry.get("SPDX-FileCopyrightText", [])
+            if isinstance(copyright_val, str):
+                copyrights = [copyright_val]
+            elif isinstance(copyright_val, list):
+                copyrights = [str(c) for c in copyright_val]
+            else:
+                copyrights = []
+
+            # Get license
+            license_id = entry.get("SPDX-License-Identifier", "")
+
+            if not paths or not copyrights:
+                continue
+
+            # Normalize patterns
+            patterns = []
+            for p in paths:
+                p = p.replace("\\", "/").strip()
+                if p:
+                    patterns.append(p)
+
+            entries.append({
+                'patterns': patterns,
+                'copyrights': copyrights,
+                'license': license_id
+            })
+
+    except Exception as e:
+        print(f"Warning: Failed to parse REUSE.toml: {e}", file=sys.stderr)
+        return []
+
+    return entries
+
 def _get_upstream_copyright_from_dep5(file_path: str) -> list[str]:
     """
-    Get the upstream copyright holder(s) from dep5 file for a given file path.
+    Get the upstream copyright holder(s) from dep5 or REUSE.toml for a given file path.
     Returns a list of copyright holders (extracted from copyright lines), or empty list.
     Prefers the most specific pattern match.
     """
+    # Try dep5 first, then REUSE.toml
     dep5_entries = _parse_dep5_file()
-    if not dep5_entries:
+    reuse_toml_entries = _parse_reuse_toml()
+
+    all_entries = dep5_entries + reuse_toml_entries
+    if not all_entries:
         return []
 
     # Normalize the file path
@@ -244,9 +322,9 @@ def _get_upstream_copyright_from_dep5(file_path: str) -> list[str]:
 
     # Find matching entries (prefer most specific pattern)
     matches = []
-    for entry in dep5_entries:
+    for entry in all_entries:
         for pattern in entry['patterns']:
-            # Convert dep5 glob pattern to fnmatch pattern
+            # Convert glob pattern to fnmatch pattern
             pattern = pattern.replace('\\', '/')
             if fnmatch.fnmatch(normalized_path, pattern):
                 # Use pattern specificity: longer pattern = more specific
