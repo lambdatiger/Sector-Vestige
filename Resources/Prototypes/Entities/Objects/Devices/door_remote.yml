@@ -203,8 +203,7 @@
       color: "#bc5b00"
   - type: Access
     groups:
-    - Engineering
-    - External  # Vestige Change: Add externals access to engineering door remote
+    - EngineeringExternals # Vestige Change: Add acccess group with external access for engineering door remote
 
 - type: entity
   parent: [DoorRemoteCanEletrifyDoors, BaseCommandContraband]
