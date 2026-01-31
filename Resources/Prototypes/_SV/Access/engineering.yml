@@ -1,0 +1,7 @@
+- type: accessGroup  # Vestige Change: Add acccess group with external access for engineering door remote
+  id: EngineeringExternals
+  tags:
+  - ChiefEngineer
+  - Engineering
+  - Atmospherics
+  - External
