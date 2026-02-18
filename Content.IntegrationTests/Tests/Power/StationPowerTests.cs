@@ -37,6 +37,7 @@ public sealed class StationPowerTests
             // "Exo", // Vestige: Derotated Map
             "Vanquish", // LateStation Map by Lachri
             "Cluster", // Sector Vestige, remade by Rebound
+            "Packed_SM", // Sector Vestige, edits by Lambda.Tiger
     ];
 
     [Explicit]

@@ -52664,12 +52664,12 @@ entities:
       pos: 25.5,-44.5
       parent: 2
     - type: DeviceNetwork
-      configurators:
-      - invalid
       deviceLists:
       - 16007
     - type: AtmosPipeColor
       color: '#5300ABFF'
+    - type: Label
+      currentLabel: Supermatter Reservoir
 - proto: GasPipeSensorDistribution
   entities:
   - uid: 7869

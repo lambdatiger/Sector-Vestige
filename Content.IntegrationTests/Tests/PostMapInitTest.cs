@@ -132,7 +132,6 @@ namespace Content.IntegrationTests.Tests
             {"/Maps/Shuttles/ShuttleEvent/instigator.yml", ["ShuttleGunFriendship"]},
             {"/Maps/_LateStation/shuttles/avenger.yml", ["ShuttleGunSvalinnMachineGun", "ShuttleGunDuster"]},
             {"/Maps/_SV/cluster.yml", ["RubberStampMime"]},
-            {"/Maps/_SV/packed2.yml", ["RubberStampMime"]},
         };
 
         /// <summary>
@@ -179,7 +178,7 @@ namespace Content.IntegrationTests.Tests
             // "Exo", // Vestige: Derotated Map
             "Vanquish", // LateStation Map by Lachri
             "Cluster", // Sector Vestige, remade by Rebound
-            "Packed2", // Sector Vestige, edited by Lambda.Tiger
+            "Packed_SM", // Sector Vestige, edited by Lambda.Tiger
         };
 
         private static readonly ProtoId<EntityCategoryPrototype> DoNotMapCategory = "DoNotMap";
