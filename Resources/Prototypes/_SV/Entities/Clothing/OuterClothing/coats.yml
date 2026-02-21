@@ -129,3 +129,20 @@
 - type: entity
   parent: [ClothingOuterStorageFoldableBaseOpened, ClothingOuterCoatHighcutRD]
   id: ClothingOuterCoatHighcutOpenedRD
+
+#Damaged Centcomm Overseer
+- type: entity
+  parent: ClothingOuterStorageFoldableBase
+  id: ClothingOuterCoatCentCommOverseerDamaged
+  name: damaged centcomm overseer jacket
+  description: A leather jacket worn by Overseers who prefer a more rugged style.
+  components:
+  - type: Sprite
+    sprite: _SV/Clothing/OuterClothing/Coats/damaged_central_overseer.rsi
+  - type: Clothing
+    sprite: _SV/Clothing/OuterClothing/Coats/damaged_central_overseer.rsi
+
+- type: entity
+  parent: [ ClothingOuterStorageFoldableBaseOpened, ClothingOuterCoatCentCommOverseerDamaged ]
+  id: ClothingOuterCoatCentCommOverseerDamagedOpened
+  name: CentComm overseer jacket

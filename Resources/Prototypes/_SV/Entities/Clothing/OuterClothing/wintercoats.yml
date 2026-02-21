@@ -14,3 +14,14 @@
     sprite: _SV/Clothing/OuterClothing/Wintercoats/miningjacket.rsi
   - type: Clothing
     sprite: _SV/Clothing/OuterClothing/Wintercoats/miningjacket.rsi
+
+#Damaged Centcomm Winter Coat
+- type: entity
+  parent: ClothingOuterWinterCoat
+  id: ClothingOuterWinterCoatCentcommDamaged
+  name: damaged centcomm winter coat
+  components:
+  - type: Sprite
+    sprite: _SV/Clothing/OuterClothing/Wintercoats/Damaged_Centcom_Wintercoat.rsi
+  - type: Clothing
+    sprite: _SV/Clothing/OuterClothing/Wintercoats/Damaged_Centcom_Wintercoat.rsi
