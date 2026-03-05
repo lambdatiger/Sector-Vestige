@@ -8,7 +8,7 @@
 - type: entity
   parent: ClothingUniformBase
   id: ClothingUniformJumpsuitDamagedCentcommTurtleneck
-  name: damaged centcomm turtleneck 
+  name: damaged centcomm turtleneck
   description: A cozy centcomm turtle neck stained with your own blood. I don't think that's gonna come out anytime soon.
   components:
   - type: Sprite
