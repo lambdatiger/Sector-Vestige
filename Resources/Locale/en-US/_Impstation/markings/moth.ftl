@@ -81,3 +81,98 @@ marking-LegTwistingRightMoth = Twisted Scar (Right)
 marking-LegTwistingRightMoth-leg_r_twisting_moth = Twisted Scar (Right)
 marking-TorsoIncisionMoth = Torso Incision
 marking-TorsoIncisionMoth-torso_incision_moth = Torso Incision
+
+### Moth import part two
+# Chest
+
+marking-MothChestGlow = Moth Bioluminescence (Chest)
+marking-MothChestGlow-glow = Glow
+
+
+# Head
+
+marking-MothHeadGlow = Moth Bioluminescence (Head)
+marking-MothHeadGlow-glow = Glow
+
+marking-MothHeadTuft = Tuft (Head)
+marking-MothHeadTuft-headtuft = Head Tuft
+
+marking-MothTuftBangs = Tuft (Bangs)
+marking-MothTuftBangs-tuftbangs = Tuft Bangs
+
+marking-MothVerticalTuft = Tuft (Vertical)
+marking-MothVerticalTuft-verticaltuft = Vertical Tuft
+
+marking-MothEmoTuft = Tuft (Emo)
+marking-MothEmoTuft-emotuft = Emo Tuft
+
+marking-MothTinyTuft = Tuft (Tiny)
+marking-MothTinyTuft-tinytuft = Tiny Tuft
+
+# Snout
+
+marking-MouthpartsFulgoridae = Mouthparts (Fulgoridae)
+marking-MouthpartsFulgoridaeUpturned = Mouthparts (Fulgoridae Upturned)
+marking-MouthpartsHymenoptera = Mouthparts (Hymenoptera)
+marking-MouthpartsHymenopteraLarge = Mouthparts (Hymenoptera Large)
+marking-MouthpartsProboscisDownturned = Mouthparts (Proboscis Downturned)
+marking-MouthpartsProboscisDownturned-proboscisdownturned = Mouthparts (Proboscis Downturned)
+marking-MouthpartsProboscisUpturned = Mouthparts (Proboscis Upturned)
+marking-MouthpartsProboscisUpturned-proboscisupturned = Mouthparts (Proboscis Upturned)
+marking-MouthpartsSchistocerca = Mouthparts (Schistocerca)
+
+# HeadSide
+
+marking-PlateBlunt = Head (Blunt)
+marking-PlateHeart = Head (Heart)
+marking-PlateDaisy = Head (Daisy)
+marking-PlateHorn = Head (Horned)
+marking-PlateSmallSpike = Head (Spike)
+
+# HeadTop
+
+marking-AntennaCockroach = Antennae (Cockroach)
+marking-AntennaCockroach-cockroach = Antennae
+marking-AntennaHeart = Antennae (Heartbrush)
+marking-AntennaHeart-heart1 = Antennae
+marking-AntennaHeart-heart2 = Heart
+marking-AntennaFly = Antennae (Fly)
+marking-AntennaFly-fly = Antennae
+marking-AntennaShort = Antennae (Locust)
+marking-AntennaShort-nub = Antennae
+
+# Tail
+
+marking-LunaWings = Wings (Luna Moth)
+marking-LunaWings-luna_neck = Neck
+marking-LunaWings-luna_primary_front = Wings
+marking-LunaWings-luna_secondary_front = Spots
+
+marking-MothFirefly-firefly_neck = Neck
+
+marking-MothGlasswing-glasswing_neck = Neck
+
+marking-MothSnoth-snoth_neck = Neck
+
+marking-WingsBackstabbed-backstabbed_neck = Neck
+marking-WingsBackstabbed-backstabbed_primary_front = Wings
+
+marking-WingsFly = Wings (Fly)
+marking-WingsFly-fly_neck = Neck
+marking-WingsFly-fly_primary_front = Wings
+marking-WingsFly-fly_secondary_front = Tail
+
+marking-WingsDragonfly = Wings (Dragonfly)
+marking-WingsDragonfly-dragonfly_neck = Neck
+marking-WingsDragonfly-dragonfly_primary_front = Wings
+marking-WingsDragonfly-dragonfly_secondary_front = Tail
+
+marking-WingsLanternfly = Wings (Lanternfly)
+marking-WingsLanternfly-lanternfly_neck = Neck
+marking-WingsLanternfly-lanternfly_primary_front = Wings
+
+marking-WingsPyrausta = Wings (Pyrausta)
+marking-WingsPyrausta-pyr_neck = Neck
+marking-WingsPyrausta-pyr_wing_front = Wings
+marking-WingsPyrausta-pyr_inner_front = Inner wing
+marking-WingsPyrausta-pyr_stripes_front = Stripes

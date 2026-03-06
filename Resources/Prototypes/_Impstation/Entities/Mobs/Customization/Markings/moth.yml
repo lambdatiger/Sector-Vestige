@@ -388,3 +388,364 @@
   sprites:
   - sprite: _Impstation/Mobs/Customization/moth.rsi
     state: torso_incision_moth
+
+### Impstation Part Two
+# Chest
+
+- type: marking
+  id: MothChestGlow
+  bodyPart: Chest
+  groupWhitelist: [ Moth ]
+  sprites:
+  - sprite: _Impstation/Mobs/Customization/Moth/chest.rsi
+    state: glow
+  shader: unshaded
+
+# Head
+
+- type: marking
+  id: MothHeadGlow
+  bodyPart: Head
+  groupWhitelist: [ Moth ]
+  sprites:
+  - sprite: _Impstation/Mobs/Customization/Moth/head.rsi
+    state: glow
+  shader: unshaded
+
+- type: marking
+  id: MothSlashRight
+  bodyPart: Head
+  groupWhitelist: [ Moth ]
+  sprites:
+  - sprite: _Impstation/Mobs/Customization/Moth/head.rsi
+    state: slashright
+
+- type: marking
+  id: MothHeadTuft
+  bodyPart: HeadSide
+  groupWhitelist: [ Moth ]
+  sprites:
+  - sprite: _Impstation/Mobs/Customization/Moth/head.rsi
+    state: headtuft
+
+- type: marking
+  id: MothTuftBangs
+  bodyPart: HeadSide
+  groupWhitelist: [ Moth ]
+  sprites:
+  - sprite: _Impstation/Mobs/Customization/Moth/head.rsi
+    state: tuftbangs
+
+- type: marking
+  id: MothVerticalTuft
+  bodyPart: HeadSide
+  groupWhitelist: [ Moth ]
+  sprites:
+  - sprite: _Impstation/Mobs/Customization/Moth/head.rsi
+    state: verticaltuft
+
+- type: marking
+  id: MothEmoTuft
+  bodyPart: HeadSide
+  groupWhitelist: [ Moth ]
+  sprites:
+  - sprite: _Impstation/Mobs/Customization/Moth/head.rsi
+    state: emotuft
+
+- type: marking
+  id: MothTinyTuft
+  bodyPart: HeadSide
+  groupWhitelist: [ Moth ]
+  sprites:
+  - sprite: _Impstation/Mobs/Customization/Moth/head.rsi
+    state: tinytuft
+
+# Snout
+
+- type: marking
+  id: MouthpartsFulgoridae
+  bodyPart: Snout
+  groupWhitelist: [ Moth ]
+  followSkinColor: true
+  forcedColoring: true
+  sprites:
+  - sprite: _Impstation/Mobs/Customization/Moth/snout.rsi
+    state: fulgoridae
+
+- type: marking
+  id: MouthpartsFulgoridaeUpturned
+  bodyPart: Snout
+  groupWhitelist: [ Moth ]
+  followSkinColor: true
+  forcedColoring: true
+  sprites:
+  - sprite: _Impstation/Mobs/Customization/Moth/snout.rsi
+    state: fulgoridaeupturned
+
+- type: marking
+  id: MouthpartsHymenoptera
+  bodyPart: Snout
+  groupWhitelist: [ Moth ]
+  followSkinColor: true
+  forcedColoring: true
+  sprites:
+  - sprite: _Impstation/Mobs/Customization/Moth/snout.rsi
+    state: hymenoptera
+
+- type: marking
+  id: MouthpartsHymenopteraLarge
+  bodyPart: Snout
+  groupWhitelist: [ Moth ]
+  followSkinColor: true
+  forcedColoring: true
+  sprites:
+  - sprite: _Impstation/Mobs/Customization/Moth/snout.rsi
+    state: hymenopteralarge
+
+- type: marking
+  id: MouthpartsProboscisDownturned
+  bodyPart: Snout
+  groupWhitelist: [ Moth ]
+  coloring:
+    default:
+      type:
+        !type:SkinColoring
+        negative: true
+  sprites:
+  - sprite: _Impstation/Mobs/Customization/Moth/snout.rsi
+    state: proboscisdownturned
+
+- type: marking
+  id: MouthpartsProboscisUpturned
+  bodyPart: Snout
+  groupWhitelist: [ Moth ]
+  coloring:
+    default:
+      type:
+        !type:SkinColoring
+        negative: true
+  sprites:
+  - sprite: _Impstation/Mobs/Customization/Moth/snout.rsi
+    state: proboscisupturned
+
+- type: marking
+  id: MouthpartsSchistocerca
+  bodyPart: Snout
+  groupWhitelist: [ Moth ]
+  followSkinColor: true
+  forcedColoring: true
+  sprites:
+  - sprite: _Impstation/Mobs/Customization/Moth/snout.rsi
+    state: schistocerca
+
+# HeadSide
+
+- type: marking
+  id: PlateBlunt
+  bodyPart: HeadSide
+  groupWhitelist: [ Moth ]
+  forcedColoring: true
+  followSkinColor: true
+  sprites:
+  - sprite: _Impstation/Mobs/Customization/Moth/headside.rsi
+    state: blunt
+
+- type: marking
+  id: PlateDaisy
+  bodyPart: HeadSide
+  groupWhitelist: [ Moth ]
+  forcedColoring: true
+  followSkinColor: true
+  sprites:
+  - sprite: _Impstation/Mobs/Customization/Moth/headside.rsi
+    state: daisy
+
+- type: marking
+  id: PlateHeart
+  bodyPart: HeadSide
+  groupWhitelist: [ Moth ]
+  forcedColoring: true
+  followSkinColor: true
+  sprites:
+  - sprite: _Impstation/Mobs/Customization/Moth/headside.rsi
+    state: heart
+
+- type: marking
+  id: PlateHorn
+  bodyPart: HeadSide
+  groupWhitelist: [ Moth ]
+  forcedColoring: true
+  followSkinColor: true
+  sprites:
+  - sprite: _Impstation/Mobs/Customization/Moth/headside.rsi
+    state: horn
+
+- type: marking
+  id: PlateSmallSpike
+  bodyPart: HeadSide
+  groupWhitelist: [ Moth ]
+  forcedColoring: true
+  followSkinColor: true
+  sprites:
+  - sprite: _Impstation/Mobs/Customization/Moth/headside.rsi
+    state: smallspike
+
+# HeadTop
+
+- type: marking
+  id: AntennaCockroach
+  bodyPart: HeadTop
+  groupWhitelist: [ Moth ]
+  sprites:
+  - sprite: _Impstation/Mobs/Customization/Moth/headtop.rsi
+    state: cockroach
+
+- type: marking
+  id: AntennaFly
+  bodyPart: HeadTop
+  groupWhitelist: [ Moth ]
+  sprites:
+  - sprite: _Impstation/Mobs/Customization/Moth/headtop.rsi
+    state: fly
+
+- type: marking
+  id: AntennaHeart
+  bodyPart: HeadTop
+  groupWhitelist: [ Moth ]
+  sprites:
+  - sprite: _Impstation/Mobs/Customization/Moth/headtop.rsi
+    state: heart1
+  - sprite: _Impstation/Mobs/Customization/Moth/headtop.rsi
+    state: heart2
+
+- type: marking
+  id: AntennaShort
+  bodyPart: HeadTop
+  groupWhitelist: [ Moth ]
+  sprites:
+  - sprite: _Impstation/Mobs/Customization/Moth/headtop.rsi
+    state: nub
+
+# Tail
+
+- type: marking
+  id: LunaWings
+  bodyPart: Tail
+  groupWhitelist: [ Moth ]
+  layering:
+    luna_neck: TailBehindBackpack
+    luna_primary_behind: TailBehind
+    luna_primary_front: TailBehindBackpack
+    luna_secondary_behind: TailBehind
+    luna_secondary_front: TailBehindBackpack
+  colorLinks:
+    luna_primary_behind: luna_primary_front
+    luna_secondary_behind: luna_secondary_front
+  sprites:
+  - sprite: _Impstation/Mobs/Customization/Moth/taillayers.rsi
+    state: luna_neck
+  - sprite: _Impstation/Mobs/Customization/Moth/taillayers.rsi
+    state: luna_primary_behind
+  - sprite: _Impstation/Mobs/Customization/Moth/taillayers.rsi
+    state: luna_primary_front
+  - sprite: _Impstation/Mobs/Customization/Moth/taillayers.rsi
+    state: luna_secondary_behind
+  - sprite: _Impstation/Mobs/Customization/Moth/taillayers.rsi
+    state: luna_secondary_front
+
+- type: marking
+  id: WingsDragonfly
+  bodyPart: Tail
+  groupWhitelist: [ Moth ]
+  layering:
+    dragonfly_neck: TailBehindBackpack
+    dragonfly_primary_behind: TailBehind
+    dragonfly_primary_front: TailBehindBackpack
+    dragonfly_secondary_behind: TailBehind
+    dragonfly_secondary_front: TailBehindBackpack
+  colorLinks:
+    dragonfly_primary_behind: dragonfly_primary_front
+    dragonfly_secondary_behind: dragonfly_secondary_front
+  sprites:
+  - sprite: _Impstation/Mobs/Customization/Moth/taillayers.rsi
+    state: dragonfly_neck
+  - sprite: _Impstation/Mobs/Customization/Moth/taillayers.rsi
+    state: dragonfly_primary_behind
+  - sprite: _Impstation/Mobs/Customization/Moth/taillayers.rsi
+    state: dragonfly_primary_front
+  - sprite: _Impstation/Mobs/Customization/Moth/taillayers.rsi
+    state: dragonfly_secondary_behind
+  - sprite: _Impstation/Mobs/Customization/Moth/taillayers.rsi
+    state: dragonfly_secondary_front
+
+- type: marking
+  id: WingsFly
+  bodyPart: Tail
+  groupWhitelist: [ Moth ]
+  layering:
+    fly_neck: TailBehindBackpack
+    fly_primary_behind: TailBehind
+    fly_primary_front: TailBehindBackpack
+    fly_secondary_behind: TailBehind
+    fly_secondary_front: TailBehindBackpack
+  colorLinks:
+    fly_primary_behind: fly_primary_front
+    fly_secondary_behind: fly_secondary_front
+  sprites:
+  - sprite: _Impstation/Mobs/Customization/Moth/taillayers.rsi
+    state: fly_neck
+  - sprite: _Impstation/Mobs/Customization/Moth/taillayers.rsi
+    state: fly_primary_behind
+  - sprite: _Impstation/Mobs/Customization/Moth/taillayers.rsi
+    state: fly_primary_front
+  - sprite: _Impstation/Mobs/Customization/Moth/taillayers.rsi
+    state: fly_secondary_behind
+  - sprite: _Impstation/Mobs/Customization/Moth/taillayers.rsi
+    state: fly_secondary_front
+
+- type: marking
+  id: WingsLanternfly
+  bodyPart: Tail
+  groupWhitelist: [ Moth ]
+  layering:
+    lanternfly_neck: TailBehindBackpack
+    lanternfly_primary_behind: TailBehind
+    lanternfly_primary_front: TailBehindBackpack
+  colorLinks:
+    lanternfly_primary_behind: lanternfly_primary_front
+  sprites:
+  - sprite: _Impstation/Mobs/Customization/Moth/taillayers.rsi
+    state: lanternfly_neck
+  - sprite: _Impstation/Mobs/Customization/Moth/taillayers.rsi
+    state: lanternfly_primary_behind
+  - sprite: _Impstation/Mobs/Customization/Moth/taillayers.rsi
+    state: lanternfly_primary_front
+
+- type: marking
+  id: WingsPyrausta
+  bodyPart: Tail
+  groupWhitelist: [ Moth ]
+  layering:
+    pyr_neck: TailBehindBackpack
+    pyr_wing_behind: TailBehind
+    pyr_wing_front: TailBehindBackpack
+    pyr_inner_behind: TailBehind
+    pyr_inner_front: TailBehindBackpack
+    pyr_stripes_front: TailBehindBackpack
+  colorLinks:
+    pyr_wing_behind: pyr_wing_front
+    pyr_inner_behind: pyr_inner_front
+  sprites:
+  - sprite: _Impstation/Mobs/Customization/Moth/taillayers.rsi
+    state: pyr_neck
+  - sprite: _Impstation/Mobs/Customization/Moth/taillayers.rsi
+    state: pyr_wing_behind
+  - sprite: _Impstation/Mobs/Customization/Moth/taillayers.rsi
+    state: pyr_wing_front
+  - sprite: _Impstation/Mobs/Customization/Moth/taillayers.rsi
+    state: pyr_inner_behind
+  - sprite: _Impstation/Mobs/Customization/Moth/taillayers.rsi
+    state: pyr_inner_front
+  - sprite: _Impstation/Mobs/Customization/Moth/taillayers.rsi
+    state: pyr_stripes_front
+
