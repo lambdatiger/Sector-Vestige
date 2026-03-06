@@ -390,27 +390,7 @@
     state: torso_incision_moth
 
 ### Impstation Part Two
-# Chest
-
-- type: marking
-  id: MothChestGlow
-  bodyPart: Chest
-  groupWhitelist: [ Moth ]
-  sprites:
-  - sprite: _Impstation/Mobs/Customization/Moth/chest.rsi
-    state: glow
-  shader: unshaded
-
 # Head
-
-- type: marking
-  id: MothHeadGlow
-  bodyPart: Head
-  groupWhitelist: [ Moth ]
-  sprites:
-  - sprite: _Impstation/Mobs/Customization/Moth/head.rsi
-    state: glow
-  shader: unshaded
 
 - type: marking
   id: MothSlashRight

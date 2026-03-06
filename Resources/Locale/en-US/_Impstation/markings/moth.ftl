@@ -83,16 +83,7 @@ marking-TorsoIncisionMoth = Torso Incision
 marking-TorsoIncisionMoth-torso_incision_moth = Torso Incision
 
 ### Moth import part two
-# Chest
-
-marking-MothChestGlow = Moth Bioluminescence (Chest)
-marking-MothChestGlow-glow = Glow
-
-
 # Head
-
-marking-MothHeadGlow = Moth Bioluminescence (Head)
-marking-MothHeadGlow-glow = Glow
 
 marking-MothHeadTuft = Tuft (Head)
 marking-MothHeadTuft-headtuft = Head Tuft
