@@ -446,7 +446,6 @@
   id: MouthpartsFulgoridae
   bodyPart: Snout
   groupWhitelist: [ Moth ]
-  followSkinColor: true
   forcedColoring: true
   sprites:
   - sprite: _Impstation/Mobs/Customization/Moth/snout.rsi
@@ -456,7 +455,6 @@
   id: MouthpartsFulgoridaeUpturned
   bodyPart: Snout
   groupWhitelist: [ Moth ]
-  followSkinColor: true
   forcedColoring: true
   sprites:
   - sprite: _Impstation/Mobs/Customization/Moth/snout.rsi
@@ -466,7 +464,6 @@
   id: MouthpartsHymenoptera
   bodyPart: Snout
   groupWhitelist: [ Moth ]
-  followSkinColor: true
   forcedColoring: true
   sprites:
   - sprite: _Impstation/Mobs/Customization/Moth/snout.rsi
@@ -476,7 +473,6 @@
   id: MouthpartsHymenopteraLarge
   bodyPart: Snout
   groupWhitelist: [ Moth ]
-  followSkinColor: true
   forcedColoring: true
   sprites:
   - sprite: _Impstation/Mobs/Customization/Moth/snout.rsi
@@ -512,7 +508,6 @@
   id: MouthpartsSchistocerca
   bodyPart: Snout
   groupWhitelist: [ Moth ]
-  followSkinColor: true
   forcedColoring: true
   sprites:
   - sprite: _Impstation/Mobs/Customization/Moth/snout.rsi
@@ -525,7 +520,6 @@
   bodyPart: HeadSide
   groupWhitelist: [ Moth ]
   forcedColoring: true
-  followSkinColor: true
   sprites:
   - sprite: _Impstation/Mobs/Customization/Moth/headside.rsi
     state: blunt
@@ -535,7 +529,6 @@
   bodyPart: HeadSide
   groupWhitelist: [ Moth ]
   forcedColoring: true
-  followSkinColor: true
   sprites:
   - sprite: _Impstation/Mobs/Customization/Moth/headside.rsi
     state: daisy
@@ -545,7 +538,6 @@
   bodyPart: HeadSide
   groupWhitelist: [ Moth ]
   forcedColoring: true
-  followSkinColor: true
   sprites:
   - sprite: _Impstation/Mobs/Customization/Moth/headside.rsi
     state: heart
@@ -555,7 +547,6 @@
   bodyPart: HeadSide
   groupWhitelist: [ Moth ]
   forcedColoring: true
-  followSkinColor: true
   sprites:
   - sprite: _Impstation/Mobs/Customization/Moth/headside.rsi
     state: horn
@@ -565,7 +556,6 @@
   bodyPart: HeadSide
   groupWhitelist: [ Moth ]
   forcedColoring: true
-  followSkinColor: true
   sprites:
   - sprite: _Impstation/Mobs/Customization/Moth/headside.rsi
     state: smallspike
