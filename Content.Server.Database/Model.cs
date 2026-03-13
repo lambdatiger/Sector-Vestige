@@ -89,6 +89,8 @@ namespace Content.Server.Database
         public DbSet<JobWhitelistGroup> JobWhitelistGroups { get; set; } = null!; // SV changes - Job whitelist groups
         public DbSet<BanTemplate> BanTemplate { get; set; } = null!;
         public DbSet<IPIntelCache> IPIntelCache { get; set; } = null!;
+        public DbSet<TestModel.TestProfile> TestProfiles { get; set; } = null!;
+        public DbSet<TestModel.CharacterDocument> CharacterDocuments { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -113,6 +115,20 @@ namespace Content.Server.Database
                 .HasForeignKey(e => e.CDProfileId)
                 .IsRequired();
             // END CD
+
+            // SV: CharacterDocuments START
+            modelBuilder.Entity<TestModel.TestProfile>()
+                .HasOne(p => p.Profile)
+                .WithOne(p => p.TestProfile)
+                .HasForeignKey<TestModel.TestProfile>(p => p.ProfileId)
+                .IsRequired();
+
+            modelBuilder.Entity<TestModel.CharacterDocument>()
+                .HasOne(e => e.TestProfile)
+                .WithMany(e => e.CharacterDocuments)
+                .HasForeignKey(e => e.TestProfileID)
+                .IsRequired();
+            // SV: CharacterDocuments END
 
             modelBuilder.Entity<Antag>()
                 .HasIndex(p => new {HumanoidProfileId = p.ProfileId, p.AntagName})
@@ -415,6 +431,7 @@ namespace Content.Server.Database
         public Preference Preference { get; set; } = null!;
 
         public CDModel.CDProfile? CDProfile { get; set; }
+        public TestModel.TestProfile? TestProfile { get; set; }
     }
 
     public class Job

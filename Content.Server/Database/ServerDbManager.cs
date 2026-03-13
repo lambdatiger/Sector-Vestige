@@ -86,6 +86,9 @@ namespace Content.Server.Database
         // Single method for two operations for transaction.
         Task DeleteSlotAndSetSelectedIndex(NetUserId userId, int deleteSlot, int newSlot);
         Task<PlayerPreferences?> GetPlayerPreferencesAsync(NetUserId userId, CancellationToken cancel);
+
+        Task SaveSVCharacterDocumentsAsync(int profileId, JsonDocument serializedDocument, IReadOnlyCollection<TestModel.CharacterDocument> documents);
+        Task<(JsonDocument? SerializedDocument, List<TestModel.CharacterDocument> Documents)?> GetSVCharacterDocumentsAsync(int profileId, CancellationToken cancel = default);
         #endregion
 
         #region User Ids
@@ -514,6 +517,18 @@ namespace Content.Server.Database
         {
             DbReadOpsMetric.Inc();
             return RunDbCommand(() => _db.GetPlayerPreferencesAsync(userId, cancel));
+        }
+
+        public Task SaveSVCharacterDocumentsAsync(int profileId, JsonDocument serializedDocument, IReadOnlyCollection<TestModel.CharacterDocument> documents)
+        {
+            DbWriteOpsMetric.Inc();
+            return RunDbCommand(() => _db.SaveSVCharacterDocumentsAsync(profileId, serializedDocument, documents));
+        }
+
+        public Task<(JsonDocument? SerializedDocument, List<TestModel.CharacterDocument> Documents)?> GetSVCharacterDocumentsAsync(int profileId, CancellationToken cancel = default)
+        {
+            DbReadOpsMetric.Inc();
+            return RunDbCommand(() => _db.GetSVCharacterDocumentsAsync(profileId, cancel));
         }
 
         public Task AssignUserIdAsync(string name, NetUserId userId)

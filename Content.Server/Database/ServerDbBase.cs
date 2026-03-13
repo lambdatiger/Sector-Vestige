@@ -214,6 +214,69 @@ namespace Content.Server.Database
             return new PlayerPreferences(new[] { new KeyValuePair<int, HumanoidCharacterProfile>(0, defaultProfile) }, 0, Color.FromHex(prefs.AdminOOCColor), []);
         }
 
+        public async Task SaveSVCharacterDocumentsAsync(int profileId, JsonDocument serializedDocument, IReadOnlyCollection<TestModel.CharacterDocument> documents)
+        {
+            await using var db = await GetDb();
+
+            var testProfile = await db.DbContext.TestProfiles
+                .Include(p => p.CharacterDocuments)
+                .SingleOrDefaultAsync(p => p.ProfileId == profileId);
+
+            if (testProfile == null)
+            {
+                testProfile = new TestModel.TestProfile
+                {
+                    ProfileId = profileId,
+                };
+
+                db.DbContext.TestProfiles.Add(testProfile);
+            }
+
+            testProfile.CharacterDocument = JsonDocument.Parse(serializedDocument.RootElement.GetRawText());
+            testProfile.CharacterDocuments.Clear();
+
+            foreach (var document in documents)
+            {
+                testProfile.CharacterDocuments.Add(new TestModel.CharacterDocument
+                {
+                    DocTitle = document.DocTitle,
+                    DocAuthor = document.DocAuthor,
+                    DocContent = document.DocContent,
+                    DocStamps = document.DocStamps,
+                });
+            }
+
+            await db.DbContext.SaveChangesAsync();
+        }
+
+        public async Task<(JsonDocument? SerializedDocument, List<TestModel.CharacterDocument> Documents)?> GetSVCharacterDocumentsAsync(
+            int profileId,
+            CancellationToken cancel = default)
+        {
+            await using var db = await GetDb(cancel);
+
+            var testProfile = await db.DbContext.TestProfiles
+                .Include(p => p.CharacterDocuments)
+                .SingleOrDefaultAsync(p => p.ProfileId == profileId, cancel);
+
+            if (testProfile == null)
+                return null;
+
+            var documents = testProfile.CharacterDocuments
+                .Select(document => new TestModel.CharacterDocument
+                {
+                    DocID = document.DocID,
+                    DocTitle = document.DocTitle,
+                    DocAuthor = document.DocAuthor,
+                    DocContent = document.DocContent,
+                    DocStamps = document.DocStamps,
+                    TestProfileID = document.TestProfileID,
+                })
+                .ToList();
+
+            return (testProfile.CharacterDocument, documents);
+        }
+
         public async Task DeleteSlotAndSetSelectedIndex(NetUserId userId, int deleteSlot, int newSlot)
         {
             await using var db = await GetDb();
