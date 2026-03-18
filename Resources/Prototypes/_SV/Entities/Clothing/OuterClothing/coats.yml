@@ -136,7 +136,7 @@
   parent: ClothingOuterStorageFoldableBase
   id: ClothingOuterCoatCentCommOverseerDamaged
   name: damaged centcomm overseer jacket
-  description: A leather jacket worn by Overseers who prefer a more rugged style.
+  description: A leather jacket worn by Overseers who prefer a more rugged style. This bad boy has been through the ringer of station combat
   components:
   - type: Sprite
     sprite: _SV/Clothing/OuterClothing/Coats/damaged_central_overseer.rsi

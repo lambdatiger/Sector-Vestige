@@ -23,7 +23,7 @@
   parent: [ClothingOuterArmorBaseCarapace, BaseCentcommContraband]
   id: ClothingOuterArmorCentcommCarapaceDamaged
   name: damaged centcomm carapace
-  description: An armored chestpiece that provides protection whilst still offering maximum mobility and flexibility. Issued only to centcomm officials and agents.
+  description: An armored chestpiece that provides protection whilst still offering maximum mobility and flexibility. Issued only to centcomm officials and agents. This ones been shot more then a fair few times.
   components:
   - type: Sprite
     sprite: _SV/Clothing/OuterClothing/Armor/damaged_centcomm_carapace.rsi

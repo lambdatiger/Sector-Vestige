@@ -21,6 +21,7 @@
   parent: ClothingOuterWinterCoat
   id: ClothingOuterWinterCoatCentcommDamaged
   name: damaged centcomm winter coat
+  description: A cozy winter coat to keep nuclear winters at bay. Although, this ones got a few too many holes in it for that now.
   components:
   - type: Sprite
     sprite: _SV/Clothing/OuterClothing/Wintercoats/Damaged_Centcom_Wintercoat.rsi
