@@ -87,8 +87,8 @@ namespace Content.Server.Database
 
         // Single method for two operations for transaction.
         Task DeleteSlotAndSetSelectedIndex(NetUserId userId, int deleteSlot, int newSlot);
-        Task SaveSVCharacterDocumentsAsync(int profileId, JsonDocument serializedDocument, IReadOnlyCollection<TestModel.CharacterDocument> documents);
-        Task<(JsonDocument? SerializedDocument, List<TestModel.CharacterDocument> Documents)?> GetSVCharacterDocumentsAsync(int profileId, CancellationToken cancel = default);
+        Task SaveSVCharacterDocumentsAsync(int profileId, JsonDocument serializedDocument, IReadOnlyCollection<SVModel.CharacterDocument> documents);
+        Task<(JsonDocument? SerializedDocument, List<SVModel.CharacterDocument> Documents)?> GetSVCharacterDocumentsAsync(int profileId, CancellationToken cancel = default);
         Task<Preference?> GetPlayerPreferencesAsync(NetUserId userId, CancellationToken cancel);
         #endregion
 
@@ -525,13 +525,13 @@ namespace Content.Server.Database
             return RunDbCommand(() => _db.GetPlayerPreferencesAsync(userId, cancel));
         }
 
-        public Task SaveSVCharacterDocumentsAsync(int profileId, JsonDocument serializedDocument, IReadOnlyCollection<TestModel.CharacterDocument> documents)
+        public Task SaveSVCharacterDocumentsAsync(int profileId, JsonDocument serializedDocument, IReadOnlyCollection<SVModel.CharacterDocument> documents)
         {
             DbWriteOpsMetric.Inc();
             return RunDbCommand(() => _db.SaveSVCharacterDocumentsAsync(profileId, serializedDocument, documents));
         }
 
-        public Task<(JsonDocument? SerializedDocument, List<TestModel.CharacterDocument> Documents)?> GetSVCharacterDocumentsAsync(int profileId, CancellationToken cancel = default)
+        public Task<(JsonDocument? SerializedDocument, List<SVModel.CharacterDocument> Documents)?> GetSVCharacterDocumentsAsync(int profileId, CancellationToken cancel = default)
         {
             DbReadOpsMetric.Inc();
             return RunDbCommand(() => _db.GetSVCharacterDocumentsAsync(profileId, cancel));

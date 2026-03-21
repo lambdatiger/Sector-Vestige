@@ -1353,6 +1353,81 @@ namespace Content.Server.Database.Migrations.Postgres
                     b.ToTable("round", (string)null);
                 });
 
+            modelBuilder.Entity("Content.Server.Database.SVModel+CharacterDocument", b =>
+                {
+                    b.Property<int>("DocID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("doc_i_d");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("DocID"));
+
+                    b.Property<string>("DocAuthor")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("doc_author");
+
+                    b.Property<string>("DocContent")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("doc_content");
+
+                    b.Property<DateTime>("DocDateLastEdited")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("doc_date_last_edited");
+
+                    b.Property<string>("DocStamps")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("doc_stamps");
+
+                    b.Property<string>("DocTitle")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("doc_title");
+
+                    b.Property<int>("SVProfileID")
+                        .HasColumnType("integer")
+                        .HasColumnName("svprofile_i_d");
+
+                    b.HasKey("DocID")
+                        .HasName("PK_sv_character_document_entries");
+
+                    b.HasIndex("DocID")
+                        .HasDatabaseName("IX_sv_character_document_entries_doc_i_d");
+
+                    b.HasIndex("SVProfileID")
+                        .HasDatabaseName("IX_sv_character_document_entries_svprofile_i_d");
+
+                    b.ToTable("sv_character_document_entries", (string)null);
+                });
+
+            modelBuilder.Entity("Content.Server.Database.SVModel+SVProfile", b =>
+                {
+                    b.Property<int>("PlayerID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("player_i_d");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("PlayerID"));
+
+                    b.Property<JsonDocument>("CharacterDocument")
+                        .HasColumnType("jsonb")
+                        .HasColumnName("character_doc");
+
+                    b.Property<int>("ProfileId")
+                        .HasColumnType("integer")
+                        .HasColumnName("profile_id");
+
+                    b.HasKey("PlayerID")
+                        .HasName("PK_test_profiles");
+
+                    b.HasIndex("ProfileId")
+                        .IsUnique();
+
+                    b.ToTable("test_profiles", (string)null);
+                });
+
             modelBuilder.Entity("Content.Server.Database.Server", b =>
                 {
                     b.Property<int>("Id")
@@ -1420,77 +1495,6 @@ namespace Content.Server.Database.Migrations.Postgres
                         .HasDatabaseName("IX_server_ban_hit_connection_id");
 
                     b.ToTable("server_ban_hit", (string)null);
-                });
-
-            modelBuilder.Entity("Content.Server.Database.TestModel+CharacterDocument", b =>
-                {
-                    b.Property<int>("DocID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("doc_i_d");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("DocID"));
-
-                    b.Property<string>("DocAuthor")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("doc_author");
-
-                    b.Property<string>("DocContent")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("doc_content");
-
-                    b.Property<string>("DocStamps")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("doc_stamps");
-
-                    b.Property<string>("DocTitle")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("doc_title");
-
-                    b.Property<int>("TestProfileID")
-                        .HasColumnType("integer")
-                        .HasColumnName("test_profile_i_d");
-
-                    b.HasKey("DocID")
-                        .HasName("PK_sv_character_document_entries");
-
-                    b.HasIndex("DocID")
-                        .HasDatabaseName("IX_sv_character_document_entries_doc_i_d");
-
-                    b.HasIndex("TestProfileID")
-                        .HasDatabaseName("IX_sv_character_document_entries_test_profile_i_d");
-
-                    b.ToTable("sv_character_document_entries", (string)null);
-                });
-
-            modelBuilder.Entity("Content.Server.Database.TestModel+TestProfile", b =>
-                {
-                    b.Property<int>("PlayerID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("player_i_d");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("PlayerID"));
-
-                    b.Property<JsonDocument>("CharacterDocument")
-                        .HasColumnType("jsonb")
-                        .HasColumnName("character_doc");
-
-                    b.Property<int>("ProfileId")
-                        .HasColumnType("integer")
-                        .HasColumnName("profile_id");
-
-                    b.HasKey("PlayerID")
-                        .HasName("PK_test_profiles");
-
-                    b.HasIndex("ProfileId")
-                        .IsUnique();
-
-                    b.ToTable("test_profiles", (string)null);
                 });
 
             modelBuilder.Entity("Content.Server.Database.Trait", b =>
@@ -2144,6 +2148,30 @@ namespace Content.Server.Database.Migrations.Postgres
                     b.Navigation("Server");
                 });
 
+            modelBuilder.Entity("Content.Server.Database.SVModel+CharacterDocument", b =>
+                {
+                    b.HasOne("Content.Server.Database.SVModel+SVProfile", "SVProfile")
+                        .WithMany("CharacterDocuments")
+                        .HasForeignKey("SVProfileID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_sv_character_document_entries_test_profiles_svprofile_i_d");
+
+                    b.Navigation("SVProfile");
+                });
+
+            modelBuilder.Entity("Content.Server.Database.SVModel+SVProfile", b =>
+                {
+                    b.HasOne("Content.Server.Database.Profile", "Profile")
+                        .WithOne("TestProfile")
+                        .HasForeignKey("Content.Server.Database.SVModel+SVProfile", "ProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_test_profiles_profile_profile_id");
+
+                    b.Navigation("Profile");
+                });
+
             modelBuilder.Entity("Content.Server.Database.ServerBanHit", b =>
                 {
                     b.HasOne("Content.Server.Database.Ban", "Ban")
@@ -2163,30 +2191,6 @@ namespace Content.Server.Database.Migrations.Postgres
                     b.Navigation("Ban");
 
                     b.Navigation("Connection");
-                });
-
-            modelBuilder.Entity("Content.Server.Database.TestModel+CharacterDocument", b =>
-                {
-                    b.HasOne("Content.Server.Database.TestModel+TestProfile", "TestProfile")
-                        .WithMany("CharacterDocuments")
-                        .HasForeignKey("TestProfileID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_sv_character_document_entries_test_profiles_test_profile_i_d");
-
-                    b.Navigation("TestProfile");
-                });
-
-            modelBuilder.Entity("Content.Server.Database.TestModel+TestProfile", b =>
-                {
-                    b.HasOne("Content.Server.Database.Profile", "Profile")
-                        .WithOne("TestProfile")
-                        .HasForeignKey("Content.Server.Database.TestModel+TestProfile", "ProfileId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_test_profiles_profile_profile_id");
-
-                    b.Navigation("Profile");
                 });
 
             modelBuilder.Entity("Content.Server.Database.Trait", b =>
@@ -2346,16 +2350,16 @@ namespace Content.Server.Database.Migrations.Postgres
                     b.Navigation("AdminLogs");
                 });
 
+            modelBuilder.Entity("Content.Server.Database.SVModel+SVProfile", b =>
+                {
+                    b.Navigation("CharacterDocuments");
+                });
+
             modelBuilder.Entity("Content.Server.Database.Server", b =>
                 {
                     b.Navigation("ConnectionLogs");
 
                     b.Navigation("Rounds");
-                });
-
-            modelBuilder.Entity("Content.Server.Database.TestModel+TestProfile", b =>
-                {
-                    b.Navigation("CharacterDocuments");
                 });
 #pragma warning restore 612, 618
         }

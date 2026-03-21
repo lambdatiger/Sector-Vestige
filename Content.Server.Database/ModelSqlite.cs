@@ -86,7 +86,7 @@ namespace Content.Server.Database
             // CD: Store Records
 
             // SV: Store Character Document JSON
-            modelBuilder.Entity<TestModel.TestProfile>()
+            modelBuilder.Entity<SVModel.SVProfile>()
                 .Property(log => log.CharacterDocument)
                 .HasConversion(jsonByteArrayConverter);
             // SV: Store Character Document JSON

@@ -6,10 +6,10 @@ namespace Content.Server._SV.CharacterDocuments;
 
 public static class CharacterDocumentDeserializer
 {
-    public static List<TestModel.CharacterDocument> DocumentDeserializer(JsonDocument serializedDocument)
+    public static List<SVModel.CharacterDocument> DocumentDeserializer(JsonDocument serializedDocument)
     {
-        return JsonSerializer.Deserialize<List<TestModel.CharacterDocument>>(serializedDocument)
-            ?? new List<TestModel.CharacterDocument>();
+        return JsonSerializer.Deserialize<List<SVModel.CharacterDocument>>(serializedDocument)
+            ?? new List<SVModel.CharacterDocument>();
     }
 
 }

@@ -217,7 +217,7 @@ namespace Content.Server.Database
             return prefs;
         }
 
-        public async Task SaveSVCharacterDocumentsAsync(int profileId, JsonDocument serializedDocument, IReadOnlyCollection<TestModel.CharacterDocument> documents)
+        public async Task SaveSVCharacterDocumentsAsync(int profileId, JsonDocument serializedDocument, IReadOnlyCollection<SVModel.CharacterDocument> documents)
         {
             await using var db = await GetDb();
 
@@ -227,7 +227,7 @@ namespace Content.Server.Database
 
             if (testProfile == null)
             {
-                testProfile = new TestModel.TestProfile
+                testProfile = new SVModel.SVProfile
                 {
                     ProfileId = profileId,
                 };
@@ -240,7 +240,7 @@ namespace Content.Server.Database
 
             foreach (var document in documents)
             {
-                testProfile.CharacterDocuments.Add(new TestModel.CharacterDocument
+                testProfile.CharacterDocuments.Add(new SVModel.CharacterDocument
                 {
                     DocTitle = document.DocTitle,
                     DocAuthor = document.DocAuthor,
@@ -252,7 +252,7 @@ namespace Content.Server.Database
             await db.DbContext.SaveChangesAsync();
         }
 
-        public async Task<(JsonDocument? SerializedDocument, List<TestModel.CharacterDocument> Documents)?> GetSVCharacterDocumentsAsync(
+        public async Task<(JsonDocument? SerializedDocument, List<SVModel.CharacterDocument> Documents)?> GetSVCharacterDocumentsAsync(
             int profileId,
             CancellationToken cancel = default)
         {
@@ -266,14 +266,14 @@ namespace Content.Server.Database
                 return null;
 
             var documents = testProfile.CharacterDocuments
-                .Select(document => new TestModel.CharacterDocument
+                .Select(document => new SVModel.CharacterDocument
                 {
                     DocID = document.DocID,
                     DocTitle = document.DocTitle,
                     DocAuthor = document.DocAuthor,
                     DocContent = document.DocContent,
                     DocStamps = document.DocStamps,
-                    TestProfileID = document.TestProfileID,
+                    SVProfileID = document.SVProfileID,
                 })
                 .ToList();
 

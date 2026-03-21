@@ -8,9 +8,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Content.Server.Database;
 
-public static class TestModel
+public static class SVModel
 {
-    public class TestProfile
+    public class SVProfile
     {
         [Key]
         public int PlayerID { get; set; }
@@ -29,7 +29,7 @@ public static class TestModel
     {
         [Key]
         public int DocID { get; set; }
-        public DateTime DocDate { get; set; }
+        public DateTime DocDateLastEdited { get; set; }
         public string DocTitle { get; set; } = null!;
         public string DocAuthor { get; set; } = null!;
         public string DocContent { get; set; } = null!;
@@ -37,7 +37,7 @@ public static class TestModel
 
         // Profile stuff:
         [JsonIgnore]
-        public TestProfile TestProfile { get; set; } = null!;
-        public int TestProfileID { get; set; }
+        public SVProfile SVProfile { get; set; } = null!;
+        public int SVProfileID { get; set; }
     }
 }
