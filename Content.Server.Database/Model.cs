@@ -89,7 +89,7 @@ namespace Content.Server.Database
         public DbSet<JobWhitelistGroup> JobWhitelistGroups { get; set; } = null!; // SV changes - Job whitelist groups
         public DbSet<BanTemplate> BanTemplate { get; set; } = null!;
         public DbSet<IPIntelCache> IPIntelCache { get; set; } = null!;
-        public DbSet<SVModel.SVProfile> TestProfiles { get; set; } = null!;
+        public DbSet<SVModel.SVProfile> SVProfiles { get; set; } = null!;
         public DbSet<SVModel.CharacterDocument> CharacterDocuments { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -119,7 +119,7 @@ namespace Content.Server.Database
             // SV: CharacterDocuments START
             modelBuilder.Entity<SVModel.SVProfile>()
                 .HasOne(p => p.Profile)
-                .WithOne(p => p.TestProfile)
+                .WithOne(p => p.SVProfile)
                 .HasForeignKey<SVModel.SVProfile>(p => p.ProfileId)
                 .IsRequired();
 
@@ -431,7 +431,7 @@ namespace Content.Server.Database
         public Preference Preference { get; set; } = null!;
 
         public CDModel.CDProfile? CDProfile { get; set; }
-        public SVModel.SVProfile? TestProfile { get; set; }
+        public SVModel.SVProfile? SVProfile { get; set; }
     }
 
     public class Job

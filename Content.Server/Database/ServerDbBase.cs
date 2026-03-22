@@ -217,11 +217,11 @@ namespace Content.Server.Database
             return prefs;
         }
 
-        public async Task SaveSVCharacterDocumentsAsync(int profileId, JsonDocument serializedDocument, IReadOnlyCollection<SVModel.CharacterDocument> documents)
+        public async Task SaveSVCharacterDocumentsAsync(int profileId, string playerName, string characterName, JsonDocument serializedDocument, IReadOnlyCollection<SVModel.CharacterDocument> documents)
         {
             await using var db = await GetDb();
 
-            var testProfile = await db.DbContext.TestProfiles
+            var testProfile = await db.DbContext.SVProfiles
                 .Include(p => p.CharacterDocuments)
                 .SingleOrDefaultAsync(p => p.ProfileId == profileId);
 
@@ -232,9 +232,11 @@ namespace Content.Server.Database
                     ProfileId = profileId,
                 };
 
-                db.DbContext.TestProfiles.Add(testProfile);
+                db.DbContext.SVProfiles.Add(testProfile);
             }
 
+            testProfile.PlayerName = playerName;
+            testProfile.CharacterName = characterName;
             testProfile.CharacterDocument = JsonDocument.Parse(serializedDocument.RootElement.GetRawText());
             testProfile.CharacterDocuments.Clear();
 
@@ -258,7 +260,7 @@ namespace Content.Server.Database
         {
             await using var db = await GetDb(cancel);
 
-            var testProfile = await db.DbContext.TestProfiles
+            var testProfile = await db.DbContext.SVProfiles
                 .Include(p => p.CharacterDocuments)
                 .SingleOrDefaultAsync(p => p.ProfileId == profileId, cancel);
 

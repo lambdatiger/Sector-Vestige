@@ -1328,26 +1328,36 @@ namespace Content.Server.Database.Migrations.Sqlite
 
             modelBuilder.Entity("Content.Server.Database.SVModel+SVProfile", b =>
                 {
-                    b.Property<int>("PlayerID")
+                    b.Property<int>("SVProfileID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER")
-                        .HasColumnName("player_i_d");
+                        .HasColumnName("svprofile_i_d");
 
                     b.Property<byte[]>("CharacterDocument")
                         .HasColumnType("jsonb")
                         .HasColumnName("character_doc");
 
+                    b.Property<string>("CharacterName")
+                        .IsRequired()
+                        .HasColumnType("TEXT")
+                        .HasColumnName("character_name");
+
+                    b.Property<string>("PlayerName")
+                        .IsRequired()
+                        .HasColumnType("TEXT")
+                        .HasColumnName("player_name");
+
                     b.Property<int>("ProfileId")
                         .HasColumnType("INTEGER")
                         .HasColumnName("profile_id");
 
-                    b.HasKey("PlayerID")
-                        .HasName("PK_test_profiles");
+                    b.HasKey("SVProfileID")
+                        .HasName("PK_sv_profiles");
 
                     b.HasIndex("ProfileId")
                         .IsUnique();
 
-                    b.ToTable("test_profiles", (string)null);
+                    b.ToTable("sv_profiles", (string)null);
                 });
 
             modelBuilder.Entity("Content.Server.Database.Server", b =>
@@ -2067,7 +2077,7 @@ namespace Content.Server.Database.Migrations.Sqlite
                         .HasForeignKey("SVProfileID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("FK_sv_character_document_entries_test_profiles_svprofile_i_d");
+                        .HasConstraintName("FK_sv_character_document_entries_sv_profiles_svprofile_i_d");
 
                     b.Navigation("SVProfile");
                 });
@@ -2075,11 +2085,11 @@ namespace Content.Server.Database.Migrations.Sqlite
             modelBuilder.Entity("Content.Server.Database.SVModel+SVProfile", b =>
                 {
                     b.HasOne("Content.Server.Database.Profile", "Profile")
-                        .WithOne("TestProfile")
+                        .WithOne("SVProfile")
                         .HasForeignKey("Content.Server.Database.SVModel+SVProfile", "ProfileId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("FK_test_profiles_profile_profile_id");
+                        .HasConstraintName("FK_sv_profiles_profile_profile_id");
 
                     b.Navigation("Profile");
                 });
@@ -2242,7 +2252,7 @@ namespace Content.Server.Database.Migrations.Sqlite
 
                     b.Navigation("Loadouts");
 
-                    b.Navigation("TestProfile");
+                    b.Navigation("SVProfile");
 
                     b.Navigation("Traits");
                 });

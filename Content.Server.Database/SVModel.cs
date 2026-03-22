@@ -10,13 +10,24 @@ namespace Content.Server.Database;
 
 public static class SVModel
 {
+    [Table("sv_profiles")]
     public class SVProfile
     {
         [Key]
-        public int PlayerID { get; set; }
+        public int SVProfileID { get; set; }
         public int ProfileId { get; set; }
         [JsonIgnore]
         public Profile Profile { get; set; } = null!;
+
+        /// <summary>
+        /// The player's username. Updated on every spawn.
+        /// </summary>
+        public string PlayerName { get; set; } = string.Empty;
+
+        /// <summary>
+        /// The character's name.
+        /// </summary>
+        public string CharacterName { get; set; } = string.Empty;
 
         [Column("character_doc", TypeName = "jsonb")]
         public JsonDocument? CharacterDocument { get; set; }

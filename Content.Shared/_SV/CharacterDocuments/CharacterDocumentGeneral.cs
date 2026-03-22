@@ -4,7 +4,7 @@ namespace Content.Shared._SV.CharacterDocuments;
 
 [DataDefinition]
 [Serializable, NetSerializable]
-public sealed partial class CharacterDocumentBasic
+public sealed partial class CharacterDocumentGeneral
 {
     public const int TextMedLen = 64;
     public const int TextLargeLen = 4096;
@@ -33,6 +33,4 @@ public sealed partial class CharacterDocumentBasic
     public string Allergies { get; private set; }
     [DataField]
     public string DrugAllergies { get; private set; }
-
-
 }
