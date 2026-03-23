@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Content.Server.Database;
 using Content.Server.StationRecords.Systems;
+using Content.Server._SV.CharacterDocuments;
 using Content.Shared._SV.CharacterDocuments;
 using Content.Shared._SV.CharacterDocuments.Components;
 using Content.Shared.GameTicking;
@@ -66,14 +67,9 @@ public sealed partial class CharacterDocumentSystem : EntitySystem
         if (!TryComp<CharacterDocumentComponent>(mob, out var docComp))
             return;
 
-        docComp.SVPlayerID = (uint) profile.Id;
+        docComp.SVPlayerID = (uint)profile.Id;
 
         var result = await _db.GetSVCharacterDocumentsAsync(profile.Id);
-        if (result == null)
-        {
-            await _db.SaveSVCharacterDocumentsAsync(profile.Id, player.Name, characterName, JsonDocument.Parse("{}"), []);
-            return;
-        }
 
         foreach (var doc in result.Value.Documents)
         {
@@ -84,9 +80,9 @@ public sealed partial class CharacterDocumentSystem : EntitySystem
                 DocAuthor = doc.DocAuthor,
                 DocDateLastEdited = doc.DocDateLastEdited,
                 DocContent = doc.DocContent,
-                // TODO: deserialize doc.DocStamps (string) into DocStamp (StampType enum)
+                DocStamps = CharacterDocumentDeserializer.DeserializeStamps(doc.DocStamps)
             };
-            docComp.Documents[(uint) doc.DocID] = characterDoc;
+            docComp.Documents[(uint)doc.DocID] = characterDoc;
         }
     }
 
