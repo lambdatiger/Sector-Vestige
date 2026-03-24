@@ -44,6 +44,7 @@ namespace Content.Server.Database.Migrations.Sqlite
                     doc_author = table.Column<string>(nullable: false),
                     doc_content = table.Column<string>(nullable: false),
                     doc_stamps = table.Column<string>(nullable: false),
+                    doc_type = table.Column<int>(nullable: false),
                     svprofile_i_d = table.Column<int>(nullable: false)
                 },
                 constraints: table =>

@@ -4,7 +4,7 @@ namespace Content.Shared._SV.CharacterDocuments.Components;
 public sealed partial class CharacterDocumentComponent : Component
 {
     [DataField]
-    public Dictionary<uint, CharacterDocument> Documents = new();
+    public Dictionary<int, CharacterDocument> Documents = new();
 
     public CharacterDocumentGeneral CharacterDocumentGeneral = new();
 

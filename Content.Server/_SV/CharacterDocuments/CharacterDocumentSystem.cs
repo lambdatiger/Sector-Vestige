@@ -12,6 +12,7 @@ using Content.Shared.Humanoid;
 using Content.Shared.Players;
 using Content.Shared.StationRecords;
 using Robust.Shared.Player;
+using Robust.Shared.Random;
 
 namespace Content.Server._SV.CharacterDocuments;
 
@@ -24,6 +25,8 @@ public sealed partial class CharacterDocumentSystem : EntitySystem
         base.Initialize();
 
         SubscribeLocalEvent<PlayerSpawnCompleteEvent>(OnPlayerSpawn, after: [typeof(StationRecordsSystem)]);
+        SubscribeLocalEvent<CharacterDocumentEditedEvent>(OnDocumentEdited);
+
     }
 
     private void OnPlayerSpawn(PlayerSpawnCompleteEvent args)
@@ -67,8 +70,6 @@ public sealed partial class CharacterDocumentSystem : EntitySystem
         if (!TryComp<CharacterDocumentComponent>(mob, out var docComp))
             return;
 
-        docComp.SVPlayerID = (uint)profile.Id;
-
         var result = await _db.GetSVCharacterDocumentsAsync(profile.Id);
 
         foreach (var doc in result.Value.Documents)
@@ -76,18 +77,43 @@ public sealed partial class CharacterDocumentSystem : EntitySystem
             var characterDoc = new CharacterDocument
             {
                 DocID = doc.DocID,
+                DocType = doc.DocType,
                 DocTitle = doc.DocTitle,
                 DocAuthor = doc.DocAuthor,
                 DocDateLastEdited = doc.DocDateLastEdited,
                 DocContent = doc.DocContent,
                 DocStamps = CharacterDocumentDeserializer.DeserializeStamps(doc.DocStamps)
             };
-            docComp.Documents[(uint)doc.DocID] = characterDoc;
+            docComp.Documents[doc.DocID] = characterDoc;
         }
     }
 
-    private void AddDocument(CharacterDocument characterDocument)
+    private void OnDocumentEdited(CharacterDocumentEditedEvent args)
     {
 
     }
+
+    private async Task AddDocument(EntityUid mob, ICommonSession player, CharacterDocument characterDocument)
+    {
+        if (!TryComp<CharacterDocumentComponent>(mob, out var docComp))
+            return;
+
+        var id = docComp.Documents.Count == 0 ? 1 : docComp.Documents.Keys.Max() + 1;
+        docComp.Documents.Add(id, characterDocument);
+
+        var dbDocs = docComp.Documents.Values.Select(doc => new SVModel.CharacterDocument
+        {
+            DocTitle = doc.DocTitle,
+            DocAuthor = doc.DocAuthor,
+            DocContent = doc.DocContent,
+            DocDateLastEdited = doc.DocDateLastEdited,
+            DocStamps = CharacterDocumentSerializer.SerializeStamp(doc.DocStamps),
+            DocType = doc.DocType,
+            SVProfileID = (int)docComp.SVPlayerID
+        }).ToList();
+
+        await _db.SaveSVCharacterDocumentsAsync((int)docComp.SVPlayerID, player.Name, characterDocument.DocTitle, CharacterDocumentSerializer.SerializeDocument(dbDocs), dbDocs);
+        RaiseLocalEvent(new CharacterDocumentEditedEvent());
+    }
+    public sealed class CharacterDocumentEditedEvent : EntityEventArgs;
 }

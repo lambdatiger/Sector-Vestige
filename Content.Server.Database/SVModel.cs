@@ -40,6 +40,7 @@ public static class SVModel
     {
         [Key]
         public int DocID { get; set; }
+        public int DocType { get; set; } = 0;
         public DateTime DocDateLastEdited { get; set; }
         public string DocTitle { get; set; } = null!;
         public string DocAuthor { get; set; } = null!;

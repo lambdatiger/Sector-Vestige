@@ -6,7 +6,7 @@ namespace Content.Server._SV.CharacterDocuments;
 
 public static class CharacterDocumentSerializer
 {
-    public static JsonDocument DocumentSerializer(IReadOnlyCollection<SVModel.CharacterDocument> characterDocuments)
+    public static JsonDocument SerializeDocument(IReadOnlyCollection<SVModel.CharacterDocument> characterDocuments)
     {
         var serializeddoc = JsonSerializer.Serialize(characterDocuments);
         return JsonDocument.Parse(serializeddoc);
