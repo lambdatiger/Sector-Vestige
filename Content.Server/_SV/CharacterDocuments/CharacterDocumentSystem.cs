@@ -25,7 +25,6 @@ public sealed partial class CharacterDocumentSystem : EntitySystem
         base.Initialize();
 
         SubscribeLocalEvent<PlayerSpawnCompleteEvent>(OnPlayerSpawn, after: [typeof(StationRecordsSystem)]);
-        SubscribeLocalEvent<CharacterDocumentEditedEvent>(OnDocumentEdited);
 
     }
 
@@ -88,11 +87,6 @@ public sealed partial class CharacterDocumentSystem : EntitySystem
         }
     }
 
-    private void OnDocumentEdited(CharacterDocumentEditedEvent args)
-    {
-
-    }
-
     private async Task AddDocument(EntityUid mob, ICommonSession player, CharacterDocument characterDocument)
     {
         if (!TryComp<CharacterDocumentComponent>(mob, out var docComp))
@@ -113,7 +107,26 @@ public sealed partial class CharacterDocumentSystem : EntitySystem
         }).ToList();
 
         await _db.SaveSVCharacterDocumentsAsync((int)docComp.SVPlayerID, player.Name, characterDocument.DocTitle, CharacterDocumentSerializer.SerializeDocument(dbDocs), dbDocs);
-        RaiseLocalEvent(new CharacterDocumentEditedEvent());
     }
-    public sealed class CharacterDocumentEditedEvent : EntityEventArgs;
+
+    private async Task DeleteDocument(EntityUid mob, ICommonSession player, CharacterDocument characterDocument)
+    {
+        if (!TryComp<CharacterDocumentComponent>(mob, out var docComp))
+            return;
+
+        docComp.Documents.Remove(characterDocument.DocID);
+
+        var dbDocs = docComp.Documents.Values.Select(doc => new SVModel.CharacterDocument
+        {
+            DocTitle = doc.DocTitle,
+            DocAuthor = doc.DocAuthor,
+            DocContent = doc.DocContent,
+            DocDateLastEdited = doc.DocDateLastEdited,
+            DocStamps = CharacterDocumentSerializer.SerializeStamp(doc.DocStamps),
+            DocType = doc.DocType,
+            SVProfileID = (int)docComp.SVPlayerID
+        }).ToList();
+
+        await _db.SaveSVCharacterDocumentsAsync((int)docComp.SVPlayerID, player.Name, characterDocument.DocTitle, CharacterDocumentSerializer.SerializeDocument(dbDocs), dbDocs);
+    }
 }
