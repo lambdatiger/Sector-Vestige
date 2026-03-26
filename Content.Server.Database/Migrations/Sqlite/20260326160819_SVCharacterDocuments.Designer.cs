@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Content.Server.Database.Migrations.Sqlite
 {
     [DbContext(typeof(SqliteServerDbContext))]
-    [Migration("20260322130429_Sector-vestige-DB")]
-    partial class SectorvestigeDB
+    [Migration("20260326160819_SVCharacterDocuments")]
+    partial class SVCharacterDocuments
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -1313,9 +1313,13 @@ namespace Content.Server.Database.Migrations.Sqlite
                         .HasColumnType("TEXT")
                         .HasColumnName("doc_title");
 
-                    b.Property<int>("SVProfileID")
+                    b.Property<int>("DocType")
                         .HasColumnType("INTEGER")
-                        .HasColumnName("svprofile_i_d");
+                        .HasColumnName("doc_type");
+
+                    b.Property<int>("ProfileId")
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("profile_id");
 
                     b.HasKey("DocID")
                         .HasName("PK_sv_character_document_entries");
@@ -1323,22 +1327,16 @@ namespace Content.Server.Database.Migrations.Sqlite
                     b.HasIndex("DocID")
                         .HasDatabaseName("IX_sv_character_document_entries_doc_i_d");
 
-                    b.HasIndex("SVProfileID")
-                        .HasDatabaseName("IX_sv_character_document_entries_svprofile_i_d");
+                    b.HasIndex("ProfileId");
 
                     b.ToTable("sv_character_document_entries", (string)null);
                 });
 
             modelBuilder.Entity("Content.Server.Database.SVModel+SVProfile", b =>
                 {
-                    b.Property<int>("SVProfileID")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("ProfileId")
                         .HasColumnType("INTEGER")
-                        .HasColumnName("svprofile_i_d");
-
-                    b.Property<byte[]>("CharacterDocument")
-                        .HasColumnType("jsonb")
-                        .HasColumnName("character_doc");
+                        .HasColumnName("profile_id");
 
                     b.Property<string>("CharacterName")
                         .IsRequired()
@@ -1350,15 +1348,8 @@ namespace Content.Server.Database.Migrations.Sqlite
                         .HasColumnType("TEXT")
                         .HasColumnName("player_name");
 
-                    b.Property<int>("ProfileId")
-                        .HasColumnType("INTEGER")
-                        .HasColumnName("profile_id");
-
-                    b.HasKey("SVProfileID")
+                    b.HasKey("ProfileId")
                         .HasName("PK_sv_profiles");
-
-                    b.HasIndex("ProfileId")
-                        .IsUnique();
 
                     b.ToTable("sv_profiles", (string)null);
                 });
@@ -2077,10 +2068,10 @@ namespace Content.Server.Database.Migrations.Sqlite
                 {
                     b.HasOne("Content.Server.Database.SVModel+SVProfile", "SVProfile")
                         .WithMany("CharacterDocuments")
-                        .HasForeignKey("SVProfileID")
+                        .HasForeignKey("ProfileId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("FK_sv_character_document_entries_sv_profiles_svprofile_i_d");
+                        .HasConstraintName("FK_sv_character_document_entries_sv_profiles__sv_profile_temp_id");
 
                     b.Navigation("SVProfile");
                 });

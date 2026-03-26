@@ -85,11 +85,6 @@ namespace Content.Server.Database
                 .HasConversion(jsonByteArrayConverter);
             // CD: Store Records
 
-            // SV: Store Character Document JSON
-            modelBuilder.Entity<SVModel.SVProfile>()
-                .Property(log => log.CharacterDocument)
-                .HasConversion(jsonByteArrayConverter);
-            // SV: Store Character Document JSON
 
             modelBuilder.Entity<Profile>()
                 .Property(log => log.OrganMarkings)

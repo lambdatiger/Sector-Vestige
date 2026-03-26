@@ -126,7 +126,7 @@ namespace Content.Server.Database
             modelBuilder.Entity<SVModel.CharacterDocument>()
                 .HasOne(e => e.SVProfile)
                 .WithMany(e => e.CharacterDocuments)
-                .HasForeignKey(e => e.SVProfileID)
+                .HasForeignKey(e => e.ProfileId)
                 .IsRequired();
             // SV: CharacterDocuments END
 

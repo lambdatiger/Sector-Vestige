@@ -6,4 +6,5 @@ namespace Content.Shared._SV.CharacterDocuments.Components;
 public sealed partial class CharacterDocumentStationComponent : Component
 {
     public List<EntityUid> PlayerEntities = new();
+
 }

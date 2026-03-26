@@ -217,7 +217,7 @@ namespace Content.Server.Database
             return prefs;
         }
 
-        public async Task SaveSVCharacterDocumentsAsync(int profileId, string playerName, string characterName, JsonDocument serializedDocument, IReadOnlyCollection<SVModel.CharacterDocument> documents)
+        public async Task SaveSVCharacterDocumentsAsync(int profileId, string playerName, string characterName, IReadOnlyCollection<SVModel.CharacterDocument> documents)
         {
             await using var db = await GetDb();
 
@@ -237,7 +237,6 @@ namespace Content.Server.Database
 
             testProfile.PlayerName = playerName;
             testProfile.CharacterName = characterName;
-            testProfile.CharacterDocument = JsonDocument.Parse(serializedDocument.RootElement.GetRawText());
             testProfile.CharacterDocuments.Clear();
 
             foreach (var document in documents)
@@ -248,6 +247,8 @@ namespace Content.Server.Database
                     DocAuthor = document.DocAuthor,
                     DocContent = document.DocContent,
                     DocStamps = document.DocStamps,
+                    DocType = document.DocType,
+                    DocDateLastEdited = document.DocDateLastEdited,
                 });
             }
 
@@ -275,11 +276,13 @@ namespace Content.Server.Database
                     DocAuthor = document.DocAuthor,
                     DocContent = document.DocContent,
                     DocStamps = document.DocStamps,
-                    SVProfileID = document.SVProfileID,
+                    DocType = document.DocType,
+                    DocDateLastEdited = document.DocDateLastEdited,
+                    ProfileId = document.ProfileId,
                 })
                 .ToList();
 
-            return (testProfile.CharacterDocument, documents);
+            return (null, documents);
         }
 
         public async Task DeleteSlotAndSetSelectedIndex(NetUserId userId, int deleteSlot, int newSlot)

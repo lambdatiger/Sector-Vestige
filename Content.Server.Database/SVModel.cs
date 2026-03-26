@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,7 +13,6 @@ public static class SVModel
     public class SVProfile
     {
         [Key]
-        public int SVProfileID { get; set; }
         public int ProfileId { get; set; }
         [JsonIgnore]
         public Profile Profile { get; set; } = null!;
@@ -25,12 +23,10 @@ public static class SVModel
         public string PlayerName { get; set; } = string.Empty;
 
         /// <summary>
-        /// The character's name.
+        /// The character's name. Can change between rounds.
         /// </summary>
         public string CharacterName { get; set; } = string.Empty;
 
-        [Column("character_doc", TypeName = "jsonb")]
-        public JsonDocument? CharacterDocument { get; set; }
         [JsonIgnore]
         public List<CharacterDocument> CharacterDocuments { get; set; } = new();
     }
@@ -40,16 +36,15 @@ public static class SVModel
     {
         [Key]
         public int DocID { get; set; }
-        public int DocType { get; set; } = 0;
+        public int DocType { get; set; }
         public DateTime DocDateLastEdited { get; set; }
-        public string DocTitle { get; set; } = null!;
-        public string DocAuthor { get; set; } = null!;
-        public string DocContent { get; set; } = null!;
-        public string DocStamps { get; set; } = null!;
+        public string DocTitle { get; set; } = string.Empty;
+        public string DocAuthor { get; set; } = string.Empty;
+        public string DocContent { get; set; } = string.Empty;
+        public string DocStamps { get; set; } = string.Empty;
 
-        // Profile stuff:
         [JsonIgnore]
         public SVProfile SVProfile { get; set; } = null!;
-        public int SVProfileID { get; set; }
+        public int ProfileId { get; set; }
     }
 }

@@ -13,6 +13,7 @@ using Content.Shared.Players;
 using Content.Shared.StationRecords;
 using Robust.Shared.Player;
 using Robust.Shared.Random;
+using Robust.Shared.Toolshed.Commands.Values;
 
 namespace Content.Server._SV.CharacterDocuments;
 
@@ -45,9 +46,12 @@ public sealed partial class CharacterDocumentSystem : EntitySystem
         if (!HasComp<CharacterDocumentComponent>(player) && HasComp<HumanoidProfileComponent>(player))
         {
             AddComp<CharacterDocumentComponent>(player);
+            var comp = Comp<CharacterDocumentComponent>(player);
+            comp.ProfileName = args.Profile.Name;
         }
 
         _ = LoadPlayerDocumentsAsync(player, args.Player, args.Profile.Name);
+        RaiseLocalEvent(new CharacterDocumentEditedEvent());
     }
 
     private async Task LoadPlayerDocumentsAsync(EntityUid mob, ICommonSession player, string characterName)
@@ -69,6 +73,7 @@ public sealed partial class CharacterDocumentSystem : EntitySystem
         if (!TryComp<CharacterDocumentComponent>(mob, out var docComp))
             return;
 
+        docComp.ProfileId = profile.Id;
         var result = await _db.GetSVCharacterDocumentsAsync(profile.Id);
 
         foreach (var doc in result.Value.Documents)
@@ -103,10 +108,11 @@ public sealed partial class CharacterDocumentSystem : EntitySystem
             DocDateLastEdited = doc.DocDateLastEdited,
             DocStamps = CharacterDocumentSerializer.SerializeStamp(doc.DocStamps),
             DocType = doc.DocType,
-            SVProfileID = (int)docComp.SVPlayerID
+            ProfileId = docComp.ProfileId
         }).ToList();
 
-        await _db.SaveSVCharacterDocumentsAsync((int)docComp.SVPlayerID, player.Name, characterDocument.DocTitle, CharacterDocumentSerializer.SerializeDocument(dbDocs), dbDocs);
+        await _db.SaveSVCharacterDocumentsAsync(docComp.ProfileId, player.Name, docComp.ProfileName, dbDocs);
+        RaiseLocalEvent(new CharacterDocumentEditedEvent());
     }
 
     private async Task DeleteDocument(EntityUid mob, ICommonSession player, CharacterDocument characterDocument)
@@ -124,9 +130,11 @@ public sealed partial class CharacterDocumentSystem : EntitySystem
             DocDateLastEdited = doc.DocDateLastEdited,
             DocStamps = CharacterDocumentSerializer.SerializeStamp(doc.DocStamps),
             DocType = doc.DocType,
-            SVProfileID = (int)docComp.SVPlayerID
+            ProfileId = docComp.ProfileId
         }).ToList();
 
-        await _db.SaveSVCharacterDocumentsAsync((int)docComp.SVPlayerID, player.Name, characterDocument.DocTitle, CharacterDocumentSerializer.SerializeDocument(dbDocs), dbDocs);
+        await _db.SaveSVCharacterDocumentsAsync(docComp.ProfileId, player.Name, docComp.ProfileName, dbDocs);
+        RaiseLocalEvent(new CharacterDocumentEditedEvent());
     }
 }
+public sealed class CharacterDocumentEditedEvent : EntityEventArgs;
