@@ -17,4 +17,7 @@ public sealed partial class CharacterDocumentComponent : Component
 
     [DataField]
     public string ProfileName;
+
+    [DataField("readOnly")]
+    public EntityUid EntityUid;
 }

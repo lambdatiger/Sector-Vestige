@@ -75,6 +75,8 @@ public sealed partial class CharacterDocumentSystem : EntitySystem
 
         docComp.ProfileId = profile.Id;
         var result = await _db.GetSVCharacterDocumentsAsync(profile.Id);
+        if (result == null)
+            return;
 
         foreach (var doc in result.Value.Documents)
         {
