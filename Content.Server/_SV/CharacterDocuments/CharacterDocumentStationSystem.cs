@@ -1,6 +1,6 @@
+using Content.Server.Database;
 using Content.Shared._SV.CharacterDocuments.Components;
 using Content.Shared.GameTicking;
-using Content.Shared.NPC.Components;
 using Content.Shared.NPC.Prototypes;
 using Content.Shared.NPC.Systems;
 using Content.Shared.Station;
@@ -31,12 +31,9 @@ public sealed partial class CharacterDocumentStationSystem : EntitySystem
         if (!TryComp<CharacterDocumentStationComponent>(args.Station, out var stationComp))
             return;
 
-        if (!TryComp<NpcFactionMemberComponent>(args.Mob, out var factioncomp))
-            return;
-
-        if (!stationComp.PlayerEntities.Contains(args.Mob) && _factions.IsMember(args.Mob, new ProtoId<NpcFactionPrototype>("NanoTrasen")))
+        if (!stationComp.PlayerEntities.ContainsKey(args.Mob) && _factions.IsMember(args.Mob, new ProtoId<NpcFactionPrototype>("NanoTrasen")))
         {
-            stationComp.PlayerEntities.Add(args.Mob);
+            stationComp.PlayerEntities.Add(args.Mob, playercomp.ProfileName);
             playercomp.EntityUid = args.Mob;
             Log.Debug($"Added {playercomp.ProfileName} to the list of {args.Station} it now has a count of {stationComp.PlayerEntities.Count}");
         }
@@ -50,9 +47,9 @@ public sealed partial class CharacterDocumentStationSystem : EntitySystem
             if (!TryComp<CharacterDocumentStationComponent>(station, out var stationComp))
                 continue;
 
-            if (!stationComp.PlayerEntities.Contains(uid) && _factions.IsMember(uid, new ProtoId<NpcFactionPrototype>("NanoTrasen")))
+            if (!stationComp.PlayerEntities.ContainsKey(uid) && _factions.IsMember(uid, new ProtoId<NpcFactionPrototype>("NanoTrasen")))
             {
-                stationComp.PlayerEntities.Add(uid);
+                stationComp.PlayerEntities.Add(uid, component.ProfileName);
                 component.EntityUid = uid;
                 Log.Debug($"Added {component.ProfileName} to the list of {station.Id} it now has a count of {stationComp.PlayerEntities.Count}");
             }
