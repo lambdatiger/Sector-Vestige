@@ -55,9 +55,4 @@ public sealed partial class CharacterDocumentStationSystem : EntitySystem
             }
         }
     }
-
-    public void DetectStation(EntityUid uid, CharacterDocumentComponent component, ref EntParentChangedMessage args)
-    {
-
-    }
 }

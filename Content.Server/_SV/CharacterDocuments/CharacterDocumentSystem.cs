@@ -1,5 +1,4 @@
 using System.Linq;
-using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Content.Server.Database;
@@ -9,11 +8,8 @@ using Content.Shared._SV.CharacterDocuments;
 using Content.Shared._SV.CharacterDocuments.Components;
 using Content.Shared.GameTicking;
 using Content.Shared.Humanoid;
-using Content.Shared.Players;
 using Content.Shared.StationRecords;
 using Robust.Shared.Player;
-using Robust.Shared.Random;
-using Robust.Shared.Toolshed.Commands.Values;
 
 namespace Content.Server._SV.CharacterDocuments;
 
