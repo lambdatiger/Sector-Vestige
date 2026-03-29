@@ -47,7 +47,6 @@ public sealed partial class CharacterDocumentSystem : EntitySystem
         }
 
         _ = LoadPlayerDocumentsAsync(player, args.Player, args.Profile.Name);
-        RaiseLocalEvent(new CharacterDocumentEditedEvent());
     }
 
     private async Task LoadPlayerDocumentsAsync(EntityUid mob, ICommonSession player, string characterName)
@@ -88,6 +87,7 @@ public sealed partial class CharacterDocumentSystem : EntitySystem
             };
             docComp.Documents[doc.DocID] = characterDoc;
         }
+        RaiseLocalEvent(new CharacterDocumentEditedEvent());
     }
 
     private async Task AddDocument(EntityUid mob, ICommonSession player, CharacterDocument characterDocument)
@@ -110,6 +110,7 @@ public sealed partial class CharacterDocumentSystem : EntitySystem
         }).ToList();
 
         await _db.SaveSVCharacterDocumentsAsync(docComp.ProfileId, player.Name, docComp.ProfileName, dbDocs);
+        await LoadPlayerDocumentsAsync(mob, player, docComp.ProfileName);
         RaiseLocalEvent(new CharacterDocumentEditedEvent());
     }
 
@@ -132,6 +133,7 @@ public sealed partial class CharacterDocumentSystem : EntitySystem
         }).ToList();
 
         await _db.SaveSVCharacterDocumentsAsync(docComp.ProfileId, player.Name, docComp.ProfileName, dbDocs);
+        await LoadPlayerDocumentsAsync(mob, player, docComp.ProfileName);
         RaiseLocalEvent(new CharacterDocumentEditedEvent());
     }
 }

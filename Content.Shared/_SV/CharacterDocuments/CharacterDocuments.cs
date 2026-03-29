@@ -1,7 +1,7 @@
-namespace Content.Shared._SV.CharacterDocuments;
-
 using Content.Shared.Paper;
+using Robust.Shared.Serialization;
 
+namespace Content.Shared._SV.CharacterDocuments;
 
 public enum DocumentType
 {
@@ -9,9 +9,11 @@ public enum DocumentType
     Medical,
     Security,
     CentralCommand,
+    Syndicate,
     Admin,
 }
 
+[Serializable, NetSerializable]
 public sealed partial class CharacterDocument
 {
     public int DocID;
