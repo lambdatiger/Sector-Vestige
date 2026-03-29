@@ -105,6 +105,7 @@ Sector Vestige includes code ported from other SS14 forks, organized in namespac
 | **Einstein Engines** | `_EE/` | AGPL-3.0-or-later | [GitHub](https://github.com/Simple-Station/Einstein-Engines) |
 | **Funkystation** | `_Funkystation/` | AGPL-3.0-or-later | [GitHub](https://github.com/funky-station/funky-station) |
 | **Moffstation** | `_Moffstation/` | MIT | [GitHub](https://github.com/moff-station/moff-station-14) |
+| **RMC14**       | `_RMC14`        | MIT | [Github](https://github.com/RMC-14/RMC-14) |
 
 - Ported code retains its **original license** as specified above.
 - All modifications by Sector Vestige contributors are documented in SPDX headers.
