@@ -425,15 +425,17 @@
   name: employment records computer
   description: This can be used to check employment records.
   components:
-  - type: GeneralStationRecordConsole
+  # - type: GeneralStationRecordConsole #SV - CharacterDocuments
+  - type: CharacterDocumentConsole #SV - CharacterDocuments
+    documentType: Employment
   - type: UserInterface
     interfaces:
-        enum.CharacterRecordConsoleKey.Key:
-          type: CharacterRecordConsoleBoundUserInterface
+        enum.CharacterDocumentConsoleUiKey.Key:
+          type: CharacterDocumentConsoleBoundUserInterface #SV - CharacterDocuments
         enum.WiresUiKey.Key:
           type: WiresBoundUserInterface
   - type: ActivatableUI
-    key: enum.CharacterRecordConsoleKey.Key
+    key: enum.CharacterDocumentConsoleUiKey.Key #SV - CharacterDocuments
   - type: PointLight
     radius: 1.5
     energy: 4.0
@@ -443,8 +445,6 @@
   - type: GuideHelp
     guides:
     - Forensics
-  - type: CharacterRecordConsole
-    consoleType: Employment
 
 - type: entity
   parent: BaseComputerAiAccess

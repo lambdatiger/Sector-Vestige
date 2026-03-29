@@ -5,7 +5,7 @@
                       SetSize="1000 750" >
             <BoxContainer Orientation="Vertical">
                 <!-- Search bar | Note we're kinda hitchhiking on the upstream locale migrate later -->
-                <BoxContainer margin="5 5 5 10" HorizontalExpand="true" VerticalAlignment="Center">
+                <BoxContainer Margin="5 5 5 10" HorizontalExpand="true" VerticalAlignment="Center">
                     <OptionButton Name="DocumentFilterType" MinWidth="200" Margin="0 0 10 0" Visible="False"/>
                     <LineEdit Name="DocumentFiltersValue" PlaceHolder="{Loc 'general-station-document-for-filter-line-placeholder'}" HorizontalExpand="True"/>
                     <Button Name="DocumentFilters" Text="{Loc 'general-station-document-console-search-documents'}"/>
@@ -21,7 +21,9 @@
                     </BoxContainer>
                     <!-- Show the document -->
                     <BoxContainer Orientation="Vertical" Margin="5" HorizontalExpand="True">
-                        <Label Name="Document"/>
+                        <ScrollContainer>
+                            <RichTextLabel Name="Document" HorizontalExpand="True"/>
+                        </ScrollContainer>
                     </BoxContainer>
                     <!-- List all the availible documents for the selectedplayer -->
                     <BoxContainer Orientation="Vertical" Margin="5" MinWidth="250" MaxWidth="250">

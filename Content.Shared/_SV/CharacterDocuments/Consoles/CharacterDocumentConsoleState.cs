@@ -6,12 +6,12 @@ namespace Content.Shared._SV.CharacterDocuments.Consoles;
 [Serializable, NetSerializable]
 public sealed class CharacterDocumentConsoleState : BoundUserInterfaceState
 {
-    public Dictionary<EntityUid, string> PlayerList = new();
-    public EntityUid? SelectedPlayer;
+    public Dictionary<NetEntity, string> PlayerList = new();
+    public NetEntity? SelectedPlayer;
     public Dictionary<int, CharacterDocument>? SelectedPlayerDocuments;
     public CharacterDocument? SelectedDocument;
 
-    public CharacterDocumentConsoleState(Dictionary<EntityUid, string> playerlist, EntityUid? selectedplayer,
+    public CharacterDocumentConsoleState(Dictionary<NetEntity, string> playerlist, NetEntity? selectedplayer,
         Dictionary<int, CharacterDocument>? selectedplayerdocuments, CharacterDocument? selecteddocument)
     {
         PlayerList = playerlist;

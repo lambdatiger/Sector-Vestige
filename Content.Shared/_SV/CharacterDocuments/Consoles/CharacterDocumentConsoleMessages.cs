@@ -6,12 +6,12 @@ namespace Content.Shared._SV.CharacterDocuments.Consoles;
 [Serializable, NetSerializable]
 public sealed class SelectCharacterDocumentPlayer : BoundUserInterfaceMessage
 {
-    public EntityUid Player;
+    public NetEntity Player;
 }
 
 [Serializable, NetSerializable]
 public sealed class SelectCharacterDocument : BoundUserInterfaceMessage
 {
-    public EntityUid Player;
+    public NetEntity Player;
     public int DocID;
 }

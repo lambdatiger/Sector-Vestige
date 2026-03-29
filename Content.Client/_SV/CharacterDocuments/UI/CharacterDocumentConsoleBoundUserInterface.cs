@@ -18,7 +18,8 @@ public sealed class CharacterDocumentConsoleBoundUserInterface : BoundUserInterf
 
         _window = this.CreateWindow<CharacterDocumentConsoleWindow>();
         _window.OnPlayerSelected += player => SendMessage(new SelectCharacterDocumentPlayer { Player = player });
-        _window.OnDocumentSelected += document => SendMessage(new SelectCharacterDocument { DocID = document });
+        _window.OnDocumentSelected += (player, docId) => SendMessage(new SelectCharacterDocument { Player = player, DocID = docId });
+
 
     }
 
