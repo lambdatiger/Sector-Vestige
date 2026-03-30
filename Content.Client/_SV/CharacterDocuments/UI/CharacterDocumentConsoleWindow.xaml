@@ -1,9 +1,8 @@
 <DefaultWindow xmlns="https://spacestation14.io"
                       xmlns:controls="clr-namespace:Content.Client.UserInterface.Controls"
                       xmlns:documents="clr-namespace:Content.Client._SV.CharacterDocuments.UI"
-                      MinSize="1000 750"
-                      SetSize="1000 750" >
-            <title name="Employment Documentation Computer"></title>
+                      MinSize="1250 900"
+                      SetSize="1250 900" >
             <BoxContainer Orientation="Vertical">
                 <!-- Search bar -->
                 <BoxContainer Margin="5 5 5 10" HorizontalExpand="true" VerticalAlignment="Center">

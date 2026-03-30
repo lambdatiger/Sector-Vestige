@@ -428,6 +428,19 @@
   # - type: GeneralStationRecordConsole #SV - CharacterDocuments
   - type: CharacterDocumentConsole #SV - CharacterDocuments
     documentType: Employment
+    paperSlot:
+      insertSound: /Audio/Machines/scanning.ogg
+      ejectSound: /Audio/Machines/tray_eject.ogg
+      # whitelist:
+      #   components:
+      #     - FaxableObject #used to be PaperComponent - brainfood1183
+      # blacklist:
+      #   components:
+      #     - CargoSlip
+  - type: ItemSlots #SV - CharacterDocuments
+  - type: ContainerContainer #SV - CharacterDocuments
+    containers:
+      Paper: !type:ContainerSlot
   - type: UserInterface
     interfaces:
         enum.CharacterDocumentConsoleUiKey.Key:
