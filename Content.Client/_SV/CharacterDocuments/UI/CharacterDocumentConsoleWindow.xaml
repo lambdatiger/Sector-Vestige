@@ -1,8 +1,10 @@
 <DefaultWindow xmlns="https://spacestation14.io"
                       xmlns:controls="clr-namespace:Content.Client.UserInterface.Controls"
                       xmlns:documents="clr-namespace:Content.Client._SV.CharacterDocuments.UI"
-                      MinSize="1250 900"
-                      SetSize="1250 900" >
+                      xmlns:gfx="clr-namespace:Robust.Client.Graphics;assembly=Robust.Client"
+                      MinSize="1000 900"
+                      SetSize="1000 900"
+                      Title="Employment Documentation Computer" >
             <BoxContainer Orientation="Vertical">
                 <!-- Search bar -->
                 <BoxContainer Margin="5 5 5 10" HorizontalExpand="true" VerticalAlignment="Center">
@@ -21,9 +23,16 @@
                     </BoxContainer>
                     <!-- Show the document -->
                     <BoxContainer Orientation="Vertical" Margin="5" HorizontalExpand="True">
-                        <ScrollContainer>
+                        <ScrollContainer VerticalExpand="True">
                             <RichTextLabel Name="Document" HorizontalExpand="True"/>
                         </ScrollContainer>
+                        <!-- Bottom control panel -->
+                        <BoxContainer Orientation="Horizontal" Margin="0" HorizontalExpand="True" MinHeight="100" VerticalAlignment="Bottom">
+                            <Label Name="ControlPanelStatus"/>
+                            <ScrollContainer HorizontalExpand="True" VerticalExpand="True">
+                                <ItemList Name="Controls"/>
+                            </ScrollContainer>
+                        </BoxContainer>
                     </BoxContainer>
                     <!-- List all the availible documents for the selectedplayer -->
                     <BoxContainer Orientation="Vertical" Margin="5" MinWidth="250" MaxWidth="250">
