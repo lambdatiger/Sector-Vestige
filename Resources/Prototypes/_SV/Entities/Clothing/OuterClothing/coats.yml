@@ -83,6 +83,22 @@
   parent: [ClothingOuterStorageFoldableBaseOpened, ClothingOuterCoatHighcutScience]
   id: ClothingOuterCoatHighcutOpenedScience
 
+#High-cut senior scientist labcoat
+- type: entity
+  parent: [ClothingOuterStorageFoldableBase, ClothingOuterCoatHighcutBase]
+  id: ClothingOuterCoatHighcutSeniorResearcher
+  name: senior researcher high-cut coat
+  description: Even more fashionable AND scientific. Some would say "Serendipity!".
+  components:
+  - type: Sprite
+    sprite: _SV/Clothing/OuterClothing/Coats/highcut_senior_researcher.rsi
+  - type: Clothing
+    sprite: _SV/Clothing/OuterClothing/Coats/highcut_senior_researcher.rsi
+
+- type: entity
+  parent: [ClothingOuterStorageFoldableBaseOpened, ClothingOuterCoatHighcutSeniorResearcher]
+  id: ClothingOuterCoatHighcutOpenedSeniorResearcher
+
 #High-cut chemist labcoat
 - type: entity
   parent: [ClothingOuterStorageFoldableBase, ClothingOuterCoatHighcutBase]

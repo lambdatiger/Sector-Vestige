@@ -112,8 +112,11 @@
   minLimit: 0
   loadouts:
   - SeniorResearcherLabCoat
+  - HighCutSeniorResearcher # Added by SV
   - RegularLabCoat
+  - HighCutBase # Added by SV
   - ScienceLabCoat
+  - HighCutScience # Added by SV
   - ScienceWintercoat
   - RoboticistLabCoat
   - RoboticistWintercoat
@@ -185,6 +188,7 @@
   - SeniorPhysicianLabCoat
   - SeniorPhysicianModernLabCoat
   - RegularLabCoat
+  - HighCutBase # Added by SV
   - ModernLabCoat
   - MedicalDoctorWintercoat
 
