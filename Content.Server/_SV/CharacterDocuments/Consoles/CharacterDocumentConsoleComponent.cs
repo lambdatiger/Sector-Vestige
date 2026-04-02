@@ -18,6 +18,12 @@ public sealed partial class CharacterDocumentConsoleComponent : Component
     [DataField(required: true), ViewVariables(VVAccess.ReadOnly)]
     public DocumentType DocumentType;
 
+    [DataField, ViewVariables(VVAccess.ReadOnly)]
+    public NetEntity SelectedPlayer;
+
+    [DataField, ViewVariables(VVAccess.ReadOnly)]
+    public CharacterDocument? SelectedDocument;
+
     /// The internal scanner part ///
     /// <summary>
     /// Contains the item to be sent, assumes it's paper...
@@ -38,15 +44,21 @@ public sealed partial class CharacterDocumentConsoleComponent : Component
     public float InsertionTime = 1.88f; // 0.02 off for correct animation
 
     /// <summary>
-    /// Sound to play when fax printing new message
+    /// Sound to play when we print something out
     /// </summary>
     [DataField]
     public SoundSpecifier PrintSound = new SoundPathSpecifier("/Audio/Machines/printer.ogg");
 
     /// <summary>
-    /// Sound to play when fax successfully send message
+    /// Sound to play when something went right like importing a document
     /// </summary>
     [DataField]
-    public SoundSpecifier SendSound = new SoundPathSpecifier("/Audio/Machines/high_tech_confirm.ogg");
+    public SoundSpecifier SuccessSound = new SoundPathSpecifier("/Audio/Machines/high_tech_confirm.ogg");
+
+    /// <summary>
+    /// Sound to play when something goes wrong
+    /// </summary>
+    [DataField]
+    public SoundSpecifier ErrorSound = new SoundPathSpecifier("/Audio/Effects/Cargo/buzz_sigh.ogg");
 
 }

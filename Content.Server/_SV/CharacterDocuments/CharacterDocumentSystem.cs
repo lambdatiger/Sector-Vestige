@@ -10,12 +10,15 @@ using Content.Shared.GameTicking;
 using Content.Shared.Humanoid;
 using Content.Shared.StationRecords;
 using Robust.Shared.Player;
+using Robust.Server.Player;
+using Robust.Shared.Network;
 
 namespace Content.Server._SV.CharacterDocuments;
 
 public sealed partial class CharacterDocumentSystem : EntitySystem
 {
     [Dependency] private readonly IServerDbManager _db = default!;
+    [Dependency] private readonly IPlayerManager _playerManager = default!;
 
     public override void Initialize()
     {
@@ -46,26 +49,32 @@ public sealed partial class CharacterDocumentSystem : EntitySystem
             comp.ProfileName = args.Profile.Name;
         }
 
-        _ = LoadPlayerDocumentsAsync(player, args.Player, args.Profile.Name);
+        _ = LoadPlayerDocumentsAsync(player, args.Profile.Name);
     }
 
-    private async Task LoadPlayerDocumentsAsync(EntityUid mob, ICommonSession player, string characterName)
+    private async Task LoadPlayerDocumentsAsync(EntityUid uid, string characterName, bool notifyUI = false)
     {
-        var prefs = await _db.GetPlayerPreferencesAsync(player.UserId, CancellationToken.None);
+        _playerManager.TryGetSessionByEntity(uid, out var session);
+        if (session == null) return;
+
+        var netUserId = session.UserId;
+        var playerName = session.Name;
+
+        var prefs = await _db.GetPlayerPreferencesAsync(netUserId, CancellationToken.None);
         if (prefs == null)
         {
-            Log.Error($"Could not load preferences for player {player.Name}");
+            Log.Error($"Could not load preferences for player {playerName} ({characterName})");
             return;
         }
 
         var profile = prefs.Profiles.FirstOrDefault(p => p.CharacterName == characterName);
         if (profile == null)
         {
-            Log.Error($"Could not find profile '{characterName}' for player {player.Name}");
+            Log.Error($"Could not find profile '{characterName}' for player {playerName}");
             return;
         }
 
-        if (!TryComp<CharacterDocumentComponent>(mob, out var docComp))
+        if (!TryComp<CharacterDocumentComponent>(uid, out var docComp))
             return;
 
         docComp.ProfileId = profile.Id;
@@ -73,6 +82,7 @@ public sealed partial class CharacterDocumentSystem : EntitySystem
         if (result == null)
             return;
 
+        docComp.Documents.Clear();
         foreach (var doc in result.Value.Documents)
         {
             var characterDoc = new CharacterDocument
@@ -87,12 +97,19 @@ public sealed partial class CharacterDocumentSystem : EntitySystem
             };
             docComp.Documents[doc.DocID] = characterDoc;
         }
-        RaiseLocalEvent(new CharacterDocumentEditedEvent());
+
+        if (notifyUI)
+        {
+            RaiseLocalEvent(new CharacterDocumentEditedEvent());
+        }
     }
 
-    private async Task AddDocument(EntityUid mob, ICommonSession player, CharacterDocument characterDocument)
+    public async Task AddDocument(EntityUid uid, CharacterDocument characterDocument)
     {
-        if (!TryComp<CharacterDocumentComponent>(mob, out var docComp))
+        _playerManager.TryGetSessionByEntity(uid, out var session);
+        var playerName = session?.Name ?? "Unknown";
+
+        if (!TryComp<CharacterDocumentComponent>(uid, out var docComp))
             return;
 
         var id = docComp.Documents.Count == 0 ? 1 : docComp.Documents.Keys.Max() + 1;
@@ -109,14 +126,17 @@ public sealed partial class CharacterDocumentSystem : EntitySystem
             ProfileId = docComp.ProfileId
         }).ToList();
 
-        await _db.SaveSVCharacterDocumentsAsync(docComp.ProfileId, player.Name, docComp.ProfileName, dbDocs);
-        await LoadPlayerDocumentsAsync(mob, player, docComp.ProfileName);
+        await _db.SaveSVCharacterDocumentsAsync(docComp.ProfileId, playerName, docComp.ProfileName, dbDocs);
+        await LoadPlayerDocumentsAsync(uid, docComp.ProfileName, true);
         RaiseLocalEvent(new CharacterDocumentEditedEvent());
     }
 
-    private async Task DeleteDocument(EntityUid mob, ICommonSession player, CharacterDocument characterDocument)
+    public async Task DeleteDocument(EntityUid uid, CharacterDocument characterDocument)
     {
-        if (!TryComp<CharacterDocumentComponent>(mob, out var docComp))
+        _playerManager.TryGetSessionByEntity(uid, out var session);
+        var playerName = session?.Name ?? "Unknown";
+
+        if (!TryComp<CharacterDocumentComponent>(uid, out var docComp))
             return;
 
         docComp.Documents.Remove(characterDocument.DocID);
@@ -132,8 +152,8 @@ public sealed partial class CharacterDocumentSystem : EntitySystem
             ProfileId = docComp.ProfileId
         }).ToList();
 
-        await _db.SaveSVCharacterDocumentsAsync(docComp.ProfileId, player.Name, docComp.ProfileName, dbDocs);
-        await LoadPlayerDocumentsAsync(mob, player, docComp.ProfileName);
+        await _db.SaveSVCharacterDocumentsAsync(docComp.ProfileId, playerName, docComp.ProfileName, dbDocs);
+        await LoadPlayerDocumentsAsync(uid, docComp.ProfileName, true);
         RaiseLocalEvent(new CharacterDocumentEditedEvent());
     }
 }

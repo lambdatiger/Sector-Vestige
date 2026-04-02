@@ -19,6 +19,7 @@ public static class CharacterDocumentSerializer
     /// <returns></returns>
     public static string SerializeStamp(StampDisplayInfo stamp)
     {
-        return JsonSerializer.Serialize(stamp);
+        var options = new JsonSerializerOptions { IncludeFields = true };
+        return JsonSerializer.Serialize(stamp, options);
     }
 }

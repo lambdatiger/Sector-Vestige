@@ -19,10 +19,11 @@ public sealed class CharacterDocumentConsoleBoundUserInterface : BoundUserInterf
         _window = this.CreateWindow<CharacterDocumentConsoleWindow>();
         _window.OnPlayerSelected += player => SendMessage(new SelectCharacterDocumentPlayer { Player = player });
         _window.OnDocumentSelected += (player, docId) => SendMessage(new SelectCharacterDocument { Player = player, DocID = docId });
-
+        _window.OnButtonScanPressed += (player, title) => SendMessage(new CharacterDocumentScan { Player = player, DocTitle = title });
+        _window.OnButtonDeletePressed += (player, doc) => SendMessage(new CharacterDocumentDelete { Player = player, CharacterDocument = doc });
+        _window.OnDocumentDeselected += () => SendMessage(new CharacterDocumentDeselect());
 
     }
-
 
     protected override void UpdateState(BoundUserInterfaceState state)
     {

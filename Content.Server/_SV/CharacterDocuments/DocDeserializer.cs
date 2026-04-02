@@ -19,7 +19,8 @@ public static class CharacterDocumentDeserializer
     /// <returns></returns>
     public static StampDisplayInfo DeserializeStamps(string data)
     {
-        return JsonSerializer.Deserialize<StampDisplayInfo>(data);
+        var options = new JsonSerializerOptions { IncludeFields = true };
+        return JsonSerializer.Deserialize<StampDisplayInfo>(data, options);
     }
 }
 
