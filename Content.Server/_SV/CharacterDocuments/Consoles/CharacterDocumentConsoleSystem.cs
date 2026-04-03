@@ -15,6 +15,10 @@ using Content.Shared.Containers.ItemSlots;
 using Robust.Server.Audio;
 using Robust.Shared.Containers;
 using NetCord;
+using Content.Server.Popups;
+using Content.Shared.Coordinates;
+using Robust.Shared.Utility;
+using Content.Shared.Fax.Components;
 
 namespace Content.Server._SV.CharacterDocuments.Consoles;
 
@@ -26,6 +30,10 @@ public sealed class CharacterDocumentConsoleSystem : EntitySystem
     [Dependency] private readonly CharacterDocumentSystem _characterDocumentSystem = default!;
     [Dependency] private readonly ItemSlotsSystem _itemSlotsSystem = default!;
     [Dependency] private readonly AudioSystem _audio = default!;
+    [Dependency] private readonly PopupSystem _popupSystem = default!;
+    [Dependency] private readonly MetaDataSystem _metaData = default!;
+    [Dependency] private readonly PaperSystem _paperSystem = default!;
+    [Dependency] private readonly AppearanceSystem _appearanceSystem = default!;
 
 
     public override void Initialize()
@@ -43,6 +51,7 @@ public sealed class CharacterDocumentConsoleSystem : EntitySystem
         SubscribeLocalEvent<CharacterDocumentConsoleComponent, CharacterDocumentDeselect>(OnDocumentDeselected);
         SubscribeLocalEvent<CharacterDocumentConsoleComponent, EntInsertedIntoContainerMessage>(OnSlotChanged);
         SubscribeLocalEvent<CharacterDocumentConsoleComponent, EntRemovedFromContainerMessage>(OnSlotChanged);
+        SubscribeLocalEvent<CharacterDocumentConsoleComponent, CharacterDocumentPrint>(OnDocumentPrint);
 
     }
 
@@ -181,13 +190,22 @@ public sealed class CharacterDocumentConsoleSystem : EntitySystem
             return;
         }
 
+        var stamps = new List<CharacterDocumentStamp>();
+        if (paperComponent.StampedBy != null && paperComponent.StampState != null)
+        {
+            foreach (StampDisplayInfo stamp in paperComponent.StampedBy)
+            {
+                stamps.Add(new CharacterDocumentStamp { DocStamp = stamp, DocStampState = paperComponent.StampState });
+            }
+        }
+
         var providedDocument = new CharacterDocument()
         {
             DocTitle = args.DocTitle,
             DocAuthor = "Testvalue_Author",
             DocContent = paperComponent.Content,
             DocType = (int)comp.DocumentType,
-            DocStamps = paperComponent.StampedBy.FirstOrDefault()
+            DocStamps = stamps
         };
 
         _audio.PlayPvs(comp.SuccessSound, uid);
@@ -205,6 +223,35 @@ public sealed class CharacterDocumentConsoleSystem : EntitySystem
 
         _audio.PlayPvs(comp.SuccessSound, uid);
         await _characterDocumentSystem.DeleteDocument(player, args.CharacterDocument);
+    }
+
+    public void OnDocumentPrint(EntityUid uid, CharacterDocumentConsoleComponent comp, CharacterDocumentPrint args)
+    {
+        var printed = Spawn("SVPaperDocumentation", uid.ToCoordinates());
+
+        var stamps = new List<StampDisplayInfo>();
+        string stampState = string.Empty;
+        if (comp.SelectedDocument?.DocStamps != null)
+        {
+            stampState = comp.SelectedDocument.DocStamps[0].DocStampState;
+            foreach (CharacterDocumentStamp stamp in comp.SelectedDocument.DocStamps)
+            {
+                stamps.Add(stamp.DocStamp);
+            }
+        }
+
+        if (!TryComp<PaperComponent>(printed, out var paperComponent))
+            return;
+        else
+        {
+            _metaData.SetEntityName(printed, comp.SelectedDocument?.DocTitle ?? "Error in Printing, please report to NT R&D");
+            _paperSystem.SetContent(printed, comp.SelectedDocument?.DocContent ?? "Error in Printing, please report to NT R&D");
+            foreach (StampDisplayInfo stamp in stamps)
+            {
+                _paperSystem.TryStamp((printed, paperComponent), stamp, stampState);
+            }
+        }
+        _audio.PlayPvs(comp.PrintSound, uid);
     }
 
     public void OnDocumentDeselected(EntityUid uid, CharacterDocumentConsoleComponent comp, CharacterDocumentDeselect args)
@@ -232,18 +279,53 @@ public sealed class CharacterDocumentConsoleSystem : EntitySystem
         foreach (var (playerUid, name) in stationComponent.PlayerEntities)
             netPlayerEntities.Add(GetNetEntity(playerUid), name);
 
-        var paperInserted = comp.PaperSlot.ContainerSlot?.ContainedEntity != null;
+        var isPaperInserted = comp.PaperSlot.Item.HasValue;
+        if (isPaperInserted)
+        {
+            comp.InsertingTimeRemaining = comp.InsertionTime;
+            _itemSlotsSystem.SetLock(uid, comp.PaperSlot, true);
+        }
+
         var player = GetEntity(comp.SelectedPlayer);
 
         if (TryComp<CharacterDocumentComponent>(player, out var docComp))
         {
-            var state = new CharacterDocumentConsoleState(netPlayerEntities, comp.SelectedPlayer, docComp.Documents, comp.SelectedDocument, paperInserted);
+            var state = new CharacterDocumentConsoleState(netPlayerEntities, comp.SelectedPlayer, docComp.Documents, comp.SelectedDocument, isPaperInserted);
             _userInterfaceSystem.SetUiState(uid, CharacterDocumentConsoleUiKey.Key, state);
         }
         else
         {
-            var state = new CharacterDocumentConsoleState(netPlayerEntities, null, null, comp.SelectedDocument, paperInserted);
+            var state = new CharacterDocumentConsoleState(netPlayerEntities, null, null, comp.SelectedDocument, isPaperInserted);
             _userInterfaceSystem.SetUiState(uid, CharacterDocumentConsoleUiKey.Key, state);
         }
+    }
+
+    private void ProcessInsertingAnimation(EntityUid uid, float frameTime, CharacterDocumentConsoleComponent comp)
+    {
+        if (comp.InsertingTimeRemaining <= 0)
+            return;
+
+        comp.InsertingTimeRemaining -= frameTime;
+        UpdateAppearance(uid, comp);
+    }
+
+    private void UpdateAppearance(EntityUid uid, CharacterDocumentConsoleComponent? component = null)
+    {
+        if (!Resolve(uid, ref component))
+            return;
+
+        if (TryComp<FaxableObjectComponent>(component.PaperSlot.Item, out var faxable))
+            component.InsertingState = faxable.InsertingState;
+
+
+        if (component.InsertingTimeRemaining > 0)
+        {
+            _appearanceSystem.SetData(uid, CharacterDocumentConsoleVisuals.VisualState, CharacterDocumentConsoleVisualState.Inserting);
+            Dirty(uid, component);
+        }
+        else if (component.PrintingTimeRemaining > 0)
+            _appearanceSystem.SetData(uid, CharacterDocumentConsoleVisuals.VisualState, CharacterDocumentConsoleVisualState.Printing);
+        else
+            _appearanceSystem.SetData(uid, CharacterDocumentConsoleVisuals.VisualState, CharacterDocumentConsoleVisualState.Normal);
     }
 }

@@ -1,3 +1,4 @@
+using Content.Shared._SV.CharacterDocuments;
 using Content.Shared._SV.CharacterDocuments.Consoles;
 using Robust.Client.UserInterface;
 
@@ -20,6 +21,7 @@ public sealed class CharacterDocumentConsoleBoundUserInterface : BoundUserInterf
         _window.OnPlayerSelected += player => SendMessage(new SelectCharacterDocumentPlayer { Player = player });
         _window.OnDocumentSelected += (player, docId) => SendMessage(new SelectCharacterDocument { Player = player, DocID = docId });
         _window.OnButtonScanPressed += (player, title) => SendMessage(new CharacterDocumentScan { Player = player, DocTitle = title });
+        _window.OnButtonPrintPressed += (player, doc) => SendMessage(new CharacterDocumentPrint { Player = player, CharacterDocument = doc });
         _window.OnButtonDeletePressed += (player, doc) => SendMessage(new CharacterDocumentDelete { Player = player, CharacterDocument = doc });
         _window.OnDocumentDeselected += () => SendMessage(new CharacterDocumentDeselect());
 

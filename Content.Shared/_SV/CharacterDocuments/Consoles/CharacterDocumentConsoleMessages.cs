@@ -33,3 +33,10 @@ public sealed class CharacterDocumentDelete : BoundUserInterfaceMessage
 public sealed class CharacterDocumentDeselect : BoundUserInterfaceMessage
 {
 }
+
+[Serializable, NetSerializable]
+public sealed class CharacterDocumentPrint : BoundUserInterfaceMessage
+{
+    public NetEntity Player;
+    public CharacterDocument? CharacterDocument;
+}

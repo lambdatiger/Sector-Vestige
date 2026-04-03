@@ -22,5 +22,13 @@ public sealed partial class CharacterDocument
     public string DocAuthor = null!;
     public DateTime DocDateLastEdited = DateTime.Today.AddYears(200); //Today plus 200 years
     public string DocContent = "";
-    public StampDisplayInfo DocStamps;
+    public List<CharacterDocumentStamp> DocStamps = new();
+}
+
+[Serializable, NetSerializable]
+public struct CharacterDocumentStamp()
+{
+    public StampDisplayInfo DocStamp = default;
+    public string DocStampState = null!;
+
 }

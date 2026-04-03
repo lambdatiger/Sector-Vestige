@@ -73,6 +73,12 @@ public sealed partial class CharacterDocumentConsoleWindow : DefaultWindow
             if (_selectedDocument == null) return;
             OnButtonDeletePressed?.Invoke(_selectedPlayer, _selectedDocument);
         };
+
+        PrintButton.OnPressed += _ =>
+        {
+            if (_selectedDocument == null) return;
+            OnButtonPrintPressed?.Invoke(_selectedPlayer, _selectedDocument);
+        };
     }
 
     public void UpdateState(CharacterDocumentConsoleState state)
@@ -153,8 +159,11 @@ public sealed partial class CharacterDocumentConsoleWindow : DefaultWindow
             TitleInput.SetText(state.SelectedDocument.DocTitle);
             StampDisplay.RemoveStamps();
             StampDisplay.RemoveAllChildren();
-            if (state.SelectedDocument.DocStamps.StampedName != null)
-                StampDisplay.AddStamp(new StampWidget { StampInfo = state.SelectedDocument.DocStamps });
+            if (state.SelectedDocument.DocStamps.Count != 0)
+                foreach (CharacterDocumentStamp stamp in state.SelectedDocument.DocStamps)
+                {
+                    StampDisplay.AddStamp(new StampWidget { StampInfo = stamp.DocStamp });
+                }
         }
     }
 
@@ -163,6 +172,7 @@ public sealed partial class CharacterDocumentConsoleWindow : DefaultWindow
     public Action<NetEntity>? OnPlayerSelected;
     public Action<NetEntity, int>? OnDocumentSelected;
     public Action<NetEntity, string>? OnButtonScanPressed;
+    public Action<NetEntity, CharacterDocument>? OnButtonPrintPressed;
     public Action<NetEntity, CharacterDocument>? OnButtonDeletePressed;
     public Action? OnDocumentDeselected;
     bool _isPopulating;

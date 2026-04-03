@@ -1,5 +1,6 @@
 using System.Text.Json;
 using Content.Server.Database;
+using Content.Shared._SV.CharacterDocuments;
 using Content.Shared.Paper;
 
 namespace Content.Server._SV.CharacterDocuments;
@@ -13,13 +14,13 @@ public static class CharacterDocumentSerializer
     }
 
     /// <summary>
-    /// Takes a StampDisplayInfo object and turns it into a JSON
+    /// Takes a CharacterDocumentStamp object and turns it into a JSON
     /// </summary>
-    /// <param name="stamp"></param>
+    /// <param name="stamps"></param>
     /// <returns></returns>
-    public static string SerializeStamp(StampDisplayInfo stamp)
+    public static string SerializeStamp(List<CharacterDocumentStamp> stamps)
     {
-        var options = new JsonSerializerOptions { IncludeFields = true };
-        return JsonSerializer.Serialize(stamp, options);
+        var jsonSerializerOptions = new JsonSerializerOptions { IncludeFields = true };
+        return JsonSerializer.Serialize(stamps, jsonSerializerOptions);
     }
 }

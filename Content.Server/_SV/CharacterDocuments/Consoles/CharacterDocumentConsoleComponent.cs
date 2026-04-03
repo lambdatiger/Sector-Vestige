@@ -44,6 +44,18 @@ public sealed partial class CharacterDocumentConsoleComponent : Component
     public float InsertionTime = 1.88f; // 0.02 off for correct animation
 
     /// <summary>
+    /// Remaining time of inserting animation
+    /// </summary>
+    [DataField]
+    public float InsertingTimeRemaining;
+
+    /// <summary>
+    /// Remaining time of printing animation
+    /// </summary>
+    [DataField]
+    public float PrintingTimeRemaining;
+
+    /// <summary>
     /// Sound to play when we print something out
     /// </summary>
     [DataField]
