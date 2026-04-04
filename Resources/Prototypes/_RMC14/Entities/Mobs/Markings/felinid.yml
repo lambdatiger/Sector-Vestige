@@ -6,7 +6,7 @@
 # SPDX-License-Identifier: MIT
 
 - type: marking
-  id: FelinidTailLeopard
+  id: FelinidLeopard
   bodyPart: Tail
   groupWhitelist: [Felinid]
   sprites:
