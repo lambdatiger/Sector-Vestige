@@ -19,8 +19,7 @@
 - type: marking
   id: FelinidTiger
   bodyPart: Tail
-  markingCategory: Tail
-  speciesRestriction: [Felinid]
+  groupWhitelist: [Felinid]
   sprites:
     - sprite: _RMC14/Mobs/Felinids/tiger_tail.rsi
       state: m_tail_tiger_primary
@@ -32,8 +31,7 @@
 - type: marking
   id: FelinidCatBig
   bodyPart: Tail
-  markingCategory: Tail
-  speciesRestriction: [Felinid]
+  groupWhitelist: [Felinid]
   sprites:
     - sprite: _RMC14/Mobs/Felinids/catbig_tail.rsi
       state: m_tail_catbig_primary
@@ -41,8 +39,7 @@
 - type: marking
   id: FelinidTigerDouble
   bodyPart: Tail
-  markingCategory: Tail
-  speciesRestriction: [Felinid]
+  groupWhitelist: [Felinid]
   sprites:
     - sprite: _RMC14/Mobs/Felinids/tigerdouble_tail.rsi
       state: m_tail_tiger2_
@@ -54,8 +51,7 @@
 - type: marking
   id: FelinidDouble
   bodyPart: Tail
-  markingCategory: Tail
-  speciesRestriction: [Felinid]
+  groupWhitelist: [Felinid]
   sprites:
     - sprite: _RMC14/Mobs/Felinids/double_tail.rsi
       state: m_tail_twocat
