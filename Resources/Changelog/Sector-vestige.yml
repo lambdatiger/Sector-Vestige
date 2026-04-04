@@ -1617,3 +1617,11 @@ Entries:
         physician labcoat.
   id: 222
   time: '2026-04-04T09:55:19.0000000+00:00'
+- author: cooldolphin
+  changes:
+    - type: Add
+      message: Tiger tail, double tiger tail, big cat tail, double normal cat tail.
+    - type: Fix
+      message: Leopard tail locale issue.
+  id: 223
+  time: '2026-04-04T15:25:05.0000000+00:00'
