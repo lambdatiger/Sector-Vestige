@@ -132,6 +132,7 @@
   - Cane
   - TowelColorWhite
   - CDDogtags #Sector Vestige - Dogtags to loadout
+  - ClothingNeckLanyard #Sector Vestige - lanyard to loadout
 
 - type: loadoutGroup
   id: Glasses
