@@ -19,6 +19,7 @@ using Content.Server.Popups;
 using Content.Shared.Coordinates;
 using Robust.Shared.Utility;
 using Content.Shared.Fax.Components;
+using System.Threading.Tasks;
 
 namespace Content.Server._SV.CharacterDocuments.Consoles;
 
@@ -52,6 +53,7 @@ public sealed class CharacterDocumentConsoleSystem : EntitySystem
         SubscribeLocalEvent<CharacterDocumentConsoleComponent, EntInsertedIntoContainerMessage>(OnSlotChanged);
         SubscribeLocalEvent<CharacterDocumentConsoleComponent, EntRemovedFromContainerMessage>(OnSlotChanged);
         SubscribeLocalEvent<CharacterDocumentConsoleComponent, CharacterDocumentPrint>(OnDocumentPrint);
+        SubscribeLocalEvent<CharacterDocumentConsoleComponent, CharacterDocumentEdit>(OnDocumentEdit);
 
     }
 
@@ -90,7 +92,7 @@ public sealed class CharacterDocumentConsoleSystem : EntitySystem
 
     public void OnConsoleInit(EntityUid uid, CharacterDocumentConsoleComponent comp, ComponentInit args)
     {
-        _itemSlotsSystem.AddItemSlot(uid, "paperSlot", comp.PaperSlot);
+        _itemSlotsSystem.AddItemSlot(uid, "Paper", comp.PaperSlot);
     }
 
     public void OnBuiOpened(EntityUid uid, CharacterDocumentConsoleComponent comp, BoundUIOpenedEvent args)
@@ -254,6 +256,51 @@ public sealed class CharacterDocumentConsoleSystem : EntitySystem
         _audio.PlayPvs(comp.PrintSound, uid);
     }
 
+    public async void OnDocumentEdit(EntityUid uid, CharacterDocumentConsoleComponent comp, CharacterDocumentEdit args)
+    {
+        if (comp.SelectedDocument == null)
+            return;
+
+        if (args.CharacterDocument == null)
+            return;
+
+        var player = GetEntity(args.Player);
+
+        CharacterDocument oldCharacterDoc = comp.SelectedDocument;
+
+        var newCharacterDoc = new CharacterDocument()
+        {
+            DocID = oldCharacterDoc.DocID,
+            DocTitle = args.CharacterDocument.DocTitle,
+            DocAuthor = args.CharacterDocument.DocAuthor,
+            DocContent = args.CharacterDocument.DocContent,
+            DocDateLastEdited = DateTime.Now.AddYears(200),
+            DocStamps = args.CharacterDocument.DocStamps,
+            DocType = args.CharacterDocument.DocType
+        };
+        _audio.PlayPvs(comp.SuccessSound, uid);
+
+        var station = _sharedStationSystem.GetOwningStation(uid);
+        if (station == null) return;
+
+        if (!TryComp<CharacterDocumentStationComponent>(station, out var stationComponent))
+            return;
+
+        if (!TryComp<CharacterDocumentComponent>(player, out var documentComponent))
+            return;
+
+        var netPlayerEntities = new Dictionary<NetEntity, string>();
+        foreach (var (playerUid, name) in stationComponent.PlayerEntities)
+            netPlayerEntities.Add(GetNetEntity(playerUid), name);
+
+        await _characterDocumentSystem.DeleteDocument(player, oldCharacterDoc);
+        await _characterDocumentSystem.AddDocument(player, newCharacterDoc);
+
+        bool paperinserted = comp.PaperSlot.ContainerSlot?.ContainedEntity != null;
+        var characterDocumentConsoleState = new CharacterDocumentConsoleState(netPlayerEntities, args.Player, documentComponent.Documents, newCharacterDoc, paperinserted);
+        _userInterfaceSystem.SetUiState(uid, CharacterDocumentConsoleUiKey.Key, characterDocumentConsoleState);
+    }
+
     public void OnDocumentDeselected(EntityUid uid, CharacterDocumentConsoleComponent comp, CharacterDocumentDeselect args)
     {
         comp.SelectedDocument = null;
@@ -283,7 +330,7 @@ public sealed class CharacterDocumentConsoleSystem : EntitySystem
         if (isPaperInserted)
         {
             comp.InsertingTimeRemaining = comp.InsertionTime;
-            _itemSlotsSystem.SetLock(uid, comp.PaperSlot, true);
+            _itemSlotsSystem.SetLock(uid, comp.PaperSlot, false);
         }
 
         var player = GetEntity(comp.SelectedPlayer);
@@ -300,32 +347,32 @@ public sealed class CharacterDocumentConsoleSystem : EntitySystem
         }
     }
 
-    private void ProcessInsertingAnimation(EntityUid uid, float frameTime, CharacterDocumentConsoleComponent comp)
-    {
-        if (comp.InsertingTimeRemaining <= 0)
-            return;
+    // private void ProcessInsertingAnimation(EntityUid uid, float frameTime, CharacterDocumentConsoleComponent comp)
+    // {
+    //     if (comp.InsertingTimeRemaining <= 0)
+    //         return;
 
-        comp.InsertingTimeRemaining -= frameTime;
-        UpdateAppearance(uid, comp);
-    }
+    //     comp.InsertingTimeRemaining -= frameTime;
+    //     UpdateAppearance(uid, comp);
+    // }
 
-    private void UpdateAppearance(EntityUid uid, CharacterDocumentConsoleComponent? component = null)
-    {
-        if (!Resolve(uid, ref component))
-            return;
+    // private void UpdateAppearance(EntityUid uid, CharacterDocumentConsoleComponent? component = null)
+    // {
+    //     if (!Resolve(uid, ref component))
+    //         return;
 
-        if (TryComp<FaxableObjectComponent>(component.PaperSlot.Item, out var faxable))
-            component.InsertingState = faxable.InsertingState;
+    //     if (TryComp<FaxableObjectComponent>(component.PaperSlot.Item, out var faxable))
+    //         component.InsertingState = faxable.InsertingState;
 
 
-        if (component.InsertingTimeRemaining > 0)
-        {
-            _appearanceSystem.SetData(uid, CharacterDocumentConsoleVisuals.VisualState, CharacterDocumentConsoleVisualState.Inserting);
-            Dirty(uid, component);
-        }
-        else if (component.PrintingTimeRemaining > 0)
-            _appearanceSystem.SetData(uid, CharacterDocumentConsoleVisuals.VisualState, CharacterDocumentConsoleVisualState.Printing);
-        else
-            _appearanceSystem.SetData(uid, CharacterDocumentConsoleVisuals.VisualState, CharacterDocumentConsoleVisualState.Normal);
-    }
+    //     if (component.InsertingTimeRemaining > 0)
+    //     {
+    //         _appearanceSystem.SetData(uid, CharacterDocumentConsoleVisuals.VisualState, CharacterDocumentConsoleVisualState.Inserting);
+    //         Dirty(uid, component);
+    //     }
+    //     else if (component.PrintingTimeRemaining > 0)
+    //         _appearanceSystem.SetData(uid, CharacterDocumentConsoleVisuals.VisualState, CharacterDocumentConsoleVisualState.Printing);
+    //     else
+    //         _appearanceSystem.SetData(uid, CharacterDocumentConsoleVisuals.VisualState, CharacterDocumentConsoleVisualState.Normal);
+    // }
 }

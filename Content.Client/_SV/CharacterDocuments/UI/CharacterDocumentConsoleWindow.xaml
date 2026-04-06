@@ -3,40 +3,37 @@
                       xmlns:documents="clr-namespace:Content.Client._SV.CharacterDocuments.UI"
                       xmlns:paper="clr-namespace:Content.Client.Paper.UI"
                       xmlns:gfx="clr-namespace:Robust.Client.Graphics;assembly=Robust.Client"
-                      MinSize="1000 900"
-                      SetSize="1000 900"
+                      MinSize="1055 900"
+                      SetSize="1055 900"
                       Title="Employment Documentation Computer" >
             <BoxContainer Orientation="Vertical">
                 <!-- Search bar -->
                 <BoxContainer Margin="5 5 5 10" HorizontalExpand="true" VerticalAlignment="Center">
-                    <OptionButton Name="DocumentFilterType" MinWidth="200" Margin="0 0 10 0" Visible="False"/>
-                    <LineEdit Name="DocumentFiltersValue" PlaceHolder="{Loc 'sv-document-for-filter-line-placeholder'}" HorizontalExpand="True"/>
-                    <Button Name="DocumentFilterButton" Text="{Loc 'sv-document-console-search-documents'}"/>
-                    <Button Name="DocumentFilterResetButton" Text="{Loc 'sv-document-console-reset-filters'}"/>
+                    <OptionButton Name="DocumentFilterType" MinWidth="200" Visible="False"/>
                 </BoxContainer>
                 <BoxContainer VerticalExpand="true">
-                    <!-- List all availible profiles/crew -->
+                    <!-- Left bar - List all availible profiles/crew -->
                     <BoxContainer Orientation="Vertical" Margin="5" MinWidth="250" MaxWidth="250">
+                        <LineEdit Name="CrewFiltersValue" PlaceHolder="{Loc 'sv-document-for-filter-line-placeholder'}" HorizontalExpand="True"/>
                         <Label Name="CrewListingStatus" Visible="False"/>
                         <ScrollContainer VerticalExpand="True">
                             <ItemList Name="CrewListing"/>
                         </ScrollContainer>
                     </BoxContainer>
                     <!-- Show the document -->
-                    <BoxContainer Orientation="Vertical" Margin="5" HorizontalExpand="True">
-                        <PanelContainer VerticalExpand="True">
-                            <ScrollContainer VerticalExpand="True" HScrollEnabled="False" Margin="0 0 0 5">
-                                <PanelContainer StyleIdentifier="PaperEditBackground" VerticalExpand="True" HorizontalExpand="True">
-                                    <RichTextLabel Name="Document" StyleClasses="PaperWrittenText" HorizontalExpand="True" VerticalAlignment="Top"/>
-                                    <paper:StampCollection Name="StampDisplay" VerticalAlignment="Bottom" Margin="6"/>
-                                </PanelContainer>
+                    <BoxContainer Orientation="Vertical" Margin="5" MinWidth="460" MaxWidth="460">
+                        <PanelContainer StyleIdentifier="PaperEditBackground" Margin="0 0 0 5" VerticalExpand="True" HorizontalExpand="True">
+                            <ScrollContainer Name="DocumentScrollContainer" HScrollEnabled="False">
+                                <RichTextLabel Name="Document" StyleClasses="PaperWrittenText" VerticalExpand="True" HorizontalExpand="True" VerticalAlignment="Top" Margin="5 5 5 10"/>
+                                <paper:StampCollection Name="StampDisplay" VerticalAlignment="Bottom" VerticalExpand="True"/>
                             </ScrollContainer>
+                            <TextEdit Name="DocumentEdit" StyleClasses="PaperWrittenText" MinHeight="690" VerticalExpand="True" VerticalAlignment="Top" Editable="False" Visible="False"/>
                         </PanelContainer>
                         <!-- Bottom control panel -->
                         <BoxContainer Orientation="Horizontal" Margin="0" HorizontalExpand="True" MinHeight="100" VerticalAlignment="Bottom">
                             <Label Name="ControlPanelStatus"/>
                             <!-- Left Control panel -->
-                            <ScrollContainer MinWidth="200" VerticalExpand="True" HorizontalAlignment="Left">
+                            <ScrollContainer MinWidth="200" VerticalExpand="True" HorizontalAlignment="Left" Margin="0 5 0 0">
                                 <ItemList Name="CharacterDataGeneral"/>
                             </ScrollContainer>
                             <!-- Right Control panel -->
@@ -48,13 +45,13 @@
                                 </BoxContainer>
                                 <BoxContainer Orientation="Horizontal" HorizontalExpand="True">
                                     <Button Name="EditButton" Text="{Loc 'sv-document-console-edit-button'}" HorizontalExpand="True"/>
-                                    <Button Name="DeleteButton" Text="{Loc 'sv-document-console-delete-button'}" HorizontalExpand="True"/>
+                                    <controls:ConfirmButton Name="DeleteButton" Text="{Loc 'sv-document-console-delete-button'}" HorizontalExpand="True"/>
                                 </BoxContainer>
                             </BoxContainer>
                         </BoxContainer>
                     </BoxContainer>
-                    <!-- List all the availible documents for the selectedplayer -->
-                    <BoxContainer Orientation="Vertical" Margin="5" MinWidth="250" MaxWidth="250">
+                    <!-- Right bar - List all the availible documents for the selectedplayer -->
+                    <BoxContainer Orientation="Vertical" Margin="5" MinWidth="300" MaxWidth="300">
                         <Label Name="DocumentListingStatus" Visible="False" Text="{Loc 'sv-document-viewer-no-document-selected'}"/>
                         <ScrollContainer VerticalExpand="True">
                             <ItemList Name="DocumentListing"/>

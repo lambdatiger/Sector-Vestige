@@ -40,3 +40,10 @@ public sealed class CharacterDocumentPrint : BoundUserInterfaceMessage
     public NetEntity Player;
     public CharacterDocument? CharacterDocument;
 }
+
+[Serializable, NetSerializable]
+public sealed class CharacterDocumentEdit : BoundUserInterfaceMessage
+{
+    public NetEntity Player;
+    public CharacterDocument? CharacterDocument;
+}

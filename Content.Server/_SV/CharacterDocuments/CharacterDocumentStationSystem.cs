@@ -31,7 +31,7 @@ public sealed partial class CharacterDocumentStationSystem : EntitySystem
         if (!TryComp<CharacterDocumentStationComponent>(args.Station, out var stationComp))
             return;
 
-        if (!stationComp.PlayerEntities.ContainsKey(args.Mob) && _factions.IsMember(args.Mob, new ProtoId<NpcFactionPrototype>("NanoTrasen")))
+        if (!stationComp.PlayerEntities.ContainsKey(args.Mob))
         {
             stationComp.PlayerEntities.Add(args.Mob, playercomp.ProfileName);
             playercomp.EntityUid = args.Mob;
@@ -47,7 +47,7 @@ public sealed partial class CharacterDocumentStationSystem : EntitySystem
             if (!TryComp<CharacterDocumentStationComponent>(station, out var stationComp))
                 continue;
 
-            if (!stationComp.PlayerEntities.ContainsKey(uid) && _factions.IsMember(uid, new ProtoId<NpcFactionPrototype>("NanoTrasen")))
+            if (!stationComp.PlayerEntities.ContainsKey(uid))
             {
                 stationComp.PlayerEntities.Add(uid, component.ProfileName);
                 component.EntityUid = uid;

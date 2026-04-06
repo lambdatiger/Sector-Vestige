@@ -10,6 +10,10 @@ using Robust.Client.State;
 using System.Linq;
 using Content.Client.Paper.UI;
 using Content.Shared.Paper;
+using Content.Client.Stylesheets;
+using Robust.Client.UserInterface.Controls;
+using Content.Shared.Weapons.Melee;
+using System.Numerics;
 
 namespace Content.Client._SV.CharacterDocuments.UI;
 
@@ -37,8 +41,24 @@ public sealed partial class CharacterDocumentConsoleWindow : DefaultWindow
 
             DocumentListing.Clear();
             Document.Clear();
+            DocumentEdit.TextRope = Rope.Leaf.Empty;
             StampDisplay.RemoveStamps();
             StampDisplay.RemoveAllChildren();
+        };
+
+        CrewFiltersValue.OnTextChanged += args =>
+        {
+            _isPopulating = true;
+            CrewListing.Clear();
+            foreach (var (uid, name) in _cachedPlayerList.OrderBy(x => x.Value))
+            {
+                if (name.Contains(args.Text, StringComparison.OrdinalIgnoreCase))
+                {
+                    var item = CrewListing.AddItem(name);
+                    item.Metadata = uid;
+                }
+            }
+            _isPopulating = false;
         };
 
         DocumentListing.OnItemSelected += args =>
@@ -59,6 +79,7 @@ public sealed partial class CharacterDocumentConsoleWindow : DefaultWindow
 
             OnDocumentDeselected?.Invoke();
             Document.Clear();
+            DocumentEdit.TextRope = Rope.Leaf.Empty;
             StampDisplay.RemoveStamps();
             StampDisplay.RemoveAllChildren();
         };
@@ -71,13 +92,68 @@ public sealed partial class CharacterDocumentConsoleWindow : DefaultWindow
         DeleteButton.OnPressed += _ =>
         {
             if (_selectedDocument == null) return;
-            OnButtonDeletePressed?.Invoke(_selectedPlayer, _selectedDocument);
+
+            if (!_confirmingDelete)
+            {
+                _confirmingDelete = true;
+            }
+
+            if (_confirmingDelete)
+            {
+                OnButtonDeletePressed?.Invoke(_selectedPlayer, _selectedDocument);
+            }
         };
 
         PrintButton.OnPressed += _ =>
         {
             if (_selectedDocument == null) return;
             OnButtonPrintPressed?.Invoke(_selectedPlayer, _selectedDocument);
+        };
+
+        EditButton.OnPressed += _ =>
+        {
+            if (_selectedDocument == null) return;
+
+            if (!_editing)
+            {
+                _editing = true;
+                Document.Visible = false;
+                DocumentEdit.Visible = true;
+                DocumentEdit.Editable = true;
+                StampDisplay.Visible = false;
+                EditButton.Text = "Save";
+                EditButton.AddStyleClass(StyleClass.Negative);
+
+            }
+            else
+            {
+                if (DocumentEdit.TextRope == null)
+                    return;
+
+                string newDocContent = Rope.Collapse(DocumentEdit.TextRope);
+
+                if (string.IsNullOrEmpty(newDocContent))
+                    return;
+
+                CharacterDocument newDocument = new()
+                {
+                    DocID = _selectedDocument.DocID,
+                    DocTitle = TitleInput.Text,
+                    DocAuthor = _selectedDocument.DocAuthor,
+                    DocContent = newDocContent,
+                    DocStamps = _selectedDocument.DocStamps,
+                    DocType = _selectedDocument.DocType,
+                };
+
+                OnButtonEditPressed?.Invoke(_selectedPlayer, newDocument);
+                DocumentEdit.Editable = false;
+                DocumentEdit.Visible = false;
+                _editing = false;
+                Document.Visible = true;
+                StampDisplay.Visible = true;
+                EditButton.RemoveStyleClass(StyleClass.Negative);
+                EditButton.Text = "Edit";
+            }
         };
     }
 
@@ -86,11 +162,13 @@ public sealed partial class CharacterDocumentConsoleWindow : DefaultWindow
         _isPopulating = true;
         CrewListing.Clear();
         DocumentListing.Clear();
+        DocumentScrollContainer.SetScrollValue(new Vector2(0, 0));
+        _cachedPlayerList = state.PlayerList;
         ScanButton.Disabled = !state.SelectedPlayer.HasValue || state.PaperInserted == false;
         PrintButton.Disabled = state.SelectedDocument == null;
         DeleteButton.Disabled = state.SelectedDocument == null;
 
-        foreach (var (uid, name) in state.PlayerList)
+        foreach (var (uid, name) in state.PlayerList.OrderBy(x => x.Value))
         {
             var item = CrewListing.AddItem(name);
             item.Metadata = uid;
@@ -120,7 +198,7 @@ public sealed partial class CharacterDocumentConsoleWindow : DefaultWindow
         {
             _isPopulating = true;
             DocumentListing.Clear();
-            foreach (var doc in state.SelectedPlayerDocuments.Values)
+            foreach (var (uid, doc) in state.SelectedPlayerDocuments.OrderBy(x => x.Value.DocTitle))
             {
                 DocumentListing.AddItem(doc.DocTitle, null, true, doc.DocID);
             }
@@ -146,6 +224,7 @@ public sealed partial class CharacterDocumentConsoleWindow : DefaultWindow
         if (state.SelectedDocument == null)
         {
             _selectedDocument = null;
+            DocumentEdit.TextRope = Rope.Leaf.Empty;
             Document.Clear();
             TitleInput.Clear();
             StampDisplay.RemoveStamps();
@@ -154,7 +233,8 @@ public sealed partial class CharacterDocumentConsoleWindow : DefaultWindow
         else
         {
             _selectedDocument = state.SelectedDocument;
-            Document.SetMessage(FormattedMessage.FromMarkupPermissive(state.SelectedDocument.DocContent), UserFormattableTags.BaseAllowedTags);
+            Document.Text = state.SelectedDocument.DocContent;
+            DocumentEdit.TextRope = new Rope.Leaf(state.SelectedDocument.DocContent);
             TitleInput.Clear();
             TitleInput.SetText(state.SelectedDocument.DocTitle);
             StampDisplay.RemoveStamps();
@@ -168,12 +248,16 @@ public sealed partial class CharacterDocumentConsoleWindow : DefaultWindow
     }
 
     private NetEntity _selectedPlayer;
+    private Dictionary<NetEntity, string> _cachedPlayerList = new();
     private CharacterDocument? _selectedDocument;
+    private bool _confirmingDelete;
+    private bool _editing;
     public Action<NetEntity>? OnPlayerSelected;
     public Action<NetEntity, int>? OnDocumentSelected;
     public Action<NetEntity, string>? OnButtonScanPressed;
     public Action<NetEntity, CharacterDocument>? OnButtonPrintPressed;
     public Action<NetEntity, CharacterDocument>? OnButtonDeletePressed;
+    public Action<NetEntity, CharacterDocument>? OnButtonEditPressed;
     public Action? OnDocumentDeselected;
     bool _isPopulating;
 }
