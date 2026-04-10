@@ -7,10 +7,6 @@
                       SetSize="1055 900"
                       Title="Employment Documentation Computer" >
             <BoxContainer Orientation="Vertical">
-                <!-- Search bar -->
-                <BoxContainer Margin="5 5 5 10" HorizontalExpand="true" VerticalAlignment="Center">
-                    <OptionButton Name="DocumentFilterType" MinWidth="200" Visible="False"/>
-                </BoxContainer>
                 <BoxContainer VerticalExpand="true">
                     <!-- Left bar - List all availible profiles/crew -->
                     <BoxContainer Orientation="Vertical" Margin="5" MinWidth="250" MaxWidth="250">
@@ -30,29 +26,38 @@
                             <TextEdit Name="DocumentEdit" StyleClasses="PaperWrittenText" MinHeight="690" VerticalExpand="True" VerticalAlignment="Top" Editable="False" Visible="False"/>
                         </PanelContainer>
                         <!-- Bottom control panel -->
-                        <BoxContainer Orientation="Horizontal" Margin="0" HorizontalExpand="True" MinHeight="100" VerticalAlignment="Bottom">
+                        <LineEdit Name="TitleInput" PlaceHolder="{Loc 'sv-document-console-title-input'}" VerticalAlignment="Top" HorizontalExpand="True" Editable="False"/>
+                        <BoxContainer Orientation="Horizontal" Margin="0" HorizontalExpand="True" MinHeight="75" MaxHeight="75" VerticalAlignment="Bottom" >
                             <Label Name="ControlPanelStatus"/>
                             <!-- Left Control panel -->
-                            <ScrollContainer MinWidth="200" VerticalExpand="True" HorizontalAlignment="Left" Margin="0 5 0 0">
-                                <ItemList Name="CharacterDataGeneral"/>
-                            </ScrollContainer>
+                            <PanelContainer MinWidth="250" MaxWidth="250" VerticalExpand="True" HorizontalAlignment="Left" Margin="0 5 0 0">
+                                <BoxContainer>
+                                    <BoxContainer HorizontalAlignment="Left" Orientation="Vertical" Margin="0 0 5 0">
+                                            <Label Name="DocAuthorLabel" Text="{Loc 'sv-document-console-author-label'}"/>
+                                            <Label Name="DocDateLabel" Text="{Loc 'sv-document-console-date-label'}"/>
+                                    </BoxContainer>
+                                    <BoxContainer HorizontalAlignment="Right" Orientation="Vertical" StyleClasses="BorderedWindowPanel">
+                                        <Label Name="DocAuthorLabelValue" Text="{Loc 'sv-document-console-author-label-value'}"/>
+                                        <Label Name="DocDateLabelValue" Text="{Loc 'sv-document-console-date-label-value'}"/>
+                                    </BoxContainer>
+                                </BoxContainer>
+                            </PanelContainer>
                             <!-- Right Control panel -->
                             <BoxContainer HorizontalExpand="True" VerticalExpand="True" Orientation="Vertical" Margin="5" >
-                                <LineEdit Name="TitleInput" PlaceHolder="{Loc 'sv-document-console-title-input'}" VerticalAlignment="Top" HorizontalExpand="True"/>
                                 <BoxContainer Orientation="Horizontal" HorizontalExpand="True">
                                     <Button Name="ScanButton" Text="{Loc 'sv-document-console-scan-button'}" HorizontalExpand="True"/>
                                     <Button Name="PrintButton" Text="{Loc 'sv-document-console-print-button'}" HorizontalExpand="True"/>
                                 </BoxContainer>
                                 <BoxContainer Orientation="Horizontal" HorizontalExpand="True">
                                     <Button Name="EditButton" Text="{Loc 'sv-document-console-edit-button'}" HorizontalExpand="True"/>
-                                    <controls:ConfirmButton Name="DeleteButton" Text="{Loc 'sv-document-console-delete-button'}" HorizontalExpand="True"/>
+                                    <Button Name="DeleteButton" Text="{Loc 'sv-document-console-delete-button'}" HorizontalExpand="True"/>
                                 </BoxContainer>
                             </BoxContainer>
                         </BoxContainer>
                     </BoxContainer>
                     <!-- Right bar - List all the availible documents for the selectedplayer -->
                     <BoxContainer Orientation="Vertical" Margin="5" MinWidth="300" MaxWidth="300">
-                        <Label Name="DocumentListingStatus" Visible="False" Text="{Loc 'sv-document-viewer-no-document-selected'}"/>
+                        <Label Name="DocumentListingStatus" Visible="False" Text="{Loc 'sv-document-console-no-document-selected'}"/>
                         <ScrollContainer VerticalExpand="True">
                             <ItemList Name="DocumentListing"/>
                         </ScrollContainer>

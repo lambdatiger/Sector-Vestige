@@ -293,8 +293,10 @@ public sealed class CharacterDocumentConsoleSystem : EntitySystem
         foreach (var (playerUid, name) in stationComponent.PlayerEntities)
             netPlayerEntities.Add(GetNetEntity(playerUid), name);
 
-        await _characterDocumentSystem.DeleteDocument(player, oldCharacterDoc);
-        await _characterDocumentSystem.AddDocument(player, newCharacterDoc);
+        await _characterDocumentSystem.UpdateDocument(player, newCharacterDoc);
+        comp.SelectedDocument = documentComponent.Documents.TryGetValue(newCharacterDoc.DocID, out var reloadedDoc)
+            ? reloadedDoc
+            : newCharacterDoc;
 
         bool paperinserted = comp.PaperSlot.ContainerSlot?.ContainedEntity != null;
         var characterDocumentConsoleState = new CharacterDocumentConsoleState(netPlayerEntities, args.Player, documentComponent.Documents, newCharacterDoc, paperinserted);

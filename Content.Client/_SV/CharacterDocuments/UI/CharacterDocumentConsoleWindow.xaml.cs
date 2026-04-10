@@ -12,7 +12,6 @@ using Content.Client.Paper.UI;
 using Content.Shared.Paper;
 using Content.Client.Stylesheets;
 using Robust.Client.UserInterface.Controls;
-using Content.Shared.Weapons.Melee;
 using System.Numerics;
 
 namespace Content.Client._SV.CharacterDocuments.UI;
@@ -96,10 +95,15 @@ public sealed partial class CharacterDocumentConsoleWindow : DefaultWindow
             if (!_confirmingDelete)
             {
                 _confirmingDelete = true;
+                DeleteButton.Text = Loc.GetString("sv-document-console-delete-button-confirm");
+                DeleteButton.AddStyleClass(StyleClass.Negative);
             }
-
-            if (_confirmingDelete)
+            else
             {
+                _confirmingDelete = false;
+                DeleteButton.Disabled = true;
+                DeleteButton.Text = Loc.GetString("sv-document-console-delete-button");
+                DeleteButton.RemoveStyleClass(StyleClass.Negative);
                 OnButtonDeletePressed?.Invoke(_selectedPlayer, _selectedDocument);
             }
         };
@@ -121,6 +125,11 @@ public sealed partial class CharacterDocumentConsoleWindow : DefaultWindow
                 DocumentEdit.Visible = true;
                 DocumentEdit.Editable = true;
                 StampDisplay.Visible = false;
+                TitleInput.Editable = true;
+                TitleInput.ModulateSelfOverride = Color.FromHex("#ff6666");
+                PrintButton.Disabled = true;
+                ScanButton.Disabled = true;
+                DeleteButton.Disabled = true;
                 EditButton.Text = "Save";
                 EditButton.AddStyleClass(StyleClass.Negative);
 
@@ -145,14 +154,23 @@ public sealed partial class CharacterDocumentConsoleWindow : DefaultWindow
                     DocType = _selectedDocument.DocType,
                 };
 
-                OnButtonEditPressed?.Invoke(_selectedPlayer, newDocument);
                 DocumentEdit.Editable = false;
                 DocumentEdit.Visible = false;
                 _editing = false;
                 Document.Visible = true;
                 StampDisplay.Visible = true;
+                TitleInput.Editable = false;
+                TitleInput.ModulateSelfOverride = null;
+                PrintButton.Disabled = false;
+                DeleteButton.Disabled = _selectedDocument == null;
                 EditButton.RemoveStyleClass(StyleClass.Negative);
                 EditButton.Text = "Edit";
+
+                if (newDocument.DocTitle == _selectedDocument?.DocTitle && newDocContent == _selectedDocument.DocContent)
+                    return;
+
+                EditButton.Disabled = true;
+                OnButtonEditPressed?.Invoke(_selectedPlayer, newDocument);
             }
         };
     }
@@ -167,6 +185,7 @@ public sealed partial class CharacterDocumentConsoleWindow : DefaultWindow
         ScanButton.Disabled = !state.SelectedPlayer.HasValue || state.PaperInserted == false;
         PrintButton.Disabled = state.SelectedDocument == null;
         DeleteButton.Disabled = state.SelectedDocument == null;
+        EditButton.Disabled = state.SelectedDocument == null;
 
         foreach (var (uid, name) in state.PlayerList.OrderBy(x => x.Value))
         {
@@ -229,12 +248,16 @@ public sealed partial class CharacterDocumentConsoleWindow : DefaultWindow
             TitleInput.Clear();
             StampDisplay.RemoveStamps();
             StampDisplay.RemoveAllChildren();
+            DocAuthorLabelValue.Text = Loc.GetString("sv-document-console-author-label-value-none");
+            DocDateLabelValue.Text = Loc.GetString("sv-document-console-date-label-value-none");
         }
         else
         {
             _selectedDocument = state.SelectedDocument;
             Document.Text = state.SelectedDocument.DocContent;
             DocumentEdit.TextRope = new Rope.Leaf(state.SelectedDocument.DocContent);
+            DocAuthorLabelValue.Text = Loc.GetString("sv-document-console-author-label-value", ("DocAuthor", state.SelectedDocument.DocAuthor));
+            DocDateLabelValue.Text = Loc.GetString("sv-document-console-date-label-value", ("DocDateLastEdited", state.SelectedDocument.DocDateLastEdited.ToString("yyyy-MM-dd")));
             TitleInput.Clear();
             TitleInput.SetText(state.SelectedDocument.DocTitle);
             StampDisplay.RemoveStamps();

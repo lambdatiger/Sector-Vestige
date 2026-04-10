@@ -127,7 +127,6 @@ public sealed partial class CharacterDocumentSystem : EntitySystem
         }).ToList();
 
         await _db.SaveSVCharacterDocumentsAsync(docComp.ProfileId, playerName, docComp.ProfileName, dbDocs);
-        await LoadPlayerDocumentsAsync(uid, docComp.ProfileName, true);
         RaiseLocalEvent(new CharacterDocumentEditedEvent());
     }
 
@@ -153,7 +152,31 @@ public sealed partial class CharacterDocumentSystem : EntitySystem
         }).ToList();
 
         await _db.SaveSVCharacterDocumentsAsync(docComp.ProfileId, playerName, docComp.ProfileName, dbDocs);
-        await LoadPlayerDocumentsAsync(uid, docComp.ProfileName, true);
+        RaiseLocalEvent(new CharacterDocumentEditedEvent());
+    }
+
+    public async Task UpdateDocument(EntityUid uid, CharacterDocument characterDocument)
+    {
+        _playerManager.TryGetSessionByEntity(uid, out var session);
+        var playerName = session?.Name ?? "Unknown";
+
+        if (!TryComp<CharacterDocumentComponent>(uid, out var docComp))
+            return;
+
+        docComp.Documents[characterDocument.DocID] = characterDocument;
+
+        var dbDocs = docComp.Documents.Values.Select(doc => new SVModel.CharacterDocument
+        {
+            DocTitle = doc.DocTitle,
+            DocAuthor = doc.DocAuthor,
+            DocContent = doc.DocContent,
+            DocDateLastEdited = doc.DocDateLastEdited,
+            DocStamps = CharacterDocumentSerializer.SerializeStamp(doc.DocStamps),
+            DocType = doc.DocType,
+            ProfileId = docComp.ProfileId
+        }).ToList();
+
+        await _db.SaveSVCharacterDocumentsAsync(docComp.ProfileId, playerName, docComp.ProfileName, dbDocs);
         RaiseLocalEvent(new CharacterDocumentEditedEvent());
     }
 }

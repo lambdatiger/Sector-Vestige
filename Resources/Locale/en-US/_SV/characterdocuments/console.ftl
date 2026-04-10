@@ -1,9 +1,17 @@
 sv-document-for-filter-line-placeholder = Filter
 sv-document-console-search-documents = Search
-sv-document-console-reset-filters = Reset filters
-sv-document-viewer-no-document-selected = No document selected
+sv-document-console-no-document-selected = No document selected
 sv-document-console-title-input = Title
 sv-document-console-scan-button = Scan
 sv-document-console-print-button = Print
 sv-document-console-edit-button = Edit
 sv-document-console-delete-button = Delete
+sv-document-console-delete-button-confirm = Confirm?
+
+sv-document-console-author-label = Author:
+sv-document-console-author-label-value = {$DocAuthor}
+sv-document-console-author-label-value-none = Select a document
+
+sv-document-console-date-label = Last Edited:
+sv-document-console-date-label-value = {$DocDateLastEdited}
+sv-document-console-date-label-value-none = Select a document
