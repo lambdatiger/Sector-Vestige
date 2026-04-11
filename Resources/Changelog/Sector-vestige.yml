@@ -1631,3 +1631,9 @@ Entries:
       message: You can pick up a lanyard in your trinket loadout now.
   id: 224
   time: '2026-04-05T15:35:56.0000000+00:00'
+- author: JacketedGaming
+  changes:
+    - type: Add
+      message: Some damaged Central Clothing.
+  id: 225
+  time: '2026-04-11T20:28:02.0000000+00:00'
