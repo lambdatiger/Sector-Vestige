@@ -1637,3 +1637,28 @@ Entries:
       message: Some damaged Central Clothing.
   id: 225
   time: '2026-04-11T20:28:02.0000000+00:00'
+- author: NicoSGF64
+  changes:
+    - type: Add
+      message: The HoP has a new beret as well as new uniforms.
+    - type: Add
+      message: >-
+        All medical roles except for psychologists and medical interns now can
+        have gloves on their loadouts.
+    - type: Fix
+      message: Senior courier can no longer start shoeless.
+    - type: Fix
+      message: >-
+        Paramedics now can access their corresponding clothing both from their
+        loadout screen as well as opening the ETU can now included on their
+        locker.
+    - type: Fix
+      message: >-
+        Captains won't be forced to wear leather shoes anymore nor will a pair
+        appear on the floor magically.
+    - type: Tweak
+      message: >-
+        The CE, RD now have been assigned their corresponding berets instead of
+        generic departmental ones.
+  id: 226
+  time: '2026-04-12T15:51:49.0000000+00:00'
