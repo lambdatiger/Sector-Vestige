@@ -96,7 +96,6 @@
 - type: loadoutGroup
   id: SeniorCourierShoes
   name: loadout-group-vestige-shoes
-  minLimit: 0
   loadouts:
   - BlackShoes
   - CargoWinterBoots
@@ -138,3 +137,18 @@
   minLimit: 0
   loadouts:
   - MagistrateBriefcase
+
+# Medical gloves
+- type: loadoutGroup
+  id: MedicalGloves
+  name: loadout-group-vestige-gloves
+  minLimit: 0
+  loadouts:
+  - LatexGloves
+  - NitrileGloves
+
+- type: loadoutGroup
+  id: ParamedicGloves
+  parent: MedicalGloves
+  loadouts:
+  - GlovesETUGauntlet # CD

@@ -72,6 +72,7 @@
 # SPDX-FileCopyrightText: 2025 youtissoum <51883137+youtissoum@users.noreply.github.com>
 # SPDX-FileCopyrightText: 2026 Afrokada <pchcraft@gmail.com>
 # SPDX-FileCopyrightText: 2026 JuneSzalkowska <juneszalkowska@gmail.com>
+# SPDX-FileCopyrightText: 2026 Nico64 <74880554+NicoSGF64@users.noreply.github.com>
 # SPDX-FileCopyrightText: 2026 OnyxTheBrave <131422822+OnyxTheBrave@users.noreply.github.com>
 # SPDX-FileCopyrightText: 2026 ReboundQ3 <22770594+ReboundQ3@users.noreply.github.com>
 # SPDX-FileCopyrightText: 2026 SlamBamActionman <83650252+SlamBamActionman@users.noreply.github.com>
@@ -246,6 +247,7 @@
   minLimit: 0
   loadouts:
   - HoPHead
+  - HoPBeretHarmony # Added by SV
 
 - type: loadoutGroup
   id: HoPJumpsuit
@@ -253,6 +255,12 @@
   loadouts:
   - HoPJumpsuit
   - HoPJumpskirt
+# Begin SV changes - Add Harmony's clothing to loadouts
+  - HoPJumpsuitTurtleneckHarmony
+  - HoPJumpskirtTurtleneckHarmony
+  - HoPJumpsuitMessKitHarmony
+  - HoPJumpskirtMessKitHarmony
+# End SV changes
 
 - type: loadoutGroup
   id: HoPNeck
@@ -920,7 +928,8 @@
   minLimit: 0
   loadouts:
   - ChiefEngineerHead
-  - ChiefEngineerBeret
+  - CEBeretHarmony # Added by SV
+  # - ChiefEngineerBeret # Removed by SV
 
 - type: loadoutGroup
   id: ChiefEngineerJumpsuit
@@ -1096,7 +1105,8 @@
   name: loadout-group-vestige-head #Changed by SV
   minLimit: 0
   loadouts:
-  - ResearchDirectorBeret
+  - RDBeretHarmony # Added by SV
+  # - ResearchDirectorBeret # Removed by SV
 
 - type: loadoutGroup
   id: ResearchDirectorNeck
