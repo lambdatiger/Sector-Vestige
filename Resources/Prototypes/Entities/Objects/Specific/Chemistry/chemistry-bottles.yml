@@ -1410,6 +1410,8 @@
     - id: ChemistryBottleSaline
     - id: ChemistryBottleTricordrazine
     - id: ChemistryBottleHyronalin
+    - id: ChemistryBottleStubantazine # Sector Vestige - Extra Painkillers
+    - id: ChemistryBottleSoretizone # Sector Vestige - Extra Painkillers
 
 - type: entityTable
   id: SpecialtyMedicineReagentBottleTable
