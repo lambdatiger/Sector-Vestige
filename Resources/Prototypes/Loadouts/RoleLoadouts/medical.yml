@@ -1,3 +1,12 @@
+# SPDX-FileCopyrightText: 2026 Wizards Den contributors
+# SPDX-FileCopyrightText: 2026 Sector Vestige contributors (modifications)
+# SPDX-FileCopyrightText: 2026 Nico64 <74880554+NicoSGF64@users.noreply.github.com>
+# SPDX-FileCopyrightText: 2026 Pieter-Jan Briers <pieterjan.briers+git@gmail.com>
+# SPDX-FileCopyrightText: 2026 ReboundQ3 <22770594+ReboundQ3@users.noreply.github.com>
+# SPDX-FileCopyrightText: 2026 āda <ss.adasts@gmail.com>
+#
+# SPDX-License-Identifier: MIT
+
 ## Role Loadouts
 
 - type: roleLoadout
@@ -9,6 +18,7 @@
   - ChiefMedicalOfficerJumpsuit
   - MedicalBackpack
   - ChiefMedicalOfficerOuterClothing
+  - MedicalGloves # SV
   - ChiefMedicalOfficerNeck
   - ChiefMedicalOfficerShoes
   - Glasses
@@ -27,6 +37,7 @@
   - MedicalDoctorJumpsuit
   - MedicalSpecializationBackpack # CD change from MedicalBackpack
   - MedicalDoctorOuterClothing
+  - MedicalGloves # SV
   - MedicalShoes
   - MedicalDoctorPDA
   - Glasses
@@ -57,6 +68,7 @@
   - ChemistJumpsuit
   - ChemistBackpack
   - ChemistOuterClothing
+  - MedicalGloves # SV
   - MedicalShoes
   - Glasses
   - SurvivalMedical
@@ -72,11 +84,12 @@
   - ParamedicHead
   # CD: ETU Gear
   - ParamedicMask
-  - MedicalMask
+  # - MedicalMask # SV
   - ParamedicJumpsuit
   # CD: ETU Gear
   - MedicalBackpack
   - ParamedicOuterClothing
+  - ParamedicGloves # SV
   - ParamedicShoes
   - Glasses
   - SurvivalMedical

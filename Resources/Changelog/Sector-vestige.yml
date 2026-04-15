@@ -1597,3 +1597,68 @@ Entries:
       message: Gila Personal item
   id: 220
   time: '2026-03-21T13:53:00.0000000+00:00'
+- author: s3ptemb3rr
+  changes:
+    - type: Add
+      message: Added leopard tail from RMC14
+  id: 221
+  time: '2026-04-01T06:56:43.0000000+00:00'
+- author: NicoSGF64
+  changes:
+    - type: Add
+      message: Added the senior researcher high-cut labcoat.
+    - type: Add
+      message: >-
+        Medical doctors, senior physicians and senior researchers now have
+        access to more labcoats.
+    - type: Fix
+      message: >-
+        Medical doctors no longer can commit stolen valor and wear the senior
+        physician labcoat.
+  id: 222
+  time: '2026-04-04T09:55:19.0000000+00:00'
+- author: cooldolphin
+  changes:
+    - type: Add
+      message: Tiger tail, double tiger tail, big cat tail, double normal cat tail.
+    - type: Fix
+      message: Leopard tail locale issue.
+  id: 223
+  time: '2026-04-04T15:25:05.0000000+00:00'
+- author: cooldolphin
+  changes:
+    - type: Add
+      message: You can pick up a lanyard in your trinket loadout now.
+  id: 224
+  time: '2026-04-05T15:35:56.0000000+00:00'
+- author: JacketedGaming
+  changes:
+    - type: Add
+      message: Some damaged Central Clothing.
+  id: 225
+  time: '2026-04-11T20:28:02.0000000+00:00'
+- author: NicoSGF64
+  changes:
+    - type: Add
+      message: The HoP has a new beret as well as new uniforms.
+    - type: Add
+      message: >-
+        All medical roles except for psychologists and medical interns now can
+        have gloves on their loadouts.
+    - type: Fix
+      message: Senior courier can no longer start shoeless.
+    - type: Fix
+      message: >-
+        Paramedics now can access their corresponding clothing both from their
+        loadout screen as well as opening the ETU can now included on their
+        locker.
+    - type: Fix
+      message: >-
+        Captains won't be forced to wear leather shoes anymore nor will a pair
+        appear on the floor magically.
+    - type: Tweak
+      message: >-
+        The CE, RD now have been assigned their corresponding berets instead of
+        generic departmental ones.
+  id: 226
+  time: '2026-04-12T15:51:49.0000000+00:00'

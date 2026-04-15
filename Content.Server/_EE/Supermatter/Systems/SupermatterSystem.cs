@@ -15,7 +15,10 @@
 using Content.Server.AlertLevel;
 using Content.Server.Administration.Logs;
 using Content.Server.Atmos.EntitySystems;
+using Content.Shared.Atmos.Components;
 using Content.Server.Atmos.Piping.Components;
+using Content.Server.Atmos.Components;
+using Content.Shared.Atmos;
 using Content.Server.Chat.Managers;
 using Content.Server.Chat.Systems;
 using Content.Server.DoAfter;
@@ -32,7 +35,6 @@ using Content.Server.Traits.Assorted;
 using Content.Server.Ghost;
 using Content.Shared._EE.CCVar;
 using Content.Shared._EE.Supermatter.Components;
-using Content.Shared.Atmos;
 using Content.Shared.Audio;
 using Content.Shared.Damage.Components;
 using Content.Shared.Database;
