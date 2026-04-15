@@ -107,8 +107,8 @@ namespace Content.Client.RoundEnd
                 Orientation = LayoutOrientation.Vertical
             };
 
-            //Put observers at the bottom of the list. Put antags on top.
-            var sortedPlayersInfo = playersInfo.OrderBy(p => p.Observer).ThenBy(p => !p.Antag);
+            //Put observers at the bottom of the list. Put antags on top. // Vestige 15/04/2026 Not putting antags on top, we don't want antags showing in the end of round player manifest.
+            var sortedPlayersInfo = playersInfo.OrderBy(p => p.Observer); // .ThenBy(p => !p.Antag); // Vestige 15/04/2026 See above comment.
 
             //Create labels for each player info.
             foreach (var playerInfo in sortedPlayersInfo)
@@ -148,7 +148,7 @@ namespace Content.Client.RoundEnd
                     {
                         //TODO: On Hover display a popup detailing more play info.
                         //For example: their antag goals and if they completed them sucessfully.
-                        var icNameColor = playerInfo.Antag ? "red" : "white";
+                        var icNameColor = "white"; // Vestige 14/04/2026 Removed red name coloring if person was an antagonist, to remove antags and related things from round-end text.
                         playerInfoText.SetMarkup(
                             Loc.GetString("round-end-summary-window-player-info-if-not-observer-text",
                                 ("playerOOCName", playerInfo.PlayerOOCName),

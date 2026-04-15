@@ -148,30 +148,30 @@ public sealed class NukeopsRuleSystem : GameRuleSystem<NukeopsRuleComponent>
     }
 
     #region Event Handlers
-    protected override void AppendRoundEndText(EntityUid uid,
-        NukeopsRuleComponent component,
-        GameRuleComponent gameRule,
-        ref RoundEndTextAppendEvent args)
-    {
-        var winText = Loc.GetString($"nukeops-{component.WinType.ToString().ToLower()}");
-        args.AddLine(winText);
-
-        foreach (var cond in component.WinConditions)
-        {
-            var text = Loc.GetString($"nukeops-cond-{cond.ToString().ToLower()}");
-            args.AddLine(text);
-        }
-
-        args.AddLine(Loc.GetString("nukeops-list-start"));
-
-        var antags = _antag.GetAntagIdentifiers(uid);
-
-        foreach (var (_, sessionData, name) in antags)
-        {
-            args.AddLine(Loc.GetString("nukeops-list-name-user", ("name", name), ("user", sessionData.UserName)));
-        }
-        args.AddLine("");
-    }
+//    protected override void AppendRoundEndText(EntityUid uid, // Vestige 14/04/2026 Remove antags and related things from round-end text.
+//        NukeopsRuleComponent component,
+//        GameRuleComponent gameRule,
+//        ref RoundEndTextAppendEvent args)
+//    {
+//        var winText = Loc.GetString($"nukeops-{component.WinType.ToString().ToLower()}");
+//        args.AddLine(winText);
+//
+//        foreach (var cond in component.WinConditions)
+//        {
+//            var text = Loc.GetString($"nukeops-cond-{cond.ToString().ToLower()}");
+//            args.AddLine(text);
+//        }
+//
+//        args.AddLine(Loc.GetString("nukeops-list-start"));
+//
+//        var antags = _antag.GetAntagIdentifiers(uid);
+//
+//        foreach (var (_, sessionData, name) in antags)
+//        {
+//            args.AddLine(Loc.GetString("nukeops-list-name-user", ("name", name), ("user", sessionData.UserName)));
+//        }
+//        args.AddLine("");
+//    }
 
     private void OnNukeExploded(NukeExplodedEvent ev)
     {

@@ -39,7 +39,7 @@ public sealed class ObjectivesSystem : SharedObjectivesSystem
     {
         base.Initialize();
 
-        SubscribeLocalEvent<RoundEndTextAppendEvent>(OnRoundEndText);
+//        SubscribeLocalEvent<RoundEndTextAppendEvent>(OnRoundEndText);
 
         Subs.CVar(_cfg, CCVars.GameShowGreentext, value => _showGreentext = value, true);
 
@@ -53,6 +53,7 @@ public sealed class ObjectivesSystem : SharedObjectivesSystem
         _prototypeManager.PrototypesReloaded -= CreateCompletions;
     }
 
+/* // Vestige 14/04/2026 Remove antags and related things from round-end text.
     /// <summary>
     /// Adds objective text for each game rule's players on round end.
     /// </summary>
@@ -221,7 +222,7 @@ public sealed class ObjectivesSystem : SharedObjectivesSystem
             result.AppendLine(summary);
         }
     }
-
+*/
     public EntityUid? GetRandomObjective(EntityUid mindId, MindComponent mind, ProtoId<WeightedRandomPrototype> objectiveGroupProto, float maxDifficulty)
     {
         if (!_prototypeManager.TryIndex(objectiveGroupProto, out var groupsProto))
@@ -254,7 +255,7 @@ public sealed class ObjectivesSystem : SharedObjectivesSystem
 
         return null;
     }
-
+/* // Vestige 14/04/2026 Remove antags and related things from round-end text.
     /// <summary>
     /// Returns whether a target is considered 'in custody' (cuffed on the shuttle).
     /// </summary>
@@ -298,7 +299,7 @@ public sealed class ObjectivesSystem : SharedObjectivesSystem
         return Loc.GetString("objectives-player-named", ("name", name));
     }
 
-
+*/
     private void CreateCompletions(PrototypesReloadedEventArgs unused)
     {
         CreateCompletions();
