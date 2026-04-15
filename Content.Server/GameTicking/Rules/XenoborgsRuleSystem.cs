@@ -14,7 +14,7 @@ namespace Content.Server.GameTicking.Rules;
 
 public sealed class XenoborgsRuleSystem : GameRuleSystem<XenoborgsRuleComponent>
 {
-    [Dependency] private readonly AntagSelectionSystem _antag = default!;
+//    [Dependency] private readonly AntagSelectionSystem _antag = default!; // Vestige 15/04/2026 Remove antags and related things from round-end text.
     [Dependency] private readonly ChatSystem _chatSystem = default!;
     [Dependency] private readonly MobStateSystem _mobState = default!;
     [Dependency] private readonly SharedMindSystem _mindSystem = default!;

@@ -23,12 +23,12 @@ namespace Content.Server.Objectives;
 
 public sealed class ObjectivesSystem : SharedObjectivesSystem
 {
-    [Dependency] private readonly GameTicker _gameTicker = default!;
+//    [Dependency] private readonly GameTicker _gameTicker = default!; // Vestige 15/04/2026 Remove antags and related things from round-end text.
     [Dependency] private readonly IPrototypeManager _prototypeManager = default!;
-    [Dependency] private readonly IPlayerManager _player = default!;
+//    [Dependency] private readonly IPlayerManager _player = default!; // Vestige 15/04/2026
     [Dependency] private readonly IRobustRandom _random = default!;
-    [Dependency] private readonly EmergencyShuttleSystem _emergencyShuttle = default!;
-    [Dependency] private readonly SharedJobSystem _job = default!;
+//    [Dependency] private readonly EmergencyShuttleSystem _emergencyShuttle = default!; // Vestige 15/04/2026
+//    [Dependency] private readonly SharedJobSystem _job = default!;
     [Dependency] private readonly IConfigurationManager _cfg = default!;
 
     private IEnumerable<string>? _objectives;

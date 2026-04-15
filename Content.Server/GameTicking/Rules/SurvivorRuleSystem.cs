@@ -29,10 +29,10 @@ public sealed class SurvivorRuleSystem : GameRuleSystem<SurvivorRuleComponent>
     [Dependency] private readonly RoleSystem _role = default!;
     [Dependency] private readonly MindSystem _mind = default!;
     [Dependency] private readonly AntagSelectionSystem _antag = default!;
-    [Dependency] private readonly TransformSystem _xform = default!;
-    [Dependency] private readonly EmergencyShuttleSystem _eShuttle = default!;
+//    [Dependency] private readonly TransformSystem _xform = default!; // Vestige 15/04/2026 Remove antags and related things from round-end text.
+//    [Dependency] private readonly EmergencyShuttleSystem _eShuttle = default!;
     [Dependency] private readonly TagSystem _tag = default!;
-    [Dependency] private readonly MobStateSystem _mobState = default!;
+//    [Dependency] private readonly MobStateSystem _mobState = default!; // Vestige 15/04/2026
 
     private static readonly ProtoId<TagPrototype> InvalidForSurvivorAntagTag = "InvalidForSurvivorAntag";
 
