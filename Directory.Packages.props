@@ -18,5 +18,7 @@
     <PackageVersion Include="OpenTK" Version="4.9.4" />
     <PackageVersion Include="Veldrid" Version="4.8.0" />
     <PackageVersion Include="Veldrid.SPIRV" Version="1.0.15" />
+    <!-- SV - dep pinned to avoid known vulnerability in 9.0.0 (GHSA-37gx-xxp4-5rgx, GHSA-w3x6-4m5h-cxqf) we might have to see if upstream also implements this or no -->
+    <PackageVersion Include="System.Security.Cryptography.Xml" Version="10.0.0" />
   </ItemGroup>
 </Project>
