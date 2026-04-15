@@ -573,9 +573,7 @@ namespace Content.Server.GameTicking
                     PlayerICName = playerIcName,
                     PlayerGuid = userId,
                     PlayerNetEntity = GetNetEntity(entity),
-                    Role = antag
-                        ? roles.First(role => role.Antagonist).Name
-                        : roles.FirstOrDefault().Name ?? Loc.GetString("game-ticker-unknown-role"),
+                    Role = roles.FirstOrDefault().Name ?? Loc.GetString("game-ticker-unknown-role"), // Vestige 15/04/2026 Removed the code that displays antag roles in the end of round manifest.
                     Antag = antag,
                     JobPrototypes = roles.Where(role => !role.Antagonist).Select(role => role.Prototype).ToArray(),
                     AntagPrototypes = roles.Where(role => role.Antagonist).Select(role => role.Prototype).ToArray(),
