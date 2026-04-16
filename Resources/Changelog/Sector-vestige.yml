@@ -1668,3 +1668,9 @@ Entries:
       message: Painkillers now available in medical at the start of the shift.
   id: 227
   time: '2026-04-15T17:28:43.0000000+00:00'
+- author: Boaz1111
+  changes:
+    - type: Add
+      message: Added synth markings from CD!
+  id: 228
+  time: '2026-04-16T13:29:15.0000000+00:00'
