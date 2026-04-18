@@ -1680,3 +1680,9 @@ Entries:
       message: The end of round menu no longer shows information regarding antagonists.
   id: 229
   time: '2026-04-16T13:51:35.0000000+00:00'
+- author: Boaz1111
+  changes:
+    - type: Fix
+      message: Fixed some knives not fixing in lockers.
+  id: 230
+  time: '2026-04-18T16:07:25.0000000+00:00'
