@@ -1,15 +1,25 @@
+# SPDX-FileCopyrightText: 2026 Wizards Den contributors
+# SPDX-FileCopyrightText: 2026 Sector Vestige contributors (modifications)
+# SPDX-FileCopyrightText: 2026 JuneSzalkowska <juneszalkowska@gmail.com>
+# SPDX-FileCopyrightText: 2026 Nico64 <74880554+NicoSGF64@users.noreply.github.com>
+# SPDX-FileCopyrightText: 2026 Pieter-Jan Briers <pieterjan.briers+git@gmail.com>
+# SPDX-FileCopyrightText: 2026 ReboundQ3 <22770594+ReboundQ3@users.noreply.github.com>
+# SPDX-FileCopyrightText: 2026 āda <ss.adasts@gmail.com>
+#
+# SPDX-License-Identifier: MIT
+
 # Generic
 
 - type: loadoutGroup
   id: MedicalMask
-  name: loadout-group-medical-mask
+  name: loadout-group-vestige-mask #Changed by Sector-Vestige
   minLimit: 0
   loadouts:
   - SterileMask
 
 - type: loadoutGroup
   id: MedicalBackpack
-  name: loadout-group-medical-doctor-backpack
+  name: loadout-group-vestige-backpack #Changed by Sector-Vestige
   loadouts:
   - MedicalDoctorBackpack
   - MedicalDoctorSatchel
@@ -17,7 +27,7 @@
 
 - type: loadoutGroup
   id: MedicalShoes
-  name: loadout-group-medical-doctor-shoes
+  name: loadout-group-vestige-shoes #Changed by Sector-Vestige
   loadouts:
   - WhiteShoes
   - MedicalWinterBoots
@@ -36,7 +46,7 @@
 
 - type: loadoutGroup
   id: ChiefMedicalOfficerHead
-  name: loadout-group-chief-medical-officer-head
+  name: loadout-group-vestige-head #Changed by Sector-Vestige
   minLimit: 0
   loadouts:
   - ChiefMedicalOfficerBeret
@@ -44,7 +54,7 @@
 
 - type: loadoutGroup
   id: ChiefMedicalOfficerJumpsuit
-  name: loadout-group-chief-medical-officer-jumpsuit
+  name: loadout-group-vestige-jumpsuit #Changed by Sector-Vestige
   loadouts:
   - ChiefMedicalOfficerJumpsuit
   - ChiefMedicalOfficerJumpskirt
@@ -54,7 +64,7 @@
 
 - type: loadoutGroup
   id: ChiefMedicalOfficerOuterClothing
-  name: loadout-group-chief-medical-officer-outerclothing
+  name: loadout-group-vestige-outerclothing #Changed by Sector-Vestige
   minLimit: 0
   loadouts:
   - ChiefMedicalOfficerLabCoat
@@ -63,7 +73,7 @@
 
 - type: loadoutGroup
   id: ChiefMedicalOfficerNeck
-  name: loadout-group-chief-medical-officer-neck
+  name: loadout-group-vestige-neck #Changed by Sector-Vestige
   minLimit: 0
   loadouts:
   - ChiefMedicalOfficerCloak
@@ -71,7 +81,7 @@
 
 - type: loadoutGroup
   id: ChiefMedicalOfficerShoes
-  name: loadout-group-chief-medical-officer-shoes
+  name: loadout-group-vestige-shoes #Changed by Sector-Vestige
   loadouts:
   - LeatherShoes # CD
   - LaceupShoes # CD
@@ -87,7 +97,7 @@
 
 - type: loadoutGroup
   id: MedicalDoctorHead
-  name: loadout-group-medical-doctor-head
+  name: loadout-group-vestige-head #Changed by Sector-Vestige
   minLimit: 0
   loadouts:
   - MedicalBeret
@@ -100,7 +110,7 @@
 
 - type: loadoutGroup
   id: MedicalDoctorJumpsuit
-  name: loadout-group-medical-doctor-jumpsuit
+  name: loadout-group-vestige-jumpsuit #Changed by Sector-Vestige
   loadouts:
   - MedicalDoctorJumpsuit
   - MedicalDoctorJumpskirt
@@ -117,19 +127,21 @@
 
 - type: loadoutGroup
   id: MedicalDoctorOuterClothing
-  name: loadout-group-medical-doctor-outerclothing
+  name: loadout-group-vestige-outerclothing #Changed by Sector-Vestige
   minLimit: 0
   loadouts:
   - RegularLabCoat
   - HighCutBase #Sector-Vestige
   - MedicalDoctorWintercoat
-  - SeniorPhysicianLabCoat
+  # - SeniorPhysicianLabCoat # SV
 
 - type: loadoutGroup
   id: MedicalDoctorPDA
+  hidden: true #Changed by SV
   name: loadout-group-medical-doctor-id
   loadouts:
   - MedicalDoctorPDA
+
   # - SeniorPhysicianPDA
 
 #- type: loadoutGroup
@@ -142,7 +154,7 @@
 
 - type: loadoutGroup
   id: MedicalInternJumpsuit
-  name: loadout-group-medical-intern-jumpsuit
+  name: loadout-group-vestige-jumpsuit #Changed by SV
   loadouts:
   - WhiteJumpsuit
   - WhiteJumpskirt
@@ -157,7 +169,7 @@
 
 - type: loadoutGroup
   id: ChemistJumpsuit
-  name: loadout-group-chemist-jumpsuit
+  name: loadout-group-vestige-jumpsuit #Changed by SV
   loadouts:
   - ChemistJumpsuit
   - ChemistJumpskirt
@@ -165,7 +177,7 @@
 
 - type: loadoutGroup
   id: ChemistOuterClothing
-  name: loadout-group-chemist-outerclothing
+  name: loadout-group-vestige-outerclothing #Changed by SV
   minLimit: 0
   loadouts:
   - RegularLabCoat
@@ -176,7 +188,7 @@
 
 - type: loadoutGroup
   id: ChemistBackpack
-  name: loadout-group-chemist-backpack
+  name: loadout-group-vestige-backpack #Changed by SV
   loadouts:
   - ChemistBackpack
   - ChemistSatchel
@@ -192,7 +204,7 @@
 
 - type: loadoutGroup
   id: ParamedicHead
-  name: loadout-group-paramedic-head
+  name: loadout-group-vestige-head #Changed by SV
   minLimit: 0
   loadouts:
   - ParamedicHead
@@ -201,7 +213,7 @@
 
 - type: loadoutGroup
   id: ParamedicJumpsuit
-  name: loadout-group-paramedic-jumpsuit
+  name: loadout-group-vestige-jumpsuit #Changed by SV
   loadouts:
   - ParamedicJumpsuit
   - ParamedicJumpskirt
@@ -212,7 +224,7 @@
 
 - type: loadoutGroup
   id: ParamedicOuterClothing
-  name: loadout-group-paramedic-outerclothing
+  name: loadout-group-vestige-outerclothing #Changed by SV
   minLimit: 0
   loadouts:
   - ParamedicWindbreaker
@@ -223,10 +235,11 @@
 
 - type: loadoutGroup
   id: ParamedicShoes
-  name: loadout-group-paramedic-shoes
+  name: loadout-group-vestige-shoes #Changed by SV
   loadouts:
   - BlueShoes
   - WhiteShoes
+  - ShoesColorSlate # SV
   - MedicalWinterBoots
 
 #- type: loadoutGroup

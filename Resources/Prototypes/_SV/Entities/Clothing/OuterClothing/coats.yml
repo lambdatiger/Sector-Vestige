@@ -4,7 +4,9 @@
 # SPDX-FileCopyrightText: 2025 JuneSzalkowska <juneowo69@gmail.com>
 # SPDX-FileCopyrightText: 2025 JuneSzalkowska <juneszalkowska@gmail.com>
 # SPDX-FileCopyrightText: 2025 OnyxTheBrave <131422822+OnyxTheBrave@users.noreply.github.com>
+# SPDX-FileCopyrightText: 2026 Nico64 <74880554+NicoSGF64@users.noreply.github.com>
 # SPDX-FileCopyrightText: 2026 ReboundQ3 <22770594+ReboundQ3@users.noreply.github.com>
+# SPDX-FileCopyrightText: 2026 JacketedGaming <kalebblack399@yahoo.com>
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -83,6 +85,22 @@
   parent: [ClothingOuterStorageFoldableBaseOpened, ClothingOuterCoatHighcutScience]
   id: ClothingOuterCoatHighcutOpenedScience
 
+#High-cut senior scientist labcoat
+- type: entity
+  parent: [ClothingOuterStorageFoldableBase, ClothingOuterCoatHighcutBase]
+  id: ClothingOuterCoatHighcutSeniorResearcher
+  name: senior researcher high-cut coat
+  description: Even more fashionable AND scientific. Some would say "Serendipity!".
+  components:
+  - type: Sprite
+    sprite: _SV/Clothing/OuterClothing/Coats/highcut_senior_researcher.rsi
+  - type: Clothing
+    sprite: _SV/Clothing/OuterClothing/Coats/highcut_senior_researcher.rsi
+
+- type: entity
+  parent: [ClothingOuterStorageFoldableBaseOpened, ClothingOuterCoatHighcutSeniorResearcher]
+  id: ClothingOuterCoatHighcutOpenedSeniorResearcher
+
 #High-cut chemist labcoat
 - type: entity
   parent: [ClothingOuterStorageFoldableBase, ClothingOuterCoatHighcutBase]
@@ -129,3 +147,20 @@
 - type: entity
   parent: [ClothingOuterStorageFoldableBaseOpened, ClothingOuterCoatHighcutRD]
   id: ClothingOuterCoatHighcutOpenedRD
+
+#Damaged Centcomm Overseer
+- type: entity
+  parent: ClothingOuterStorageFoldableBase
+  id: ClothingOuterCoatCentCommOverseerDamaged
+  name: damaged centcomm overseer jacket
+  description: A leather jacket worn by Overseers who prefer a more rugged style. This bad boy has been through the ringer of station combat
+  components:
+  - type: Sprite
+    sprite: _SV/Clothing/OuterClothing/Coats/damaged_central_overseer.rsi
+  - type: Clothing
+    sprite: _SV/Clothing/OuterClothing/Coats/damaged_central_overseer.rsi
+
+- type: entity
+  parent: [ ClothingOuterStorageFoldableBaseOpened, ClothingOuterCoatCentCommOverseerDamaged ]
+  id: ClothingOuterCoatCentCommOverseerDamagedOpened
+  name: CentComm overseer jacket

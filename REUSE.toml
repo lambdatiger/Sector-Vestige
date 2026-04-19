@@ -123,6 +123,12 @@ SPDX-FileCopyrightText = ["2026 Goob-Station contributors", "2026 Sector Vestige
 SPDX-License-Identifier = "AGPL-3.0-or-later"
 
 [[annotations]]
+path = ["Content.Server/_/**", "Content.Client/_RMC14/**", "Content.Shared/_RMC14/**", "Resources/_RMC14/**", "Resources/Prototypes/_RMC14/**", "Resources/Audio/_RMC14/**", "Resources/Textures/_RMC14/**", "Resources/Locale/_RMC14/**"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = ["2026 RMC14 contributors", "2026 Sector Vestige contributors (modifications)"]
+SPDX-License-Identifier = "MIT"
+
+[[annotations]]
 path = "Resources/Textures/**"
 precedence = "aggregate"
 SPDX-FileCopyrightText = ["SS14 contributors (Check meta files)", "2026 Sector Vestige contributors (modifications)"]

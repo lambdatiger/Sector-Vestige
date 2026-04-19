@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2026 Wizards Den contributors
+# SPDX-FileCopyrightText: 2026 Sector Vestige contributors (modifications)
+# SPDX-FileCopyrightText: 2026 Nico64 <74880554+NicoSGF64@users.noreply.github.com>
+# SPDX-FileCopyrightText: 2026 Pieter-Jan Briers <pieterjan.briers+git@gmail.com>
+# SPDX-FileCopyrightText: 2026 ReboundQ3 <22770594+ReboundQ3@users.noreply.github.com>
+# SPDX-FileCopyrightText: 2026 āda <ss.adasts@gmail.com>
+#
+# SPDX-License-Identifier: MIT
+
+## Role Loadouts
+
 - type: roleLoadout
   id: JobChiefMedicalOfficer
   groups:
@@ -7,8 +18,10 @@
   - ChiefMedicalOfficerJumpsuit
   - MedicalBackpack
   - ChiefMedicalOfficerOuterClothing
+  - MedicalGloves # SV
   - ChiefMedicalOfficerNeck
   - ChiefMedicalOfficerShoes
+  - Glasses
   - SurvivalMedical
   - Trinkets
 #  - ChiefMedicalOfficerJobTrinkets
@@ -24,8 +37,10 @@
   - MedicalDoctorJumpsuit
   - MedicalSpecializationBackpack # CD change from MedicalBackpack
   - MedicalDoctorOuterClothing
+  - MedicalGloves # SV
   - MedicalShoes
   - MedicalDoctorPDA
+  - Glasses
   - SurvivalMedical
   - Trinkets
 #  - MedicalDoctorJobTrinkets
@@ -38,6 +53,7 @@
   - GroupTankHarness
   - MedicalInternJumpsuit
   - MedicalBackpack
+  - Glasses
   - SurvivalMedical
   - Trinkets
 #  - MedicalInternJobTrinkets
@@ -52,7 +68,9 @@
   - ChemistJumpsuit
   - ChemistBackpack
   - ChemistOuterClothing
+  - MedicalGloves # SV
   - MedicalShoes
+  - Glasses
   - SurvivalMedical
   - Trinkets
 #  - ChemistJobTrinkets
@@ -66,11 +84,14 @@
   - ParamedicHead
   # CD: ETU Gear
   - ParamedicMask
+  # - MedicalMask # SV
   - ParamedicJumpsuit
   # CD: ETU Gear
   - MedicalBackpack
   - ParamedicOuterClothing
+  - ParamedicGloves # SV
   - ParamedicShoes
+  - Glasses
   - SurvivalMedical
   - Trinkets
 #  - ParamedicJobTrinkets

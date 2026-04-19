@@ -1489,3 +1489,200 @@ Entries:
       message: Dawn's plushie has a new owner.
   id: 205
   time: '2026-03-01T12:18:14.0000000+00:00'
+- author: qu4drivium
+  changes:
+    - type: Tweak
+      message: Cassettes now record for 20 minutes.
+  id: 206
+  time: '2026-03-04T10:14:35.0000000+00:00'
+- author: qu4drivium
+  changes:
+    - type: Fix
+      message: Increased some marking amounts.
+  id: 207
+  time: '2026-03-04T10:16:20.0000000+00:00'
+- author: qu4drivium
+  changes:
+    - type: Tweak
+      message: Moved the Supermatter guidebook page to its proper place.
+  id: 208
+  time: '2026-03-04T10:29:44.0000000+00:00'
+- author: qu4drivium
+  changes:
+    - type: Tweak
+      message: Decreased how often tips show in the endround and lobby.
+  id: 209
+  time: '2026-03-04T15:01:08.0000000+00:00'
+- author: qu4drivium
+  changes:
+    - type: Add
+      message: Physical SOP guidebooks can now be purchased from Cargo.
+  id: 210
+  time: '2026-03-05T10:03:50.0000000+00:00'
+- author: qu4drivium
+  changes:
+    - type: Fix
+      message: Fixed Plasma lacking Senior roles.
+  id: 211
+  time: '2026-03-05T15:44:16.0000000+00:00'
+- author: JuneSzalkowska
+  changes:
+    - type: Add
+      message: Added Captain's beret
+    - type: Add
+      message: Added CD Mechanic Jumpsuits to Senior and Station Engineer loadouts
+    - type: Tweak
+      message: >-
+        Hidden PDAs for jobs that cannot select a different one (i.e not a
+        scientist)
+    - type: Tweak
+      message: Uniforms are now grouped by outfit type
+    - type: Tweak
+      message: Plushies are now grouped together
+    - type: Fix
+      message: Restored Roboticist PDA
+    - type: Fix
+      message: Restored CD Engineering Uniforms
+    - type: Remove
+      message: Loadout categories no longer list the job title in their content
+  id: 212
+  time: '2026-03-06T09:18:15.0000000+00:00'
+- author: qu4drivium
+  changes:
+    - type: Fix
+      message: Cadets now have access to personal items.
+  id: 213
+  time: '2026-03-05T16:28:59.0000000+00:00'
+- author: qu4drivium
+  changes:
+    - type: Tweak
+      message: Felinids can now mrow, miao, miaou, and a few more.
+  id: 214
+  time: '2026-03-05T16:31:10.0000000+00:00'
+- author: qu4drivium
+  changes:
+    - type: Tweak
+      message: Slightly altered the ahelp text.
+  id: 215
+  time: '2026-03-06T10:02:21.0000000+00:00'
+- author: s3ptemb3rr
+  changes:
+    - type: Add
+      message: Added a personal item for Jager Grendel.
+  id: 216
+  time: '2026-03-13T14:44:20.0000000+00:00'
+- author: cooldolphin
+  changes:
+    - type: Add
+      message: melvyn satchel
+  id: 217
+  time: '2026-03-18T07:55:56.0000000+00:00'
+- author: purpleskittleo
+  changes:
+    - type: Add
+      message: Added a few new ambiences for GMs to play around with.
+    - type: Add
+      message: Added new lobby music.
+  id: 218
+  time: '2026-03-18T08:11:35.0000000+00:00'
+- author: OnyxTheBrave
+  changes:
+    - type: Add
+      message: Supermatter off gas event. The supermatter can now emit gases randomly.
+  id: 219
+  time: '2026-03-19T15:06:49.0000000+00:00'
+- author: BackeTako
+  changes:
+    - type: Add
+      message: Gila Personal item
+  id: 220
+  time: '2026-03-21T13:53:00.0000000+00:00'
+- author: s3ptemb3rr
+  changes:
+    - type: Add
+      message: Added leopard tail from RMC14
+  id: 221
+  time: '2026-04-01T06:56:43.0000000+00:00'
+- author: NicoSGF64
+  changes:
+    - type: Add
+      message: Added the senior researcher high-cut labcoat.
+    - type: Add
+      message: >-
+        Medical doctors, senior physicians and senior researchers now have
+        access to more labcoats.
+    - type: Fix
+      message: >-
+        Medical doctors no longer can commit stolen valor and wear the senior
+        physician labcoat.
+  id: 222
+  time: '2026-04-04T09:55:19.0000000+00:00'
+- author: cooldolphin
+  changes:
+    - type: Add
+      message: Tiger tail, double tiger tail, big cat tail, double normal cat tail.
+    - type: Fix
+      message: Leopard tail locale issue.
+  id: 223
+  time: '2026-04-04T15:25:05.0000000+00:00'
+- author: cooldolphin
+  changes:
+    - type: Add
+      message: You can pick up a lanyard in your trinket loadout now.
+  id: 224
+  time: '2026-04-05T15:35:56.0000000+00:00'
+- author: JacketedGaming
+  changes:
+    - type: Add
+      message: Some damaged Central Clothing.
+  id: 225
+  time: '2026-04-11T20:28:02.0000000+00:00'
+- author: NicoSGF64
+  changes:
+    - type: Add
+      message: The HoP has a new beret as well as new uniforms.
+    - type: Add
+      message: >-
+        All medical roles except for psychologists and medical interns now can
+        have gloves on their loadouts.
+    - type: Fix
+      message: Senior courier can no longer start shoeless.
+    - type: Fix
+      message: >-
+        Paramedics now can access their corresponding clothing both from their
+        loadout screen as well as opening the ETU can now included on their
+        locker.
+    - type: Fix
+      message: >-
+        Captains won't be forced to wear leather shoes anymore nor will a pair
+        appear on the floor magically.
+    - type: Tweak
+      message: >-
+        The CE, RD now have been assigned their corresponding berets instead of
+        generic departmental ones.
+  id: 226
+  time: '2026-04-12T15:51:49.0000000+00:00'
+- author: cooldolphin
+  changes:
+    - type: Add
+      message: Painkillers now available in medical at the start of the shift.
+  id: 227
+  time: '2026-04-15T17:28:43.0000000+00:00'
+- author: Boaz1111
+  changes:
+    - type: Add
+      message: Added synth markings from CD!
+  id: 228
+  time: '2026-04-16T13:29:15.0000000+00:00'
+- author: Boaz1111
+  changes:
+    - type: Remove
+      message: The end of round menu no longer shows information regarding antagonists.
+  id: 229
+  time: '2026-04-16T13:51:35.0000000+00:00'
+- author: Boaz1111
+  changes:
+    - type: Fix
+      message: Fixed some knives not fixing in lockers.
+  id: 230
+  time: '2026-04-18T16:07:25.0000000+00:00'
