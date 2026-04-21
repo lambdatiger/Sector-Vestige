@@ -47,6 +47,9 @@
     - genetic_eqip3.ogg
     - genetic_eqip4.ogg
     - genetic_eqip5.ogg
+    - generic_small_pickup.ogg
+    - drinkglass_pickup.ogg
+    - drinkglass_drop.ogg
   license: "CC-BY-SA-3.0"
   copyright: "https://github.com/ss220-space/Paradise/tree/master220/sound/items/handling/pickup"
   copyright: "https://github.com/Goob-Station/Goob-Station/pull/2940"
