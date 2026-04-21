@@ -6,7 +6,8 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 - files: ["onwards_postround_5m0s.ogg",
-          "shiftfall_stardust_4m02s.ogg"]
+          "shiftfall_stardust_4m02s.ogg",
+          "andromeda_reef_3m32s.ogg"]
   license: "CC-BY-4.0"
   copyright: "Created by purpleskittleo"
   source: "https://www.youtube.com/@purpleskittleo"
