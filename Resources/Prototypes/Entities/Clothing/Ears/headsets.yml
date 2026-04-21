@@ -63,6 +63,7 @@
   - type: Clothing
     slots:
     - ears
+    sprite: Clothing/Ears/Headsets/base.rsi
   # Goobstation edit start
   - type: EmitSoundOnPickup
     sound:
@@ -71,7 +72,6 @@
     sound:
       path: /Audio/_Goobstation/Items/Handling/generic_small_drop.ogg
   # Goobstation edit end
-    sprite: Clothing/Ears/Headsets/base.rsi
   - type: GuideHelp
     guides:
     - Radio
