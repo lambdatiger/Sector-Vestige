@@ -6,6 +6,10 @@
   - type: Clothing
     slots:
     - FEET
+  # Goobstation edit start
+    equipSound:
+      collection: GenericEquip
+  # Goobstation edit end
   - type: Sprite
     state: icon
   - type: Item

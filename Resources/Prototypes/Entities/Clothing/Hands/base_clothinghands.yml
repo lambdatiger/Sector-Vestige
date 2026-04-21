@@ -7,6 +7,10 @@
     state: icon
   - type: Clothing
     slots: [gloves]
+  # Goobstation edit start
+    equipSound:
+      collection: GenericEquip
+  # Goobstation edit end
   - type: Edible
     requiresSpecialDigestion: true
   - type: Item
