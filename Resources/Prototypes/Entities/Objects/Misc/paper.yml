@@ -99,27 +99,27 @@
   # Goobstation edit start
   - type: EmitSoundOnPickup
     sound:
-      path: /Audio/_Goobstation/Items/handling/paper_pickup.ogg
+      path: /Audio/_Goobstation/Items/Handling/paper_pickup.ogg
       params:
         volume: -8
   - type: EmitSoundOnDrop
     sound:
-      path: /Audio/_Goobstation/Items/handling/paper_drop.ogg
+      path: /Audio/_Goobstation/Items/Handling/paper_drop.ogg
       params:
         volume: -8
   - type: EmitSoundOnUse
     sound:
-      path: /Audio/_Goobstation/Items/handling/paper_use.ogg
+      path: /Audio/_Goobstation/Items/Handling/paper_use.ogg
       params:
         volume: -8
   - type: EmitSoundOnCollide
     sound:
-      path: /Audio/_Goobstation/Items/handling/paper_drop.ogg
+      path: /Audio/_Goobstation/Items/Handling/paper_drop.ogg
       params:
         volume: -8
   - type: EmitSoundOnThrow
     sound:
-      path: /Audio/_Goobstation/Items/handling/paper_throw.ogg
+      path: /Audio/_Goobstation/Items/Handling/paper_throw.ogg
       params:
         volume: -8
   # Goobstation edit end

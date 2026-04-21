@@ -52,7 +52,7 @@
       path: /Audio/_Goobstation/Items/Handling/weldingtool_drop.ogg
   - type: EmitSoundOnPickup
     sound:
-      path: /Audio/_Goobstation/Items/handling/weldingtool_pickup.ogg
+      path: /Audio/_Goobstation/Items/Handling/weldingtool_pickup.ogg
   - type: EmitSoundOnDrop
     sound:
       path: /Audio/Items/weldingtool_drop.ogg
