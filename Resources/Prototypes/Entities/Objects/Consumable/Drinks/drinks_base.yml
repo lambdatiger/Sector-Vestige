@@ -1,3 +1,12 @@
+# SPDX-FileCopyrightText: 2026 Wizards Den contributors
+# SPDX-FileCopyrightText: 2026 Sector Vestige contributors (modifications)
+# SPDX-FileCopyrightText: 2025 ReboundQ3 <ReboundQ3@gmail.com>
+# SPDX-FileCopyrightText: 2025 iaada <iaada@users.noreply.github.com>
+# SPDX-FileCopyrightText: 2025 āda <ss.adasts@gmail.com>
+# SPDX-FileCopyrightText: 2026 Zamshi8 <235235723+Zamshi8@users.noreply.github.com>
+#
+# SPDX-License-Identifier: MIT
+
 # When adding new drinks also add to random spawner located in Resources\Prototypes\Entities\Markers\Spawners\Random\Food_Drinks\
 
 # Inheritors are an easily and freely accessible solution like cups, teapots, cans, flasks, bottles, or beakers.
@@ -6,6 +15,18 @@
   parent: BaseItem
   id: DrinkBase
   components:
+  # Goobstation edit start
+  - type: EmitSoundOnPickup
+    sound:
+      path: /Audio/_Goobstation/Items/Handling/drinkglass_pickup.ogg
+      params:
+        volume: -7
+  - type: EmitSoundOnDrop
+    sound:
+      path: /Audio/_Goobstation/Items/Handling/drinkglass_drop.ogg
+      params:
+        volume: -7
+  # Goobstation edit end
   - type: Sprite
     state: icon
   - type: MeleeWeapon
