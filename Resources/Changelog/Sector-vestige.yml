@@ -1686,3 +1686,9 @@ Entries:
       message: Fixed some knives not fixing in lockers.
   id: 230
   time: '2026-04-18T16:07:25.0000000+00:00'
+- author: Zamshi8
+  changes:
+    - type: Add
+      message: Added new pickup, drop and equip sounds to some items and clothing
+  id: 231
+  time: '2026-04-24T18:22:52.0000000+00:00'
