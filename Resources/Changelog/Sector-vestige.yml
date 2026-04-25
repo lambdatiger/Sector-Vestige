@@ -1668,3 +1668,27 @@ Entries:
       message: Painkillers now available in medical at the start of the shift.
   id: 227
   time: '2026-04-15T17:28:43.0000000+00:00'
+- author: Boaz1111
+  changes:
+    - type: Add
+      message: Added synth markings from CD!
+  id: 228
+  time: '2026-04-16T13:29:15.0000000+00:00'
+- author: Boaz1111
+  changes:
+    - type: Remove
+      message: The end of round menu no longer shows information regarding antagonists.
+  id: 229
+  time: '2026-04-16T13:51:35.0000000+00:00'
+- author: Boaz1111
+  changes:
+    - type: Fix
+      message: Fixed some knives not fixing in lockers.
+  id: 230
+  time: '2026-04-18T16:07:25.0000000+00:00'
+- author: Zamshi8
+  changes:
+    - type: Add
+      message: Added new pickup, drop and equip sounds to some items and clothing
+  id: 231
+  time: '2026-04-24T18:22:52.0000000+00:00'
