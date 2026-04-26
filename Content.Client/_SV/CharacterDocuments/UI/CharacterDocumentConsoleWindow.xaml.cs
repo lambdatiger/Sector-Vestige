@@ -85,7 +85,9 @@ public sealed partial class CharacterDocumentConsoleWindow : DefaultWindow
 
         ScanButton.OnPressed += _ =>
         {
-            OnButtonScanPressed?.Invoke(_selectedPlayer, TitleInput.Text);
+            var popup = new CharacterDocumentTitlePopup();
+            popup.OnConfirmed += title => OnButtonScanPressed?.Invoke(_selectedPlayer, title);
+            popup.OpenCentered();
         };
 
         DeleteButton.OnPressed += _ =>

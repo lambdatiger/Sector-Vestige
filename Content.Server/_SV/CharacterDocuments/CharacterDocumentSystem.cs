@@ -45,6 +45,7 @@ public sealed partial class CharacterDocumentSystem : EntitySystem
         if (!HasComp<CharacterDocumentComponent>(player) && HasComp<HumanoidProfileComponent>(player))
         {
             AddComp<CharacterDocumentComponent>(player);
+            AddComp<SVCriminalRecordsComponent>(player); // TODO: seperate this from the docs to a criminalsystem to make it persistant...
             var comp = Comp<CharacterDocumentComponent>(player);
             comp.ProfileName = args.Profile.Name;
         }
@@ -113,6 +114,7 @@ public sealed partial class CharacterDocumentSystem : EntitySystem
             return;
 
         var id = docComp.Documents.Count == 0 ? 1 : docComp.Documents.Keys.Max() + 1;
+        characterDocument.DocID = id;
         docComp.Documents.Add(id, characterDocument);
 
         var dbDocs = docComp.Documents.Values.Select(doc => new SVModel.CharacterDocument

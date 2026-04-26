@@ -233,13 +233,11 @@ public sealed class CharacterDocumentConsoleSystem : EntitySystem
 
         var stamps = new List<StampDisplayInfo>();
         string stampState = string.Empty;
-        if (comp.SelectedDocument?.DocStamps != null)
+        if (comp.SelectedDocument?.DocStamps is { Count: > 0 } docStamps)
         {
-            stampState = comp.SelectedDocument.DocStamps[0].DocStampState;
-            foreach (CharacterDocumentStamp stamp in comp.SelectedDocument.DocStamps)
-            {
+            stampState = docStamps[0].DocStampState;
+            foreach (var stamp in docStamps)
                 stamps.Add(stamp.DocStamp);
-            }
         }
 
         if (!TryComp<PaperComponent>(printed, out var paperComponent))
