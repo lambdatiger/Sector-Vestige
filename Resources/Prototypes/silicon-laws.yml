@@ -623,8 +623,8 @@
     OverlordLawset: 0.25 # SV: 0.5 -> 0.25
     GameMasterLawset: 0.5
     PainterLawset: 1
-    AntimovLawset: 0.05 # SV: 0.25 -> 0.05
+    AntimovLawset: 0.01 # SV: 0.25 -> 0.01
     NutimovLawset: 0.5
     Ninja: 0.05 # SV: 0.25 -> 0.05
-    MothershipCoreLawset: 0.05 # SV: 0.25 -> 0.05
-    XenoborgLawset: 0.05 # SV: 0.25 -> 0.05
+    MothershipCoreLawset: 0.01 # SV: 0.25 -> 0.01
+    XenoborgLawset: 0.01 # SV: 0.25 -> 0.01
