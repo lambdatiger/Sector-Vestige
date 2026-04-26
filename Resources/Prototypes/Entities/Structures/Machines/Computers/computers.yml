@@ -369,14 +369,28 @@
     color: "#1f8c28"
   - type: Computer
     board: MedicalRecordsComputerCircuitboard
-  - type: CharacterRecordConsole
-    consoleType: Medical
+  - type: CharacterDocumentConsole #SV - CharacterDocuments
+    documentType: Medical
+    paperSlot:
+      insertSound: /Audio/Machines/scanning.ogg
+      ejectSound: /Audio/Machines/tray_eject.ogg
+      # whitelist:
+      #   components:
+      #     - FaxableObject #used to be PaperComponent - brainfood1183
+      # blacklist:
+      #   components:
+      #     - CargoSlip
+  - type: ContainerContainer #SV - CharacterDocuments
+    containers:
+      Paper: !type:ContainerSlot
   - type: UserInterface
     interfaces:
-      enum.CharacterRecordConsoleKey.Key:
-        type: CharacterRecordConsoleBoundUserInterface
+        enum.CharacterDocumentConsoleUiKey.Key:
+          type: CharacterDocumentConsoleBoundUserInterface #SV - CharacterDocuments
+        enum.WiresUiKey.Key:
+          type: WiresBoundUserInterface
   - type: ActivatableUI
-    key: enum.CharacterRecordConsoleKey.Key
+    key: enum.CharacterDocumentConsoleUiKey.Key
 
 - type: entity
   parent: BaseComputerAiAccess
@@ -387,12 +401,6 @@
     # We need to have both a CriminalRecordsConsole and CharacterRecordConsole
     # component to be able to set wanted status.
   - type: CriminalRecordsConsole
-  - type: UserInterface
-    interfaces:
-      enum.CharacterRecordConsoleKey.Key:
-        type: CharacterRecordConsoleBoundUserInterface
-      enum.WiresUiKey.Key:
-        type: WiresBoundUserInterface
   - type: Sprite
     layers:
     - map: ["computerLayerBody"]
@@ -414,10 +422,25 @@
     board: CriminalRecordsComputerCircuitboard
   - type: AccessReader
     access: [["Security"]]
-  - type: CharacterRecordConsole
-    consoleType: Security
+  - type: CharacterDocumentConsole #SV - CharacterDocuments
+    documentType: Security
+    paperSlot:
+      insertSound: /Audio/Machines/scanning.ogg
+      ejectSound: /Audio/Machines/tray_eject.ogg
+      # whitelist:
+      #   components:
+      #     - FaxableObject #used to be PaperComponent - brainfood1183
+      # blacklist:
+      #   components:
+      #     - CargoSlip
+  - type: UserInterface
+    interfaces:
+        enum.CharacterDocumentConsoleUiKey.Key:
+          type: CharacterDocumentConsoleBoundUserInterface #SV - CharacterDocuments
+        enum.WiresUiKey.Key:
+          type: WiresBoundUserInterface
   - type: ActivatableUI
-    key: enum.CharacterRecordConsoleKey.Key
+    key: enum.CharacterDocumentConsoleUiKey.Key
 
 - type: entity
   parent: BaseComputerAiAccess

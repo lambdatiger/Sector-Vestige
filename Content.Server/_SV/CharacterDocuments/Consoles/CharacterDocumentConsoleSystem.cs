@@ -20,6 +20,11 @@ using Content.Shared.Coordinates;
 using Robust.Shared.Utility;
 using Content.Shared.Fax.Components;
 using System.Threading.Tasks;
+using Content.Server.CriminalRecords.Systems;
+using Content.Server.StationRecords.Systems;
+using Content.Server.Station.Systems;
+using Content.Shared.StationRecords;
+using Robust.Shared.Player;
 
 namespace Content.Server._SV.CharacterDocuments.Consoles;
 
@@ -35,6 +40,10 @@ public sealed class CharacterDocumentConsoleSystem : EntitySystem
     [Dependency] private readonly MetaDataSystem _metaData = default!;
     [Dependency] private readonly PaperSystem _paperSystem = default!;
     [Dependency] private readonly AppearanceSystem _appearanceSystem = default!;
+    [Dependency] private readonly CriminalRecordsSystem _criminalRecords = default!;
+    [Dependency] private readonly StationRecordsSystem _stationRecords = default!;
+    [Dependency] private readonly StationSystem _stationSystem = default!;
+
 
 
     public override void Initialize()
@@ -54,6 +63,7 @@ public sealed class CharacterDocumentConsoleSystem : EntitySystem
         SubscribeLocalEvent<CharacterDocumentConsoleComponent, EntRemovedFromContainerMessage>(OnSlotChanged);
         SubscribeLocalEvent<CharacterDocumentConsoleComponent, CharacterDocumentPrint>(OnDocumentPrint);
         SubscribeLocalEvent<CharacterDocumentConsoleComponent, CharacterDocumentEdit>(OnDocumentEdit);
+        SubscribeLocalEvent<CharacterDocumentConsoleComponent, CharacterDocumentSecurityStatus>(OnSecurityStatusChange);
 
     }
 
@@ -76,8 +86,12 @@ public sealed class CharacterDocumentConsoleSystem : EntitySystem
             var player = GetEntity(comp.SelectedPlayer);
             if (TryComp<CharacterDocumentComponent>(player, out var docComp))
             {
+                var filteredDocs = docComp.Documents
+                    .Where(d => d.Value.DocType == (int)comp.DocumentType)
+                    .ToDictionary(d => d.Key, d => d.Value);
+
                 bool paperinserted = comp.PaperSlot.ContainerSlot?.ContainedEntity != null;
-                var state = new CharacterDocumentConsoleState(netPlayerEntities, comp.SelectedPlayer, docComp.Documents, null, paperinserted);
+                var state = new CharacterDocumentConsoleState(netPlayerEntities, comp.SelectedPlayer, filteredDocs, null, paperinserted);
                 _userInterfaceSystem.SetUiState(uid, CharacterDocumentConsoleUiKey.Key, state);
             }
             else
@@ -148,9 +162,13 @@ public sealed class CharacterDocumentConsoleSystem : EntitySystem
         foreach (var (playerUid, name) in stationComponent.PlayerEntities)
             netPlayerEntities.Add(GetNetEntity(playerUid), name);
 
+        var filteredDocs = documentComponent.Documents
+            .Where(d => d.Value.DocType == (int)comp.DocumentType)
+            .ToDictionary(d => d.Key, d => d.Value);
+
         comp.SelectedPlayer = args.Player;
         bool paperinserted = comp.PaperSlot.ContainerSlot?.ContainedEntity != null;
-        var characterDocumentConsoleState = new CharacterDocumentConsoleState(netPlayerEntities, args.Player, documentComponent.Documents, null, paperinserted);
+        var characterDocumentConsoleState = new CharacterDocumentConsoleState(netPlayerEntities, args.Player, filteredDocs, null, paperinserted);
         _userInterfaceSystem.SetUiState(uid, CharacterDocumentConsoleUiKey.Key, characterDocumentConsoleState);
     }
 
@@ -173,8 +191,12 @@ public sealed class CharacterDocumentConsoleSystem : EntitySystem
         foreach (var (playerUid, name) in stationComponent.PlayerEntities)
             netPlayerEntities.Add(GetNetEntity(playerUid), name);
 
+        var filteredDocs = documentComponent.Documents
+            .Where(d => d.Value.DocType == (int)comp.DocumentType)
+            .ToDictionary(d => d.Key, d => d.Value);
+
         bool paperinserted = comp.PaperSlot.ContainerSlot?.ContainedEntity != null;
-        var characterDocumentConsoleState = new CharacterDocumentConsoleState(netPlayerEntities, args.Player, documentComponent.Documents, selecteddoc, paperinserted);
+        var characterDocumentConsoleState = new CharacterDocumentConsoleState(netPlayerEntities, args.Player, filteredDocs, selecteddoc, paperinserted);
         _userInterfaceSystem.SetUiState(uid, CharacterDocumentConsoleUiKey.Key, characterDocumentConsoleState);
     }
 
@@ -296,8 +318,12 @@ public sealed class CharacterDocumentConsoleSystem : EntitySystem
             ? reloadedDoc
             : newCharacterDoc;
 
+        var filteredDocs = documentComponent.Documents
+            .Where(d => d.Value.DocType == (int)comp.DocumentType)
+            .ToDictionary(d => d.Key, d => d.Value);
+
         bool paperinserted = comp.PaperSlot.ContainerSlot?.ContainedEntity != null;
-        var characterDocumentConsoleState = new CharacterDocumentConsoleState(netPlayerEntities, args.Player, documentComponent.Documents, newCharacterDoc, paperinserted);
+        var characterDocumentConsoleState = new CharacterDocumentConsoleState(netPlayerEntities, args.Player, filteredDocs, newCharacterDoc, paperinserted);
         _userInterfaceSystem.SetUiState(uid, CharacterDocumentConsoleUiKey.Key, characterDocumentConsoleState);
     }
 
@@ -337,7 +363,11 @@ public sealed class CharacterDocumentConsoleSystem : EntitySystem
 
         if (TryComp<CharacterDocumentComponent>(player, out var docComp))
         {
-            var state = new CharacterDocumentConsoleState(netPlayerEntities, comp.SelectedPlayer, docComp.Documents, comp.SelectedDocument, isPaperInserted);
+            var filteredDocs = docComp.Documents
+                .Where(d => d.Value.DocType == (int)comp.DocumentType)
+                .ToDictionary(d => d.Key, d => d.Value);
+
+            var state = new CharacterDocumentConsoleState(netPlayerEntities, comp.SelectedPlayer, filteredDocs, comp.SelectedDocument, isPaperInserted);
             _userInterfaceSystem.SetUiState(uid, CharacterDocumentConsoleUiKey.Key, state);
         }
         else
@@ -346,6 +376,36 @@ public sealed class CharacterDocumentConsoleSystem : EntitySystem
             _userInterfaceSystem.SetUiState(uid, CharacterDocumentConsoleUiKey.Key, state);
         }
     }
+
+    /// Security area
+    public void OnSecurityStatusChange(EntityUid uid, CharacterDocumentConsoleComponent comp, CharacterDocumentSecurityStatus args)
+    {
+        var player = GetEntity(args.Player);
+        var station = _stationSystem.GetOwningStation(uid);
+        if (station == null)
+            return;
+
+        if (!TryComp<StationRecordsComponent>(station, out var stationRecords))
+            return;
+
+        if (!TryComp<CharacterDocumentComponent>(player, out var docComp))
+            return;
+
+        var listing = _stationRecords.BuildListing((station.Value, stationRecords), null);
+        var recordKey = listing.FirstOrDefault(x => x.Value == docComp.ProfileName);
+        if (recordKey.Key == 0)
+            return;
+
+        var key = new StationRecordKey(recordKey.Key, station.Value);
+        _criminalRecords.TryChangeStatus(key, args.Status, args.Reason, null);
+    }
+
+    private void RefreshSecurityConsoleState(EntityUid uid, CharacterDocumentConsoleComponent comp)
+    {
+
+    }
+
+
 
     // private void ProcessInsertingAnimation(EntityUid uid, float frameTime, CharacterDocumentConsoleComponent comp)
     // {

@@ -1,6 +1,7 @@
 
 using Content.Shared._SV.CharacterDocuments;
 using Content.Shared.Containers.ItemSlots;
+using Content.Shared.Security;
 using Content.Shared.StationRecords;
 using Robust.Shared.Audio;
 
@@ -72,5 +73,15 @@ public sealed partial class CharacterDocumentConsoleComponent : Component
     /// </summary>
     [DataField]
     public SoundSpecifier ErrorSound = new SoundPathSpecifier("/Audio/Effects/Cargo/buzz_sigh.ogg");
+
+
+    /// Security console specefic rules
+
+    [DataField]
+    public SecurityStatus SecurityStatus;
+
+    [DataField]
+    public string? SecurityReason;
+
 
 }

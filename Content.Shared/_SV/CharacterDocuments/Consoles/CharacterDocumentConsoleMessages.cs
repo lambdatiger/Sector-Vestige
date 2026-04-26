@@ -1,3 +1,4 @@
+using Content.Shared.Security;
 using Robust.Shared.Serialization;
 
 namespace Content.Shared._SV.CharacterDocuments.Consoles;
@@ -46,4 +47,12 @@ public sealed class CharacterDocumentEdit : BoundUserInterfaceMessage
 {
     public NetEntity Player;
     public CharacterDocument? CharacterDocument;
+}
+
+[Serializable, NetSerializable]
+public sealed class CharacterDocumentSecurityStatus : BoundUserInterfaceMessage
+{
+    public NetEntity Player;
+    public SecurityStatus Status;
+    public string? Reason;
 }

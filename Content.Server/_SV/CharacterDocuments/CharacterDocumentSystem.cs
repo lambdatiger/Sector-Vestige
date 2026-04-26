@@ -12,6 +12,10 @@ using Content.Shared.StationRecords;
 using Robust.Shared.Player;
 using Robust.Server.Player;
 using Robust.Shared.Network;
+using Content.Server._SV.CharacterDocuments.Consoles;
+using Content.Shared._SV.CharacterDocuments.Consoles;
+using Content.Server.CriminalRecords.Systems;
+using Content.Server.Station.Systems;
 
 namespace Content.Server._SV.CharacterDocuments;
 
@@ -19,6 +23,9 @@ public sealed partial class CharacterDocumentSystem : EntitySystem
 {
     [Dependency] private readonly IServerDbManager _db = default!;
     [Dependency] private readonly IPlayerManager _playerManager = default!;
+    [Dependency] private readonly CriminalRecordsSystem _criminalRecords = default!;
+    [Dependency] private readonly StationRecordsSystem _stationRecords = default!;
+    [Dependency] private readonly StationSystem _stationSystem = default!;
 
     public override void Initialize()
     {
@@ -45,7 +52,6 @@ public sealed partial class CharacterDocumentSystem : EntitySystem
         if (!HasComp<CharacterDocumentComponent>(player) && HasComp<HumanoidProfileComponent>(player))
         {
             AddComp<CharacterDocumentComponent>(player);
-            AddComp<SVCriminalRecordsComponent>(player); // TODO: seperate this from the docs to a criminalsystem to make it persistant...
             var comp = Comp<CharacterDocumentComponent>(player);
             comp.ProfileName = args.Profile.Name;
         }
