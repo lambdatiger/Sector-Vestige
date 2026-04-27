@@ -17,6 +17,7 @@
 # SPDX-FileCopyrightText: 2026 Zamshi8 <235235723+Zamshi8@users.noreply.github.com>
 # SPDX-FileCopyrightText: 2026 lambdatiger <11843718+lambdatiger@users.noreply.github.com>
 # SPDX-FileCopyrightText: 2026 lambdatiger <spam.stnuocca.sl@gmail.com>
+# SPDX-FileCopyrightText: 2026 lunarcomets <lunarcomets2@gmail.com>
 # SPDX-FileCopyrightText: 2026 qu4drivium <aaronholiver@outlook.com>
 # SPDX-FileCopyrightText: 2026 riv <234791249+qu4drivium@users.noreply.github.com>
 # SPDX-FileCopyrightText: 2026 s3ptemb3rr (GitHub)
@@ -152,3 +153,13 @@
   parent: MedicalGloves
   loadouts:
   - GlovesETUGauntlet # CD
+
+# Ai laws
+- type: loadoutGroup
+  id: StationAiLawset
+  name: loadout-group-ai-lawset
+  minLimit: 1
+  maxLimit: 1
+  loadouts:
+  - Crewsimov
+  - NTDefault
