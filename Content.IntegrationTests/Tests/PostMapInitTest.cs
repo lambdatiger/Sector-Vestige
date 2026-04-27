@@ -130,7 +130,8 @@ namespace Content.IntegrationTests.Tests
             {"/Maps/Shuttles/ShuttleEvent/instigator.yml", ["ShuttleGunFriendship"]},
             {"/Maps/_LateStation/shuttles/avenger.yml", ["ShuttleGunSvalinnMachineGun", "ShuttleGunDuster"]},
             {"/Maps/_SV/cluster.yml", ["RubberStampMime"]},
-            {"/Maps/_SV/Shuttles/Syndicate/big/MambaFixed.yml", ["RubberStampSyndicate", "ShuttleGunDuster", "ShuttleGunDusterCircuitboard"]}, //SV Custom Syndi shuttle
+            {"/Maps/_SV/Shuttles/Syndicate/big/Mamba.yml", ["RubberStampSyndicate", "ShuttleGunDuster", "ShuttleGunDusterCircuitboard"]}, //SV Custom Syndi shuttle
+            {"/Maps/_SV/Shuttles/Syndicate/big/CopperHead.yml", ["RubberStampSyndicate", "ShuttleGunDuster", "ShuttleGunDusterCircuitboard"]}, //SV Custom Syndi shuttle
         };
 
         /// <summary>
