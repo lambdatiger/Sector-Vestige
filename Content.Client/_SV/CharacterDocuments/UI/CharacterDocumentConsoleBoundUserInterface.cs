@@ -1,5 +1,6 @@
 using Content.Shared._SV.CharacterDocuments;
 using Content.Shared._SV.CharacterDocuments.Consoles;
+using Content.Shared.Security;
 using Robust.Client.UserInterface;
 
 namespace Content.Client._SV.CharacterDocuments.UI;
@@ -25,6 +26,13 @@ public sealed class CharacterDocumentConsoleBoundUserInterface : BoundUserInterf
         _window.OnButtonDeletePressed += (player, doc) => SendMessage(new CharacterDocumentDelete { Player = player, CharacterDocument = doc });
         _window.OnButtonEditPressed += (player, doc) => SendMessage(new CharacterDocumentEdit { Player = player, CharacterDocument = doc });
         _window.OnDocumentDeselected += () => SendMessage(new CharacterDocumentDeselect());
+        _window.OnStatusButtonPressed += player =>
+        {
+            var popup = new CharacterDocumentStatusPopup();
+            popup.OnConfirmed += (status, reason) =>
+                SendMessage(new CharacterDocumentSecurityStatus { Player = player, Status = status, Reason = reason });
+            popup.OpenCentered();
+        };
 
     }
 

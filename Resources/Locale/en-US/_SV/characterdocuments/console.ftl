@@ -7,6 +7,11 @@ sv-document-console-print-button = Print
 sv-document-console-edit-button = Edit
 sv-document-console-delete-button = Delete
 sv-document-console-delete-button-confirm = Confirm?
+sv-document-console-status-button = Set Status
+sv-document-console-security-status-label = Status:
+sv-document-console-security-reason-label = Reason:
+sv-document-console-security-none = None
+sv-document-console-security-na = N/A
 
 sv-document-console-author-label = Author:
 sv-document-console-author-label-value = {$DocAuthor}

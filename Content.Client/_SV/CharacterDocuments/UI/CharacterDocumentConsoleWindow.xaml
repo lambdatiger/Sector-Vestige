@@ -27,19 +27,26 @@
                         </PanelContainer>
                         <!-- Bottom control panel -->
                         <LineEdit Name="TitleInput" PlaceHolder="{Loc 'sv-document-console-title-input'}" VerticalAlignment="Top" HorizontalExpand="True" Editable="False"/>
-                        <BoxContainer Orientation="Horizontal" Margin="0" HorizontalExpand="True" MinHeight="75" MaxHeight="75" VerticalAlignment="Bottom" >
+                        <BoxContainer Orientation="Horizontal" Margin="0" HorizontalExpand="True" MinHeight="75" VerticalAlignment="Bottom" >
                             <Label Name="ControlPanelStatus"/>
                             <!-- Left Control panel -->
                             <PanelContainer MinWidth="250" MaxWidth="250" VerticalExpand="True" HorizontalAlignment="Left" Margin="0 5 0 0">
-                                <BoxContainer>
-                                    <BoxContainer HorizontalAlignment="Left" Orientation="Vertical" Margin="0 0 5 0">
-                                            <Label Name="DocAuthorLabel" Text="{Loc 'sv-document-console-author-label'}"/>
-                                            <Label Name="DocDateLabel" Text="{Loc 'sv-document-console-date-label'}"/>
+                                <BoxContainer Orientation="Vertical">
+                                    <BoxContainer>
+                                        <BoxContainer HorizontalAlignment="Left" Orientation="Vertical" Margin="0 0 5 0">
+                                                <Label Name="DocAuthorLabel" Text="{Loc 'sv-document-console-author-label'}"/>
+                                                <Label Name="DocDateLabel" Text="{Loc 'sv-document-console-date-label'}"/>
+                                                <Label Name="DocSecurityStatusLabel" Text="{Loc 'sv-document-console-security-status-label'}" Visible="False"/>
+                                                <Label Name="DocSecurityReasonLabel" Text="{Loc 'sv-document-console-security-reason-label'}" Visible="False"/>
+                                        </BoxContainer>
+                                        <BoxContainer HorizontalExpand="True" Orientation="Vertical" StyleClasses="BorderedWindowPanel">
+                                            <Label Name="DocAuthorLabelValue" Text="{Loc 'sv-document-console-author-label-value'}"/>
+                                            <Label Name="DocDateLabelValue" Text="{Loc 'sv-document-console-date-label-value'}"/>
+                                            <Label Name="DocSecurityStatusLabelValue" Text="-" Visible="False" ClipText="True"/>
+                                            <Label Name="DocSecurityReasonLabelValue" Text="-" Visible="False" ClipText="True"/>
+                                        </BoxContainer>
                                     </BoxContainer>
-                                    <BoxContainer HorizontalAlignment="Right" Orientation="Vertical" StyleClasses="BorderedWindowPanel">
-                                        <Label Name="DocAuthorLabelValue" Text="{Loc 'sv-document-console-author-label-value'}"/>
-                                        <Label Name="DocDateLabelValue" Text="{Loc 'sv-document-console-date-label-value'}"/>
-                                    </BoxContainer>
+                                    <Button Name="StatusButton" Text="{Loc 'sv-document-console-status-button'}" HorizontalExpand="True" Visible="False"/>
                                 </BoxContainer>
                             </PanelContainer>
                             <!-- Right Control panel -->

@@ -21,10 +21,15 @@ using Robust.Shared.Utility;
 using Content.Shared.Fax.Components;
 using System.Threading.Tasks;
 using Content.Server.CriminalRecords.Systems;
+using Content.Server.Radio.EntitySystems;
 using Content.Server.StationRecords.Systems;
 using Content.Server.Station.Systems;
+using Content.Shared.CriminalRecords;
+using Content.Shared.Radio;
+using Content.Shared.Security;
 using Content.Shared.StationRecords;
 using Robust.Shared.Player;
+using Robust.Shared.Prototypes;
 
 namespace Content.Server._SV.CharacterDocuments.Consoles;
 
@@ -41,8 +46,11 @@ public sealed class CharacterDocumentConsoleSystem : EntitySystem
     [Dependency] private readonly PaperSystem _paperSystem = default!;
     [Dependency] private readonly AppearanceSystem _appearanceSystem = default!;
     [Dependency] private readonly CriminalRecordsSystem _criminalRecords = default!;
+    [Dependency] private readonly RadioSystem _radio = default!;
     [Dependency] private readonly StationRecordsSystem _stationRecords = default!;
     [Dependency] private readonly StationSystem _stationSystem = default!;
+
+    private static readonly ProtoId<RadioChannelPrototype> SecurityChannel = "Security";
 
 
 
@@ -91,13 +99,13 @@ public sealed class CharacterDocumentConsoleSystem : EntitySystem
                     .ToDictionary(d => d.Key, d => d.Value);
 
                 bool paperinserted = comp.PaperSlot.ContainerSlot?.ContainedEntity != null;
-                var state = new CharacterDocumentConsoleState(netPlayerEntities, comp.SelectedPlayer, filteredDocs, null, paperinserted);
+                var state = new CharacterDocumentConsoleState(netPlayerEntities, comp.SelectedPlayer, filteredDocs, null, paperinserted, comp.DocumentType);
                 _userInterfaceSystem.SetUiState(uid, CharacterDocumentConsoleUiKey.Key, state);
             }
             else
             {
                 bool paperinserted = comp.PaperSlot.ContainerSlot?.ContainedEntity != null;
-                var characterDocumentConsoleState = new CharacterDocumentConsoleState(netPlayerEntities, null, null, null, paperinserted);
+                var characterDocumentConsoleState = new CharacterDocumentConsoleState(netPlayerEntities, null, null, null, paperinserted, comp.DocumentType);
                 _userInterfaceSystem.SetUiState(uid, CharacterDocumentConsoleUiKey.Key, characterDocumentConsoleState);
             }
         }
@@ -122,7 +130,7 @@ public sealed class CharacterDocumentConsoleSystem : EntitySystem
             netPlayerEntities.Add(GetNetEntity(playerUid), name);
 
         bool paperinserted = comp.PaperSlot.ContainerSlot?.ContainedEntity != null || false;
-        var characterDocumentConsoleState = new CharacterDocumentConsoleState(netPlayerEntities, null, null, null, paperinserted);
+        var characterDocumentConsoleState = new CharacterDocumentConsoleState(netPlayerEntities, null, null, null, paperinserted, comp.DocumentType);
         _userInterfaceSystem.SetUiState(uid, CharacterDocumentConsoleUiKey.Key, characterDocumentConsoleState);
     }
 
@@ -142,7 +150,7 @@ public sealed class CharacterDocumentConsoleSystem : EntitySystem
             netPlayerEntities.Add(GetNetEntity(playerUid), name);
 
         bool paperinserted = comp.PaperSlot.ContainerSlot?.ContainedEntity != null || false;
-        var characterDocumentConsoleState = new CharacterDocumentConsoleState(netPlayerEntities, null, null, null, paperinserted);
+        var characterDocumentConsoleState = new CharacterDocumentConsoleState(netPlayerEntities, null, null, null, paperinserted, comp.DocumentType);
         _userInterfaceSystem.SetUiState(uid, CharacterDocumentConsoleUiKey.Key, characterDocumentConsoleState);
     }
 
@@ -168,7 +176,12 @@ public sealed class CharacterDocumentConsoleSystem : EntitySystem
 
         comp.SelectedPlayer = args.Player;
         bool paperinserted = comp.PaperSlot.ContainerSlot?.ContainedEntity != null;
-        var characterDocumentConsoleState = new CharacterDocumentConsoleState(netPlayerEntities, args.Player, filteredDocs, null, paperinserted);
+
+        var (secStatus, secReason) = comp.DocumentType == DocumentType.Security
+            ? GetCriminalStatus(uid, documentComponent)
+            : (SecurityStatus.None, null);
+
+        var characterDocumentConsoleState = new CharacterDocumentConsoleState(netPlayerEntities, args.Player, filteredDocs, null, paperinserted, comp.DocumentType, secStatus, secReason);
         _userInterfaceSystem.SetUiState(uid, CharacterDocumentConsoleUiKey.Key, characterDocumentConsoleState);
     }
 
@@ -196,7 +209,12 @@ public sealed class CharacterDocumentConsoleSystem : EntitySystem
             .ToDictionary(d => d.Key, d => d.Value);
 
         bool paperinserted = comp.PaperSlot.ContainerSlot?.ContainedEntity != null;
-        var characterDocumentConsoleState = new CharacterDocumentConsoleState(netPlayerEntities, args.Player, filteredDocs, selecteddoc, paperinserted);
+
+        var (secStatus, secReason) = comp.DocumentType == DocumentType.Security
+            ? GetCriminalStatus(uid, documentComponent)
+            : (SecurityStatus.None, null);
+
+        var characterDocumentConsoleState = new CharacterDocumentConsoleState(netPlayerEntities, args.Player, filteredDocs, selecteddoc, paperinserted, comp.DocumentType, secStatus, secReason);
         _userInterfaceSystem.SetUiState(uid, CharacterDocumentConsoleUiKey.Key, characterDocumentConsoleState);
     }
 
@@ -323,7 +341,7 @@ public sealed class CharacterDocumentConsoleSystem : EntitySystem
             .ToDictionary(d => d.Key, d => d.Value);
 
         bool paperinserted = comp.PaperSlot.ContainerSlot?.ContainedEntity != null;
-        var characterDocumentConsoleState = new CharacterDocumentConsoleState(netPlayerEntities, args.Player, filteredDocs, newCharacterDoc, paperinserted);
+        var characterDocumentConsoleState = new CharacterDocumentConsoleState(netPlayerEntities, args.Player, filteredDocs, newCharacterDoc, paperinserted, comp.DocumentType);
         _userInterfaceSystem.SetUiState(uid, CharacterDocumentConsoleUiKey.Key, characterDocumentConsoleState);
     }
 
@@ -367,12 +385,12 @@ public sealed class CharacterDocumentConsoleSystem : EntitySystem
                 .Where(d => d.Value.DocType == (int)comp.DocumentType)
                 .ToDictionary(d => d.Key, d => d.Value);
 
-            var state = new CharacterDocumentConsoleState(netPlayerEntities, comp.SelectedPlayer, filteredDocs, comp.SelectedDocument, isPaperInserted);
+            var state = new CharacterDocumentConsoleState(netPlayerEntities, comp.SelectedPlayer, filteredDocs, comp.SelectedDocument, isPaperInserted, comp.DocumentType);
             _userInterfaceSystem.SetUiState(uid, CharacterDocumentConsoleUiKey.Key, state);
         }
         else
         {
-            var state = new CharacterDocumentConsoleState(netPlayerEntities, null, null, comp.SelectedDocument, isPaperInserted);
+            var state = new CharacterDocumentConsoleState(netPlayerEntities, null, null, comp.SelectedDocument, isPaperInserted, comp.DocumentType);
             _userInterfaceSystem.SetUiState(uid, CharacterDocumentConsoleUiKey.Key, state);
         }
     }
@@ -393,16 +411,69 @@ public sealed class CharacterDocumentConsoleSystem : EntitySystem
 
         var listing = _stationRecords.BuildListing((station.Value, stationRecords), null);
         var recordKey = listing.FirstOrDefault(x => x.Value == docComp.ProfileName);
-        if (recordKey.Key == 0)
+        if (recordKey.Value == null)
             return;
 
         var key = new StationRecordKey(recordKey.Key, station.Value);
-        _criminalRecords.TryChangeStatus(key, args.Status, args.Reason, null);
+        if (!_criminalRecords.TryChangeStatus(key, args.Status, args.Reason, null))
+            return;
+
+        var statusMsg = args.Status switch
+        {
+            SecurityStatus.Wanted => $"{docComp.ProfileName} is now wanted: {args.Reason}",
+            SecurityStatus.Suspected => $"{docComp.ProfileName} is now suspected: {args.Reason}",
+            SecurityStatus.Hostile => $"{docComp.ProfileName} is now hostile: {args.Reason}",
+            SecurityStatus.Detained => $"{docComp.ProfileName} has been detained.",
+            SecurityStatus.Paroled => $"{docComp.ProfileName} has been released on parole.",
+            SecurityStatus.Discharged => $"{docComp.ProfileName} has been discharged.",
+            SecurityStatus.Eliminated => $"{docComp.ProfileName} has been eliminated.",
+            SecurityStatus.None => $"{docComp.ProfileName} criminal status has been cleared.",
+            _ => $"{docComp.ProfileName} status changed to {args.Status}."
+        };
+        _radio.SendRadioMessage(uid, statusMsg, SecurityChannel, uid);
+
+        // Refresh UI so the status label updates immediately
+        if (TryComp<CharacterDocumentStationComponent>(station, out var stationComp))
+        {
+            var netPlayerEntities = new Dictionary<NetEntity, string>();
+            foreach (var (playerUid, name) in stationComp.PlayerEntities)
+                netPlayerEntities.Add(GetNetEntity(playerUid), name);
+
+            var filteredDocs = docComp.Documents
+                .Where(d => d.Value.DocType == (int)comp.DocumentType)
+                .ToDictionary(d => d.Key, d => d.Value);
+
+            var (newStatus, newReason) = GetCriminalStatus(uid, docComp);
+            bool paperInserted = comp.PaperSlot.ContainerSlot?.ContainedEntity != null;
+            var refreshState = new CharacterDocumentConsoleState(netPlayerEntities, args.Player, filteredDocs, comp.SelectedDocument, paperInserted, comp.DocumentType, newStatus, newReason);
+            _userInterfaceSystem.SetUiState(uid, CharacterDocumentConsoleUiKey.Key, refreshState);
+        }
     }
 
     private void RefreshSecurityConsoleState(EntityUid uid, CharacterDocumentConsoleComponent comp)
     {
 
+    }
+
+    private (SecurityStatus status, string? reason) GetCriminalStatus(EntityUid consoleUid, CharacterDocumentComponent docComp)
+    {
+        var station = _stationSystem.GetOwningStation(consoleUid);
+        if (station == null)
+            return (SecurityStatus.None, null);
+
+        if (!TryComp<StationRecordsComponent>(station, out var stationRecords))
+            return (SecurityStatus.None, null);
+
+        var listing = _stationRecords.BuildListing((station.Value, stationRecords), null);
+        var recordKey = listing.FirstOrDefault(x => x.Value == docComp.ProfileName);
+        if (recordKey.Value == null)
+            return (SecurityStatus.None, null);
+
+        var key = new StationRecordKey(recordKey.Key, station.Value);
+        if (!_stationRecords.TryGetRecord<CriminalRecord>(key, out var record, stationRecords))
+            return (SecurityStatus.None, null);
+
+        return (record.Status, record.Reason);
     }
 
 
