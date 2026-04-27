@@ -228,14 +228,6 @@
   - MMIFilled
   - CircuitBrain
 
-- type: loadoutGroup
-  id: StationAiLawset
-  name: loadout-group-ai-lawset
-  minLimit: 1
-  maxLimit: 1
-  loadouts:
-  - Crewsimov
-  - NTDefault
 
 # Wildcards
 - type: loadoutGroup
