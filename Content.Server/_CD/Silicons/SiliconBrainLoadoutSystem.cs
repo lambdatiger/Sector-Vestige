@@ -1,35 +1,23 @@
 using System.Diagnostics;
-using Content.Server.GameTicking;
-using Content.Server.Players;
-using Content.Server.Preferences.Managers;
+using System.Diagnostics.CodeAnalysis;
 using Content.Server.Silicons.Laws;
 using Content.Shared.Clothing;
-using Content.Shared.GameTicking;
-using Content.Shared.Mind;
+using Content.Shared.Humanoid.Prototypes;
 using Content.Shared.Preferences;
 using Content.Shared.Preferences.Loadouts;
 using Content.Shared.Roles;
 using Content.Shared.Silicons.Borgs.Components;
-using Content.Shared.Silicons.Laws;
 using Content.Shared.Silicons.StationAi;
-using Content.Shared.Station;
 using Robust.Shared.Containers;
-using Robust.Shared.Network;
 using Robust.Shared.Player;
 using Robust.Shared.Prototypes;
+using Robust.Shared.Utility;
 
 namespace Content.Server._CD.Silicons;
 
-[Virtual]
-public partial class SharedSiliconBrainLoadout : EntitySystem
+public sealed class SharedSiliconBrainLoadout : EntitySystem
 {
     [Dependency] private readonly SharedContainerSystem _container = default!;
-    [Dependency] private readonly SharedStationSpawningSystem _station = default!;
-    [Dependency] private readonly LoadoutSystem _loadout = default!;
-    [Dependency] private readonly SharedMindSystem _mind = default!;
-    [Dependency] private readonly PlayerSystem _player = default!;
-    [Dependency] private readonly GameTicker _gameTicker = default!;
-    [Dependency] private readonly SharedStationAiSystem _ai = default!;
     [Dependency] private readonly IPrototypeManager _proto = default!;
     [Dependency] private readonly SiliconLawSystem _laws = default!;
 
@@ -44,20 +32,18 @@ public partial class SharedSiliconBrainLoadout : EntitySystem
         SubscribeLocalEvent<StationAiHeldComponent, CdPlayerSpawnBeforeMindEvent>(OnAIPlayerSpawnComplete);
     }
 
-    protected void OnAIPlayerSpawnComplete(Entity<StationAiHeldComponent> ent, ref CdPlayerSpawnBeforeMindEvent args)
+    private void OnAIPlayerSpawnComplete(Entity<StationAiHeldComponent> ent, ref CdPlayerSpawnBeforeMindEvent args)
     {
-        // surely there's a better way of doing this
-        var jobLoadoutId = LoadoutSystem.GetJobPrototype(args.JobId);
-        var selectedLoadouts = args
-            .Character
-            .GetLoadoutOrDefault(jobLoadoutId, args.Player, args.Character.Species, EntityManager, _proto)
-            .SelectedLoadouts[StationAiLawsetLoadoutPrototype];
+        if (!TryGetSiliconLoadout(args.JobId,
+                args.Character,
+                args.Player,
+                args.Character.Species,
+                StationAiLawsetLoadoutPrototype,
+                out var roleLoadout))
+            return;
 
-        Debug.Assert(selectedLoadouts.Count == 1);
-        var loadoutProto = selectedLoadouts[0].Prototype;
-
-        if(!_proto.TryIndex(loadoutProto, out var loadout) ||
-           loadout.Lawset is not {} laws)
+        if(!_proto.TryIndex(roleLoadout.Prototype, out var loadoutProto) ||
+           loadoutProto.Lawset is not {} laws)
             return;
 
         var lawset = _laws.GetLawset(laws);
@@ -67,30 +53,48 @@ public partial class SharedSiliconBrainLoadout : EntitySystem
 
     private void OnBorgPlayerSpawnComplete(Entity<BorgChassisComponent> ent, ref CdPlayerSpawnBeforeMindEvent args)
     {
-        var jobLoadoutId = LoadoutSystem.GetJobPrototype(args.JobId);
-        var selectedLoadouts = args
-            .Character
-            .GetLoadoutOrDefault(jobLoadoutId, args.Player, args.Character.Species, EntityManager, _proto)
-            .SelectedLoadouts[CyborgBrainLoadoutPrototype];
-
-        Debug.Assert(selectedLoadouts.Count == 1);
-        var loadoutProto = selectedLoadouts[0].Prototype;
-
-        if (!_container.TryGetContainer(ent, ent.Comp.BrainContainerId, out var container) ||
-            !_proto.TryIndex(loadoutProto, out var loadout))
+        if (!TryGetSiliconLoadout(args.JobId,
+                args.Character,
+                args.Player,
+                args.Character.Species,
+                CyborgBrainLoadoutPrototype,
+                out var roleLoadout))
             return;
 
-        // only run if we're absolutely SURE that we have a proto to replace it with
+        if (!_container.TryGetContainer(ent, ent.Comp.BrainContainerId, out var container) ||
+            !_proto.TryIndex(roleLoadout.Prototype, out var loadoutProto))
+            return;
+
+        // we only run if we're absolutely SURE that we have a proto to replace it with
         foreach (var brain in _container.EmptyContainer(container))
         {
             QueueDel(brain);
         }
 
-        TrySpawnInContainer(loadout.Brain, ent, ent.Comp.BrainContainerId, out var mmi);
+        TrySpawnInContainer(loadoutProto.Brain, ent, ent.Comp.BrainContainerId, out var mmi);
+    }
+
+    private bool TryGetSiliconLoadout(ProtoId<JobPrototype> jobId,
+        HumanoidCharacterProfile profile,
+        ICommonSession player,
+        ProtoId<SpeciesPrototype> species,
+        ProtoId<LoadoutGroupPrototype> loadoutGroupProtoKey,
+        [NotNullWhen(true)] out Loadout? loadout)
+    {
+        var jobLoadoutId = LoadoutSystem.GetJobPrototype(jobId);
+        var selectedLoadouts = profile
+            .GetLoadoutOrDefault(jobLoadoutId, player, species, EntityManager, _proto)
+            .SelectedLoadouts[loadoutGroupProtoKey];
+
+        Debug.Assert(selectedLoadouts.Count == 1);
+        if (!selectedLoadouts.TryFirstOrDefault(out loadout))
+            return false;
+
+        return true;
     }
 }
 
 /// <summary>
-/// Event that raises right before the mind is added to the player entity while spawning on station.
+/// Event that raises right before the mind is added to a player's entity while spawning on station.
 /// </summary>
 public sealed record CdPlayerSpawnBeforeMindEvent(ICommonSession Player, HumanoidCharacterProfile Character, ProtoId<JobPrototype> JobId);
