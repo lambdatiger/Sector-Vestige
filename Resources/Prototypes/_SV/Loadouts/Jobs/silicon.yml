@@ -1,0 +1,16 @@
+# loadout
+- type: loadout
+  id: Crewsimov
+  dummyEntity: AsimovCircuitBoard
+  lawset: Crewsimov
+
+- type: loadout
+  id: NTDefault
+  dummyEntity: NTDefaultCircuitBoard
+  lawset: NTDefault
+  effects:
+  - !type:JobRequirementLoadoutEffect
+    requirement:
+      !type:RoleTimeRequirement
+      role: JobStationAi
+      time: 3h

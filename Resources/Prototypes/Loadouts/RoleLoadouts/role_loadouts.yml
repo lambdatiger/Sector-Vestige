@@ -79,10 +79,10 @@
   id: JobStationAi
   nameDataset: NamesAI
   canCustomizeName: true
-  # CD
+  # SV
   groups:
   - StationAiLawset
-  # CD end
+  # SV end
 
 # Civilian
 - type: roleLoadout

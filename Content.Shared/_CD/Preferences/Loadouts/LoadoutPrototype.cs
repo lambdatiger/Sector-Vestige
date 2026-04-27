@@ -10,5 +10,5 @@ public sealed partial class LoadoutPrototype
     public EntProtoId? Brain { get; set; } = new();
 
     [DataField]
-    public ProtoId<SiliconLawsetPrototype>? Lawset { get; set; } = new();
+    public ProtoId<SiliconLawsetPrototype>? Lawset { get; set; } = new(); // SV
 }

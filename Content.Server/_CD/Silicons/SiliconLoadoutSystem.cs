@@ -15,44 +15,26 @@ using Robust.Shared.Utility;
 
 namespace Content.Server._CD.Silicons;
 
-public sealed class SharedSiliconBrainLoadout : EntitySystem
+public sealed class SiliconLoadoutSystem : EntitySystem
 {
     [Dependency] private readonly SharedContainerSystem _container = default!;
     [Dependency] private readonly IPrototypeManager _proto = default!;
     [Dependency] private readonly SiliconLawSystem _laws = default!;
 
     private ProtoId<LoadoutGroupPrototype> CyborgBrainLoadoutPrototype => "CyborgBrain";
-    private ProtoId<LoadoutGroupPrototype> StationAiLawsetLoadoutPrototype => "StationAiLawset";
+    private ProtoId<LoadoutGroupPrototype> StationAiLawsetLoadoutPrototype => "StationAiLawset"; // SV
 
     public override void Initialize()
     {
         base.Initialize();
 
         SubscribeLocalEvent<BorgChassisComponent, CdPlayerSpawnBeforeMindEvent>(OnBorgPlayerSpawnComplete);
-        SubscribeLocalEvent<StationAiHeldComponent, CdPlayerSpawnBeforeMindEvent>(OnAIPlayerSpawnComplete);
+        SubscribeLocalEvent<StationAiHeldComponent, CdPlayerSpawnBeforeMindEvent>(OnAIPlayerSpawnComplete); // SV
     }
-
-    private void OnAIPlayerSpawnComplete(Entity<StationAiHeldComponent> ent, ref CdPlayerSpawnBeforeMindEvent args)
-    {
-        if (!TryGetSiliconLoadout(args.JobId,
-                args.Character,
-                args.Player,
-                args.Character.Species,
-                StationAiLawsetLoadoutPrototype,
-                out var roleLoadout))
-            return;
-
-        if(!_proto.TryIndex(roleLoadout.Prototype, out var loadoutProto) ||
-           loadoutProto.Lawset is not {} laws)
-            return;
-
-        var lawset = _laws.GetLawset(laws);
-        _laws.SetLaws(lawset.Laws, ent);
-    }
-
 
     private void OnBorgPlayerSpawnComplete(Entity<BorgChassisComponent> ent, ref CdPlayerSpawnBeforeMindEvent args)
     {
+        // SV addition
         if (!TryGetSiliconLoadout(args.JobId,
                 args.Character,
                 args.Player,
@@ -74,6 +56,25 @@ public sealed class SharedSiliconBrainLoadout : EntitySystem
         TrySpawnInContainer(loadoutProto.Brain, ent, ent.Comp.BrainContainerId, out var mmi);
     }
 
+    // SV start
+    private void OnAIPlayerSpawnComplete(Entity<StationAiHeldComponent> ent, ref CdPlayerSpawnBeforeMindEvent args)
+    {
+        if (!TryGetSiliconLoadout(args.JobId,
+                args.Character,
+                args.Player,
+                args.Character.Species,
+                StationAiLawsetLoadoutPrototype,
+                out var roleLoadout))
+            return;
+
+        if(!_proto.TryIndex(roleLoadout.Prototype, out var loadoutProto) ||
+           loadoutProto.Lawset is not {} laws)
+            return;
+
+        var lawset = _laws.GetLawset(laws);
+        _laws.SetLaws(lawset.Laws, ent);
+    }
+
     private bool TryGetSiliconLoadout(ProtoId<JobPrototype> jobId,
         HumanoidCharacterProfile profile,
         ICommonSession player,
@@ -92,6 +93,7 @@ public sealed class SharedSiliconBrainLoadout : EntitySystem
 
         return true;
     }
+    // SV end
 }
 
 /// <summary>
