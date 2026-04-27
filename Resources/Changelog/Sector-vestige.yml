@@ -1692,3 +1692,9 @@ Entries:
       message: Added new pickup, drop and equip sounds to some items and clothing
   id: 231
   time: '2026-04-24T18:22:52.0000000+00:00'
+- author: Mixmaster49
+  changes:
+    - type: Tweak
+      message: Less severe ion storms
+  id: 232
+  time: '2026-04-27T15:35:50.0000000+00:00'
