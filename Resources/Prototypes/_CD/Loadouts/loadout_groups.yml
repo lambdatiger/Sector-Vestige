@@ -224,8 +224,8 @@
   minLimit: 1
   maxLimit: 1
   loadouts:
-  - MMIFilled
   - PositronicBrain
+  - MMIFilled
   - CircuitBrain
 
 - type: loadoutGroup
