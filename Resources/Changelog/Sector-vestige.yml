@@ -1706,3 +1706,12 @@ Entries:
         to choose from
   id: 233
   time: '2026-04-27T15:49:03.0000000+00:00'
+- author: lunarcomets
+  changes:
+    - type: Add
+      message: >-
+        AIs can now select which lawset they start with, and Cyborgs can now
+        select which type of brain their body has. Both are available via their
+        respective loadouts.
+  id: 234
+  time: '2026-04-27T16:22:31.0000000+00:00'
