@@ -1698,3 +1698,11 @@ Entries:
       message: Less severe ion storms
   id: 232
   time: '2026-04-27T15:35:50.0000000+00:00'
+- author: lunarcomets
+  changes:
+    - type: Add
+      message: >-
+        feeding starving silicons by adding new screens and holograms for the AI
+        to choose from
+  id: 233
+  time: '2026-04-27T15:49:03.0000000+00:00'
