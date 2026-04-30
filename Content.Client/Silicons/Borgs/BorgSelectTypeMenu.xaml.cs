@@ -3,8 +3,9 @@
 // SPDX-FileCopyrightText: 2024 Pieter-Jan Briers <pieterjan.briers+git@gmail.com>
 // SPDX-FileCopyrightText: 2025 ReboundQ3 <ReboundQ3@gmail.com>
 // SPDX-FileCopyrightText: 2025 Tayrtahn <tayrtahn@gmail.com>
-// SPDX-FileCopyrightText: 2026 lunarcomets (GitHub)
 // SPDX-FileCopyrightText: 2025 dffdff2423 <dffdff2423@gmail.com>
+// SPDX-FileCopyrightText: 2026 lunarcomets (GitHub)
+// SPDX-FileCopyrightText: 2026 lunarcomets <lunarcomets2@gmail.com>
 //
 // SPDX-License-Identifier: MIT
 
