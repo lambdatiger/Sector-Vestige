@@ -139,24 +139,23 @@ public abstract class SharedBorgSwitchableTypeSystem : EntitySystem
             footstepModifier.FootstepSoundCollection = prototype.FootstepCollection;
         }
 
-        // SV comment, just in case
-        // if (prototype.SpriteBodyMovementState is { } movementState)
-        // {
-        //     var spriteMovement = EnsureComp<SpriteMovementComponent>(entity);
-        //     spriteMovement.NoMovementLayers.Clear();
-        //     spriteMovement.NoMovementLayers["movement"] = new PrototypeLayerData
-        //     {
-        //         State = prototype.SpriteBodyState,
-        //     };
-        //     spriteMovement.MovementLayers.Clear();
-        //     spriteMovement.MovementLayers["movement"] = new PrototypeLayerData
-        //     {
-        //         State = movementState,
-        //     };
-        // }
-        // else
-        // {
-        //     RemComp<SpriteMovementComponent>(entity);
-        // }
+        if (prototype.SpriteBodyMovementState is { } movementState)
+        {
+            var spriteMovement = EnsureComp<SpriteMovementComponent>(entity);
+            spriteMovement.NoMovementLayers.Clear();
+            spriteMovement.NoMovementLayers["movement"] = new PrototypeLayerData
+            {
+                State = prototype.SpriteBodyState,
+            };
+            spriteMovement.MovementLayers.Clear();
+            spriteMovement.MovementLayers["movement"] = new PrototypeLayerData
+            {
+                State = movementState,
+            };
+        }
+        else
+        {
+            RemComp<SpriteMovementComponent>(entity);
+        }
     }
 }
