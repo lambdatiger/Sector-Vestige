@@ -7,10 +7,8 @@
   - type: Sprite
     layers:
     - state: paper
-      color: "#aff774"
     - state: paper_words
       map: ["enum.PaperVisualLayers.Writing"]
-      color: "#aff774"
       visible: false
     - state: paper_stamp-generic
       map: ["enum.PaperVisualLayers.Stamp"]
@@ -23,11 +21,11 @@
   - type: PaperVisuals
     backgroundImagePath: "/Textures/Interface/Paper/paper_background_default.svg.96dpi.png"
     # contentImagePath: "/Textures/Interface/Paper/paper_content_lined.svg.96dpi.png"
-    backgroundModulate: "#aff774"
-    contentImageModulate: "#aff774"
+    # backgroundModulate: "#aff774"
+    # contentImageModulate: "#aff774"
     backgroundPatchMargin: 16.0, 16.0, 16.0, 16.0
-    contentMargin: 16.0, 16.0, 16.0, 16.0
-    # headerImagePath: "/Textures/Interface/Paper/paper_heading_cargo_invoice.svg.96dpi.png"
-    headerMargin: 0.0, 12.0, 0.0, 0.0
+    contentMargin: 0.0, 0.0, 0.0, 0.0
+    headerImagePath: "/Textures/_SV/Interface/Paper/employment_1.png"
+    headerMargin: 0.0, 16.0, 0.0, 0.0
   - type: StaticPrice
     price: 0
