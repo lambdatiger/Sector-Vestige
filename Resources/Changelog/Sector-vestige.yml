@@ -1715,3 +1715,13 @@ Entries:
         respective loadouts.
   id: 234
   time: '2026-04-27T16:22:31.0000000+00:00'
+- author: lunarcomets
+  changes:
+    - type: Add
+      message: added subtype support for cyborgs
+    - type: Add
+      message: >-
+        spidermin and qualified doctor subtypes are now available for mining and
+        medical cyborgs, respectively 
+  id: 235
+  time: '2026-05-01T14:41:40.0000000+00:00'
