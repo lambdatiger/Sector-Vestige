@@ -1376,6 +1376,11 @@ namespace Content.Server.Database.Migrations.Postgres
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("doc_date_last_edited");
 
+                    b.Property<string>("DocLastEditedBy")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("doc_last_edited_by");
+
                     b.Property<string>("DocStamps")
                         .IsRequired()
                         .HasColumnType("text")
@@ -1386,9 +1391,13 @@ namespace Content.Server.Database.Migrations.Postgres
                         .HasColumnType("text")
                         .HasColumnName("doc_title");
 
-                    b.Property<int>("SVProfileID")
+                    b.Property<int>("DocType")
                         .HasColumnType("integer")
-                        .HasColumnName("svprofile_i_d");
+                        .HasColumnName("doc_type");
+
+                    b.Property<int>("ProfileId")
+                        .HasColumnType("integer")
+                        .HasColumnName("profile_id");
 
                     b.HasKey("DocID")
                         .HasName("PK_sv_character_document_entries");
@@ -1396,24 +1405,16 @@ namespace Content.Server.Database.Migrations.Postgres
                     b.HasIndex("DocID")
                         .HasDatabaseName("IX_sv_character_document_entries_doc_i_d");
 
-                    b.HasIndex("SVProfileID")
-                        .HasDatabaseName("IX_sv_character_document_entries_svprofile_i_d");
+                    b.HasIndex("ProfileId");
 
                     b.ToTable("sv_character_document_entries", (string)null);
                 });
 
             modelBuilder.Entity("Content.Server.Database.SVModel+SVProfile", b =>
                 {
-                    b.Property<int>("SVProfileID")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("ProfileId")
                         .HasColumnType("integer")
-                        .HasColumnName("svprofile_i_d");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("SVProfileID"));
-
-                    b.Property<JsonDocument>("CharacterDocument")
-                        .HasColumnType("jsonb")
-                        .HasColumnName("character_doc");
+                        .HasColumnName("profile_id");
 
                     b.Property<string>("CharacterName")
                         .IsRequired()
@@ -1425,15 +1426,8 @@ namespace Content.Server.Database.Migrations.Postgres
                         .HasColumnType("text")
                         .HasColumnName("player_name");
 
-                    b.Property<int>("ProfileId")
-                        .HasColumnType("integer")
-                        .HasColumnName("profile_id");
-
-                    b.HasKey("SVProfileID")
+                    b.HasKey("ProfileId")
                         .HasName("PK_sv_profiles");
-
-                    b.HasIndex("ProfileId")
-                        .IsUnique();
 
                     b.ToTable("sv_profiles", (string)null);
                 });
@@ -2162,10 +2156,10 @@ namespace Content.Server.Database.Migrations.Postgres
                 {
                     b.HasOne("Content.Server.Database.SVModel+SVProfile", "SVProfile")
                         .WithMany("CharacterDocuments")
-                        .HasForeignKey("SVProfileID")
+                        .HasForeignKey("ProfileId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("FK_sv_character_document_entries_sv_profiles_svprofile_i_d");
+                        .HasConstraintName("FK_sv_character_document_entries_sv_profiles__sv_profile_temp_id");
 
                     b.Navigation("SVProfile");
                 });

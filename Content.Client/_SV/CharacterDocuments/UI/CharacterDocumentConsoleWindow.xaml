@@ -35,18 +35,19 @@
                                     <BoxContainer>
                                         <BoxContainer HorizontalAlignment="Left" Orientation="Vertical" Margin="0 0 5 0">
                                                 <Label Name="DocAuthorLabel" Text="{Loc 'sv-document-console-author-label'}"/>
+                                                <Label Name="DocLastEditedByLabel" Text="{Loc 'sv-document-console-editedby-label'}"/>
                                                 <Label Name="DocDateLabel" Text="{Loc 'sv-document-console-date-label'}"/>
                                                 <Label Name="DocSecurityStatusLabel" Text="{Loc 'sv-document-console-security-status-label'}" Visible="False"/>
                                                 <Label Name="DocSecurityReasonLabel" Text="{Loc 'sv-document-console-security-reason-label'}" Visible="False"/>
                                         </BoxContainer>
                                         <BoxContainer HorizontalExpand="True" Orientation="Vertical" StyleClasses="BorderedWindowPanel">
-                                            <Label Name="DocAuthorLabelValue" Text="{Loc 'sv-document-console-author-label-value'}"/>
-                                            <Label Name="DocDateLabelValue" Text="{Loc 'sv-document-console-date-label-value'}"/>
+                                            <Label Name="DocAuthorLabelValue" Text="{Loc 'sv-document-console-author-label-value'}" ClipText="True"/>
+                                            <Label Name="DocLastEditedByLabelValue" Text="{Loc 'sv-document-console-editedby-label-value'}" ClipText="True"/>
+                                            <Label Name="DocDateLabelValue" Text="{Loc 'sv-document-console-date-label-value'}" ClipText="True"/>
                                             <Label Name="DocSecurityStatusLabelValue" Text="-" Visible="False" ClipText="True"/>
                                             <Label Name="DocSecurityReasonLabelValue" Text="-" Visible="False" ClipText="True"/>
                                         </BoxContainer>
                                     </BoxContainer>
-                                    <Button Name="StatusButton" Text="{Loc 'sv-document-console-status-button'}" HorizontalExpand="True" Visible="False"/>
                                 </BoxContainer>
                             </PanelContainer>
                             <!-- Right Control panel -->
@@ -59,6 +60,7 @@
                                     <Button Name="EditButton" Text="{Loc 'sv-document-console-edit-button'}" HorizontalExpand="True"/>
                                     <Button Name="DeleteButton" Text="{Loc 'sv-document-console-delete-button'}" HorizontalExpand="True"/>
                                 </BoxContainer>
+                                <Button Name="StatusButton" Text="{Loc 'sv-document-console-status-button'}" HorizontalExpand="True" Visible="False"/>
                             </BoxContainer>
                         </BoxContainer>
                     </BoxContainer>

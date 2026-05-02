@@ -277,6 +277,7 @@ public sealed partial class CharacterDocumentConsoleWindow : DefaultWindow
             StampDisplay.RemoveStamps();
             StampDisplay.RemoveAllChildren();
             DocAuthorLabelValue.Text = Loc.GetString("sv-document-console-author-label-value-none");
+            DocLastEditedByLabelValue.Text = Loc.GetString("sv-document-console-editedby-label-value-none");
             DocDateLabelValue.Text = Loc.GetString("sv-document-console-date-label-value-none");
         }
         else
@@ -285,6 +286,7 @@ public sealed partial class CharacterDocumentConsoleWindow : DefaultWindow
             Document.Text = state.SelectedDocument.DocContent;
             DocumentEdit.TextRope = new Rope.Leaf(state.SelectedDocument.DocContent);
             DocAuthorLabelValue.Text = Loc.GetString("sv-document-console-author-label-value", ("DocAuthor", state.SelectedDocument.DocAuthor));
+            DocLastEditedByLabelValue.Text = Loc.GetString("sv-document-console-editedby-label-value", ("DocLastEditedBy", string.IsNullOrEmpty(state.SelectedDocument.DocLastEditedBy) ? state.SelectedDocument.DocAuthor : state.SelectedDocument.DocLastEditedBy));
             DocDateLabelValue.Text = Loc.GetString("sv-document-console-date-label-value", ("DocDateLastEdited", state.SelectedDocument.DocDateLastEdited.ToString("yyyy-MM-dd")));
             TitleInput.Clear();
             TitleInput.SetText(state.SelectedDocument.DocTitle);

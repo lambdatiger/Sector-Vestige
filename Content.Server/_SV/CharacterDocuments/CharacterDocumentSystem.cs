@@ -98,6 +98,7 @@ public sealed partial class CharacterDocumentSystem : EntitySystem
                 DocType = doc.DocType,
                 DocTitle = doc.DocTitle,
                 DocAuthor = doc.DocAuthor,
+                DocLastEditedBy = doc.DocLastEditedBy,
                 DocDateLastEdited = doc.DocDateLastEdited,
                 DocContent = doc.DocContent,
                 DocStamps = CharacterDocumentDeserializer.DeserializeStamps(doc.DocStamps)
@@ -127,6 +128,7 @@ public sealed partial class CharacterDocumentSystem : EntitySystem
         {
             DocTitle = doc.DocTitle,
             DocAuthor = doc.DocAuthor,
+            DocLastEditedBy = doc.DocLastEditedBy,
             DocContent = doc.DocContent,
             DocDateLastEdited = doc.DocDateLastEdited,
             DocStamps = CharacterDocumentSerializer.SerializeStamp(doc.DocStamps),
@@ -152,6 +154,7 @@ public sealed partial class CharacterDocumentSystem : EntitySystem
         {
             DocTitle = doc.DocTitle,
             DocAuthor = doc.DocAuthor,
+            DocLastEditedBy = doc.DocLastEditedBy,
             DocContent = doc.DocContent,
             DocDateLastEdited = doc.DocDateLastEdited,
             DocStamps = CharacterDocumentSerializer.SerializeStamp(doc.DocStamps),
@@ -177,6 +180,7 @@ public sealed partial class CharacterDocumentSystem : EntitySystem
         {
             DocTitle = doc.DocTitle,
             DocAuthor = doc.DocAuthor,
+            DocLastEditedBy = doc.DocLastEditedBy,
             DocContent = doc.DocContent,
             DocDateLastEdited = doc.DocDateLastEdited,
             DocStamps = CharacterDocumentSerializer.SerializeStamp(doc.DocStamps),

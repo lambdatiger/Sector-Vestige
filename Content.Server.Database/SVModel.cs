@@ -40,6 +40,7 @@ public static class SVModel
         public DateTime DocDateLastEdited { get; set; }
         public string DocTitle { get; set; } = string.Empty;
         public string DocAuthor { get; set; } = string.Empty;
+        public string DocLastEditedBy { get; set; } = string.Empty;
         public string DocContent { get; set; } = string.Empty;
         public string DocStamps { get; set; } = string.Empty;
 

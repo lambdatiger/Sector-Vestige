@@ -20,6 +20,7 @@ public sealed partial class CharacterDocument
     public int DocType = (int)DocumentType.Employment;
     public string DocTitle = null!;
     public string DocAuthor = null!;
+    public string DocLastEditedBy = "";
     public DateTime DocDateLastEdited = DateTime.Today.AddYears(200); //Today plus 200 years
     public string DocContent = "";
     public List<CharacterDocumentStamp> DocStamps = new();

@@ -17,6 +17,10 @@ sv-document-console-author-label = Author:
 sv-document-console-author-label-value = {$DocAuthor}
 sv-document-console-author-label-value-none = Select a document
 
+sv-document-console-editedby-label = Last edited by:
+sv-document-console-editedby-label-value = {$DocLastEditedBy}
+sv-document-console-editedby-label-value-none = Select a document
+
 sv-document-console-date-label = Last Edited:
 sv-document-console-date-label-value = {$DocDateLastEdited}
 sv-document-console-date-label-value-none = Select a document

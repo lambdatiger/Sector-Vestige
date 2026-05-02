@@ -245,6 +245,7 @@ namespace Content.Server.Database
                 {
                     DocTitle = document.DocTitle,
                     DocAuthor = document.DocAuthor,
+                    DocLastEditedBy = document.DocLastEditedBy,
                     DocContent = document.DocContent,
                     DocStamps = document.DocStamps,
                     DocType = document.DocType,
@@ -274,6 +275,7 @@ namespace Content.Server.Database
                     DocID = document.DocID,
                     DocTitle = document.DocTitle,
                     DocAuthor = document.DocAuthor,
+                    DocLastEditedBy = document.DocLastEditedBy,
                     DocContent = document.DocContent,
                     DocStamps = document.DocStamps,
                     DocType = document.DocType,

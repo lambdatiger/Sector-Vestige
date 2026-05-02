@@ -8,6 +8,7 @@ using Robust.Server.GameObjects;
 using Content.Shared.Paper;
 using Content.Shared._SV.CharacterDocuments;
 using Content.Shared.Humanoid;
+using Content.Shared.IdentityManagement;
 using Content.Shared.Preferences;
 using System.Linq;
 using Robust.Server.Player;
@@ -241,10 +242,13 @@ public sealed class CharacterDocumentConsoleSystem : EntitySystem
             }
         }
 
+        var actorName = GetActorIdentity(args.Actor);
+
         var providedDocument = new CharacterDocument()
         {
             DocTitle = args.DocTitle,
-            DocAuthor = "Testvalue_Author",
+            DocAuthor = actorName,
+            DocLastEditedBy = actorName,
             DocContent = paperComponent.Content,
             DocType = (int)comp.DocumentType,
             DocStamps = stamps
@@ -252,6 +256,15 @@ public sealed class CharacterDocumentConsoleSystem : EntitySystem
 
         _audio.PlayPvs(comp.SuccessSound, uid);
         await _characterDocumentSystem.AddDocument(player, providedDocument);
+    }
+
+    private string GetActorIdentity(EntityUid actor)
+    {
+        var ev = new TryGetIdentityShortInfoEvent(null, actor);
+        RaiseLocalEvent(ev);
+        var title = ev.Title ?? "Unknown";
+        var jobIdx = title.IndexOf(" (", StringComparison.Ordinal);
+        return jobIdx > 0 ? title[..jobIdx] : title;
     }
 
     public async void OnDocumentDelete(EntityUid uid, CharacterDocumentConsoleComponent comp, CharacterDocumentDelete args)
@@ -269,7 +282,23 @@ public sealed class CharacterDocumentConsoleSystem : EntitySystem
 
     public void OnDocumentPrint(EntityUid uid, CharacterDocumentConsoleComponent comp, CharacterDocumentPrint args)
     {
-        var printed = Spawn("SVPaperDocumentation", uid.ToCoordinates());
+        string paper = string.Empty;
+        switch (comp.DocumentType)
+        {
+            case DocumentType.Employment:
+                paper = "SVPaperDocumentationEmployment";
+                break;
+            case DocumentType.Security:
+                paper = "SVPaperDocumentationSecurity";
+                break;
+            case DocumentType.Medical:
+                paper = "SVPaperDocumentationMedical";
+                break;
+            case DocumentType.CentralCommand:
+                paper = "SVPaperDocumentationCentcomm";
+                break;
+        }
+        var printed = Spawn(paper, uid.ToCoordinates());
 
         var stamps = new List<StampDisplayInfo>();
         string stampState = string.Empty;
@@ -311,6 +340,7 @@ public sealed class CharacterDocumentConsoleSystem : EntitySystem
             DocID = oldCharacterDoc.DocID,
             DocTitle = args.CharacterDocument.DocTitle,
             DocAuthor = args.CharacterDocument.DocAuthor,
+            DocLastEditedBy = GetActorIdentity(args.Actor),
             DocContent = args.CharacterDocument.DocContent,
             DocDateLastEdited = DateTime.Now.AddYears(200),
             DocStamps = args.CharacterDocument.DocStamps,

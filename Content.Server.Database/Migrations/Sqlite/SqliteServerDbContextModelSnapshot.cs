@@ -1300,6 +1300,11 @@ namespace Content.Server.Database.Migrations.Sqlite
                         .HasColumnType("TEXT")
                         .HasColumnName("doc_date_last_edited");
 
+                    b.Property<string>("DocLastEditedBy")
+                        .IsRequired()
+                        .HasColumnType("TEXT")
+                        .HasColumnName("doc_last_edited_by");
+
                     b.Property<string>("DocStamps")
                         .IsRequired()
                         .HasColumnType("TEXT")
