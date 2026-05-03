@@ -58,10 +58,10 @@
 // SPDX-FileCopyrightText: 2026 OnyxTheBrave <131422822+OnyxTheBrave@users.noreply.github.com>
 // SPDX-FileCopyrightText: 2026 ReboundQ3 <22770594+ReboundQ3@users.noreply.github.com>
 // SPDX-FileCopyrightText: 2026 Sophia12434 (GitHub)
+// SPDX-FileCopyrightText: 2026 Sophia12434 <sanesthetheskeleton@gmail.com>
 // SPDX-FileCopyrightText: 2026 TytosB <54259736+TytosB@users.noreply.github.com>
 // SPDX-FileCopyrightText: 2026 lambdatiger <11843718+lambdatiger@users.noreply.github.com>
 // SPDX-FileCopyrightText: 2026 lambdatiger <spam.stnuocca.sl@gmail.com>
-// SPDX-FileCopyrightText: 2026 Sophia12434 <sanesthetheskeleton@gmail.com>
 //
 // SPDX-License-Identifier: MIT
 
