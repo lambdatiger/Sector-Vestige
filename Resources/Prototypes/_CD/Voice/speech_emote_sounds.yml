@@ -36,13 +36,15 @@
     Laugh:
       collection: MaleLaugh
     Sneeze:
-      collection: MaleSneezes
+      collection: VulpkaninSneeze
     Cough:
       collection: MaleCoughs
     Whistle:
       collection: Whistles
     Sigh:
       collection: MaleSigh
+    Yawn:
+      collection: VulpkaninYawns
     Scream:
       collection: MaleScreams
     Growl:
@@ -53,8 +55,15 @@
       collection: FoxfolkBarks
     Whine:
       collection: FoxfolkWhines
+    Crying:
+      collection: MaleCry
     Howl:
       collection: FoxfolkHowls
+    Weh:
+    Gasp:
+      collection: MaleGasp
+    DefaultDeathgasp:
+      collection: MaleDeathGasp
 
 - type: emoteSounds
   id: FemaleFoxfolk
@@ -64,13 +73,15 @@
     Laugh:
       collection: FemaleLaugh
     Sneeze:
-      collection: FemaleSneezes
+      collection: VulpkaninSneeze
     Cough:
       collection: FemaleCoughs
     Whistle:
       collection: Whistles
     Sigh:
       collection: FemaleSigh
+    Yawn:
+      collection: VulpkaninYawns
     Scream:
       collection: FemaleScreams
     Growl:
@@ -81,8 +92,14 @@
       collection: FoxfolkBarks
     Whine:
       collection: FoxfolkWhines
+    Crying:
+      collection: FemaleCry
     Howl:
       collection: FoxfolkHowls
+    Gasp:
+      collection: FemaleGasp
+    DefaultDeathgasp:
+      collection: FemaleDeathGasp
 
 - type: emoteSounds
   id: MaleRodentia
