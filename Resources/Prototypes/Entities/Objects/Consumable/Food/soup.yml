@@ -823,6 +823,8 @@
   - type: Tag
     tags:
     - ChiliBowl
+    - Meat  #sv - Chili contains meat; makes edible for lizards
+    - Fruit  #sv - Chili contains tomato; makes edible for lizards
 
 
 - type: entity
@@ -884,6 +886,8 @@
   - type: Tag
     tags:
     - ChiliBowl
+    - Meat  #sv - Chili contains meat; makes edible for lizards
+    - Fruit  #sv - Chili contains tomato; makes edible for lizards
 
 - type: entity
   name: monkey's delight
