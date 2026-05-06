@@ -60,7 +60,6 @@
       collection: MaleCry #Vestige
     Howl:
       collection: FoxfolkHowls
-    Weh:
     Gasp:
       collection: MaleGasp #Vestige
     DefaultDeathgasp:
