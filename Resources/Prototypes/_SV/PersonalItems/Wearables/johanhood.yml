@@ -1,0 +1,15 @@
+# Player: Boaz1111 - Character: Johan Ullman
+- type: entity
+  parent: ClothingHeadBase
+  id: PersonalItemJohanHood
+  categories: [ HideSpawnMenu ]
+  name: Mothe's hood
+  description: ""
+  suffix: PersonalItem
+  components:
+  - type: Tag
+    tags: [] # ignore "WhitelistChameleon" tag
+  - type: Sprite
+    sprite: _SV/PersonalItems/Wearables/johanhood.rsi
+  - type: Clothing
+    sprite: _SV/PersonalItems/Wearables/johanhood.rsi
