@@ -1725,3 +1725,9 @@ Entries:
         medical cyborgs, respectively 
   id: 235
   time: '2026-05-01T14:41:40.0000000+00:00'
+- author: Rose-Diere
+  changes:
+    - type: Tweak
+      message: Reptillians can now eat Chili and Chili con Carnival
+  id: 236
+  time: '2026-05-06T07:35:41.0000000+00:00'
