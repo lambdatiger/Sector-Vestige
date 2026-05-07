@@ -1,8 +1,9 @@
 # SPDX-FileCopyrightText: 2026 Cosmatic Drift contributors
 # SPDX-FileCopyrightText: 2026 Sector Vestige contributors (modifications)
 # SPDX-FileCopyrightText: 2025 MoonlightHollow <muszynskinicholas8@gmail.com>
-# SPDX-FileCopyrightText: 2026 ReboundQ3 <22770594+ReboundQ3@users.noreply.github.com>
 # SPDX-FileCopyrightText: 2025 ReboundQ3 <ReboundQ3@gmail.com>
+# SPDX-FileCopyrightText: 2026 ReboundQ3 <22770594+ReboundQ3@users.noreply.github.com>
+# SPDX-FileCopyrightText: 2026 Zamshi8 <235235723+Zamshi8@users.noreply.github.com>
 #
 # SPDX-License-Identifier: MIT
 
@@ -36,13 +37,15 @@
     Laugh:
       collection: MaleLaugh
     Sneeze:
-      collection: MaleSneezes
+      collection: VulpkaninSneeze #Vestige
     Cough:
       collection: MaleCoughs
     Whistle:
       collection: Whistles
     Sigh:
       collection: MaleSigh
+    Yawn:
+      collection: VulpkaninYawns #Vestige
     Scream:
       collection: MaleScreams
     Growl:
@@ -53,8 +56,14 @@
       collection: FoxfolkBarks
     Whine:
       collection: FoxfolkWhines
+    Crying:
+      collection: MaleCry #Vestige
     Howl:
       collection: FoxfolkHowls
+    Gasp:
+      collection: MaleGasp #Vestige
+    DefaultDeathgasp:
+      collection: MaleDeathGasp #Vestige
 
 - type: emoteSounds
   id: FemaleFoxfolk
@@ -64,13 +73,15 @@
     Laugh:
       collection: FemaleLaugh
     Sneeze:
-      collection: FemaleSneezes
+      collection: VulpkaninSneeze #Vestige
     Cough:
       collection: FemaleCoughs
     Whistle:
       collection: Whistles
     Sigh:
       collection: FemaleSigh
+    Yawn:
+      collection: VulpkaninYawns #Vestige
     Scream:
       collection: FemaleScreams
     Growl:
@@ -81,8 +92,14 @@
       collection: FoxfolkBarks
     Whine:
       collection: FoxfolkWhines
+    Crying:
+      collection: FemaleCry #Vestige
     Howl:
       collection: FoxfolkHowls
+    Gasp:
+      collection: FemaleGasp #Vestige
+    DefaultDeathgasp:
+      collection: FemaleDeathGasp #Vestige
 
 - type: emoteSounds
   id: MaleRodentia
