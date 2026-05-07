@@ -89,6 +89,8 @@ namespace Content.Server.Database
         Task DeleteSlotAndSetSelectedIndex(NetUserId userId, int deleteSlot, int newSlot);
         Task SaveSVCharacterDocumentsAsync(int profileId, string playerName, string characterName, IReadOnlyCollection<SVModel.CharacterDocument> documents);
         Task<(JsonDocument? SerializedDocument, List<SVModel.CharacterDocument> Documents)?> GetSVCharacterDocumentsAsync(int profileId, CancellationToken cancel = default);
+        // SV: admin offline-browse UI
+        Task<List<SVModel.SVProfile>> GetAllSVCharacterDocumentsAsync(CancellationToken cancel = default);
         Task<Preference?> GetPlayerPreferencesAsync(NetUserId userId, CancellationToken cancel);
         #endregion
 
@@ -536,6 +538,14 @@ namespace Content.Server.Database
             DbReadOpsMetric.Inc();
             return RunDbCommand(() => _db.GetSVCharacterDocumentsAsync(profileId, cancel));
         }
+
+        // SV changes start - Admin character documents browser
+        public Task<List<SVModel.SVProfile>> GetAllSVCharacterDocumentsAsync(CancellationToken cancel = default)
+        {
+            DbReadOpsMetric.Inc();
+            return RunDbCommand(() => _db.GetAllSVCharacterDocumentsAsync(cancel));
+        }
+        // SV changes end
 
         public Task AssignUserIdAsync(string name, NetUserId userId)
         {

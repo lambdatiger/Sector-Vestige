@@ -1,0 +1,36 @@
+using Content.Shared.Eui;
+using Robust.Shared.Serialization;
+
+namespace Content.Shared._SV.CharacterDocuments.Admin;
+
+[Serializable, NetSerializable]
+public sealed class AdminCharacterDocumentsEuiState : EuiStateBase
+{
+    public List<AdminSVProfileEntry> Profiles { get; init; } = new();
+}
+
+[Serializable, NetSerializable]
+public sealed class AdminSVProfileEntry
+{
+    public int ProfileId;
+    public string PlayerName = string.Empty;
+    public string CharacterName = string.Empty;
+    public List<CharacterDocument> Documents = new();
+}
+
+[Serializable, NetSerializable]
+public sealed class AdminSVRefreshMsg : EuiMessageBase;
+
+[Serializable, NetSerializable]
+public sealed class AdminSVDocumentEditMsg : EuiMessageBase
+{
+    public int ProfileId;
+    public CharacterDocument Document = default!;
+}
+
+[Serializable, NetSerializable]
+public sealed class AdminSVDocumentDeleteMsg : EuiMessageBase
+{
+    public int ProfileId;
+    public int DocId;
+}

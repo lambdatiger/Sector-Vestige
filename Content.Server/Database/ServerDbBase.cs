@@ -217,6 +217,28 @@ namespace Content.Server.Database
             return prefs;
         }
 
+        // SV changes start - Admin character documents browser
+        #region Admin SV Character Documents Browser
+
+        /// <summary>
+        ///     Loads every SV profile in the database along with all their character documents.
+        ///     Used by the admin offline-browse UI; do not use on hot paths.
+        /// </summary>
+        public async Task<List<SVModel.SVProfile>> GetAllSVCharacterDocumentsAsync(CancellationToken cancel = default)
+        {
+            await using var db = await GetDb(cancel);
+
+            var profiles = await db.DbContext.SVProfiles
+                .Include(p => p.CharacterDocuments)
+                .AsNoTracking()
+                .ToListAsync(cancel);
+
+            return profiles;
+        }
+
+        #endregion
+        // SV changes end
+
         public async Task SaveSVCharacterDocumentsAsync(int profileId, string playerName, string characterName, IReadOnlyCollection<SVModel.CharacterDocument> documents)
         {
             await using var db = await GetDb();

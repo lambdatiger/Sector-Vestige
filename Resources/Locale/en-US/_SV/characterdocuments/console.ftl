@@ -8,6 +8,8 @@ sv-document-console-edit-button = Edit
 sv-document-console-delete-button = Delete
 sv-document-console-delete-button-confirm = Confirm?
 sv-document-console-status-button = Set Status
+sv-admin-character-documents-button = Character Documents
+
 sv-document-console-security-status-label = Status:
 sv-document-console-security-reason-label = Reason:
 sv-document-console-security-none = None

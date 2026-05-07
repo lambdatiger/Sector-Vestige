@@ -34,11 +34,11 @@
                                 <BoxContainer Orientation="Vertical">
                                     <BoxContainer>
                                         <BoxContainer HorizontalAlignment="Left" Orientation="Vertical" Margin="0 0 5 0">
-                                                <Label Name="DocAuthorLabel" Text="{Loc 'sv-document-console-author-label'}"/>
-                                                <Label Name="DocLastEditedByLabel" Text="{Loc 'sv-document-console-editedby-label'}"/>
-                                                <Label Name="DocDateLabel" Text="{Loc 'sv-document-console-date-label'}"/>
-                                                <Label Name="DocSecurityStatusLabel" Text="{Loc 'sv-document-console-security-status-label'}" Visible="False"/>
-                                                <Label Name="DocSecurityReasonLabel" Text="{Loc 'sv-document-console-security-reason-label'}" Visible="False"/>
+                                            <Label Name="DocAuthorLabel" Text="{Loc 'sv-document-console-author-label'}"/>
+                                            <Label Name="DocLastEditedByLabel" Text="{Loc 'sv-document-console-editedby-label'}"/>
+                                            <Label Name="DocDateLabel" Text="{Loc 'sv-document-console-date-label'}"/>
+                                            <Label Name="DocSecurityStatusLabel" Text="{Loc 'sv-document-console-security-status-label'}" Visible="False"/>
+                                            <Label Name="DocSecurityReasonLabel" Text="{Loc 'sv-document-console-security-reason-label'}" Visible="False"/>
                                         </BoxContainer>
                                         <BoxContainer HorizontalExpand="True" Orientation="Vertical" StyleClasses="BorderedWindowPanel">
                                             <Label Name="DocAuthorLabelValue" Text="{Loc 'sv-document-console-author-label-value'}" ClipText="True"/>
