@@ -12,3 +12,7 @@
   id: CartridgeCaselessLightRifle # Cartridge for S77-Locust
 - type: Tag
   id: MagazineViolee # Magazine for R36-Violee
+- type: Tag
+  id: MagazineSuggestion # Magazine for SCR-g2 'Suggestion'
+- type: Tag
+  id: CartridgeLapua # Cartridge for SCR-g2
