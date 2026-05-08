@@ -1737,3 +1737,9 @@ Entries:
       message: added some sounds to foxfolk to keep consistency with other species
   id: 237
   time: '2026-05-07T17:21:42.0000000+00:00'
+- author: BackeTako
+  changes:
+    - type: Add
+      message: Frostbitey Personal Item
+  id: 238
+  time: '2026-05-08T14:13:04.0000000+00:00'
