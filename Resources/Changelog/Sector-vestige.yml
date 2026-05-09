@@ -1751,3 +1751,11 @@ Entries:
       message: Added four new event tracks. Have fun!
   id: 239
   time: '2026-05-08T14:20:34.0000000+00:00'
+- author: Sophia12434
+  changes:
+    - type: Add
+      message: Mamba the Syndicate Battlecruiser
+    - type: Add
+      message: Copperhead the Syndicate Spycraft(The salv destroyer 9000)
+  id: 240
+  time: '2026-05-09T17:10:33.0000000+00:00'
