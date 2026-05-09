@@ -59,36 +59,6 @@ public abstract partial class SharedAtmosphereSystem
     /// </summary>
     protected readonly float[] GasOxidiserFuelMask = new float[Atmospherics.TotalNumberOfGases];
 
-    /// <summary>
-    /// Mask used to determine if a gas is flammable or not.
-    /// </summary>
-    /// <para>This is used to quickly determine if a <see cref="GasMixture"/> contains any flammable gas.
-    /// When determining flammability, the float is multiplied with the mask and then
-    /// added to see if the mixture is flammable, and how many moles are considered flammable.</para>
-    /// <para>This is done instead of a massive if statement of doom everywhere.</para>
-    /// <example><para>Say Plasma has the <see cref="GasPrototype.IsFuel"/> bool set to true.
-    /// Atmospherics will place a 1 in the spot where plasma goes in the masking array.
-    /// Whenever we need to determine if a GasMixture contains fuel gases, we multiply the
-    /// gas array by the mask. Fuel gases will keep their value (being multiplied by one)
-    /// whereas non-fuel gases will be multiplied by zero and be zeroed out.
-    /// The resulting array can be HorizontalAdded, with any value above zero indicating fuel gases.</para>
-    /// <para>This works for multiple fuel gases at the same time, so it's a fairly quick way
-    /// to determine if a mixture has the gases we care about.</para></example>
-    protected readonly float[] GasFuelMask = new float[Atmospherics.AdjustedNumberOfGases];
-
-    /// <summary>
-    /// Mask used to determine if a gas is an oxidizer or not.
-    /// <para>Used in the same way as <see cref="GasFuelMask"/>.
-    /// Nothing really super special.</para>
-    /// </summary>
-    protected readonly float[] GasOxidizerMask = new float[Atmospherics.AdjustedNumberOfGases];
-
-    /// <summary>
-    /// Mask used to determine both fuel and oxidizer properties of a gas at the same time.
-    /// Primarily used to quickly report the specific moles in a mixture that caused a flammable reaction to occur.
-    /// </summary>
-    protected readonly float[] GasOxidiserFuelMask = new float[Atmospherics.TotalNumberOfGases];
-
     public string?[] GasReagents = new string[Atmospherics.TotalNumberOfGases];
     protected readonly GasPrototype[] GasPrototypes = new GasPrototype[Atmospherics.TotalNumberOfGases];
 
