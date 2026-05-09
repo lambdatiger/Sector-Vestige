@@ -1,0 +1,51 @@
+- type: entity
+  categories: [ HideSpawnMenu ]
+  parent: BaseBullet
+  id: BulletPenetratingLapua
+  name: bullet (.338 lapua)
+  components:
+  - type: Projectile
+    damage:
+      types:
+        Piercing: 32
+        Structural: 210
+    penetrationThreshold: 360
+    penetrationDamageTypeRequirement:
+    - Structural
+  - type: StaminaDamageOnCollide
+    damage: 60
+
+- type: entity
+  categories: [ HideSpawnMenu ]
+  parent: BaseBullet
+  id: BulletBaseLapua
+  name: bullet (.338 lapua)
+  components:
+  - type: Projectile
+    damage:
+      types:
+        Piercing: 99
+        Structural: 45
+    penetrationThreshold: 120
+    penetrationDamageTypeRequirement:
+    - Structural
+  - type: StaminaDamageOnCollide
+    damage: 25
+
+- type: entity
+  parent: BaseBulletPractice
+  id: BulletSedativeLapua
+  categories: [ HideSpawnMenu ]
+  name: bullet (.338 lapua)
+  components:
+  - type: Projectile
+    damage:
+      types:
+        Blunt: 4
+  - type: SolutionContainerManager
+    solutions:
+      ammo:
+        maxVol: 8
+  - type: SolutionInjectOnProjectileHit
+    transferAmount: 8
+    solution: ammo

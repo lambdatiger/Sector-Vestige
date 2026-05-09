@@ -1,0 +1,77 @@
+- type: entity
+  parent: [ BaseCartridge, BaseMajorContraband ]
+  id: CartridgePenetratingLapua
+  name: cartridge (.338 lapua penetrative)
+  description: A high-power cartridge used by high-precision rifles.
+  components:
+  - type: Tag
+    tags:
+    - CartridgeLapua
+  - type: CartridgeAmmo
+    proto: BulletPenetratingLapua
+  - type: Sprite
+    sprite: Objects/Weapons/Guns/Ammunition/Casings/large_casing.rsi
+    layers:
+    - state: base
+      map: ["enum.AmmoVisualLayers.Base"]
+    - state: tip
+      map: [ "enum.AmmoVisualLayers.Tip" ]
+      color: "#403f3e"
+  - type: Appearance
+  - type: SpentAmmoVisuals
+  - type: StaticPrice
+    price: 200
+
+- type: entity
+  parent: [ BaseCartridge, BaseMajorContraband ]
+  id: CartridgeBaseLapua
+  name: cartridge (.338 lapua)
+  description: A high-power cartridge used by high-precision rifles.
+  components:
+  - type: Tag
+    tags:
+    - CartridgeLapua
+  - type: CartridgeAmmo
+    proto: BulletBaseLapua
+  - type: Sprite
+    sprite: Objects/Weapons/Guns/Ammunition/Casings/large_casing.rsi
+    layers:
+    - state: base
+      map: ["enum.AmmoVisualLayers.Base"]
+  - type: Appearance
+  - type: SpentAmmoVisuals
+  - type: StaticPrice
+    price: 200
+
+- type: entity
+  parent: [ BaseCartridge, BaseMajorContraband ]
+  id: CartridgeSedativeLapua
+  name: cartridge (.338 lapua sedative)
+  description: A high-power cartridge used by high-precision rifles. This special cartridge features an injector to fill the target with a substance of choice. Also features caseless technology.
+  components:
+  - type: Tag
+    tags:
+    - CartridgeLapua
+  - type: Sprite
+    sprite: Objects/Weapons/Guns/Ammunition/Casings/large_casing.rsi
+    layers:
+    - state: base
+      map: [ "enum.AmmoVisualLayers.Base" ]
+    - state: tip
+      map: [ "enum.AmmoVisualLayers.Tip" ]
+      color: "#1ed5fa"
+  - type: CartridgeAmmo
+    proto: BulletSedativeLapua
+    deleteOnSpawn: true
+  - type: ChemicalAmmo
+  - type: SolutionContainerManager
+    solutions:
+      ammo:
+        reagents:
+        - ReagentId: Nocturine
+          Quantity: 8
+  - type: SolutionTransfer
+    maxTransferAmount: 8
+  - type: SpentAmmoVisuals
+  - type: StaticPrice
+    price: 800
