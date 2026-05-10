@@ -1,0 +1,105 @@
+- type: entity
+  abstract: true
+  parent: [ BaseItem, BaseSyndicateContraband ]
+  id: BaseMagazineLapuaSuggestion
+  name: SCR-g2 magazine (.338 lapua)
+  components:
+  - type: Tag
+    tags:
+    - MagazineSuggestion
+  - type: BallisticAmmoProvider
+    mayTransfer: true
+    whitelist:
+      tags:
+      - CartridgeLapua
+    capacity: 5
+  - type: Item
+    size: Small
+  - type: ContainerContainer
+    containers:
+      ballistic-ammo: !type:Container
+  - type: Sprite
+    sprite: _SV/Objects/Weapons/Guns/Ammunition/Magazine/Sniper/suggestion.rsi
+    layers:
+    - state: base
+      map: ["enum.GunVisualLayers.Base"]
+    - state: mag-1
+      map: ["enum.GunVisualLayers.Mag"]
+  - type: MagazineVisuals
+    magState: mag
+    steps: 1
+    zeroVisible: false
+  - type: Appearance
+
+- type: entity
+  parent: BaseMagazineLapuaSuggestion
+  id: MagazineLapuaSuggestion
+  name: SCR-g2 magazine (.338 lapua)
+  description: 5-round magazine for the SCR-g2 chambered in deadly .338 lapua.
+  components:
+  - type: BallisticAmmoProvider
+    proto: CartridgeBaseLapua
+    soundInsert:
+      path: /Audio/Weapons/Guns/MagIn/bullet_insert.ogg
+  - type: Sprite
+    layers:
+    - state: base
+      map: ["enum.GunVisualLayers.Base"]
+    - state: mag-1
+      map: ["enum.GunVisualLayers.Mag"]
+  - type: Item
+    inhandVisuals:
+      left:
+      - state: inhand-left-mag
+      right:
+      - state: inhand-right-mag
+
+- type: entity
+  parent: BaseMagazineLapuaSuggestion
+  id: MagazinePenetratingLapuaSuggestion
+  name: SCR-g2 magazine (.338 lapua penetrating)
+  description: 5-round magazine for the SCR-g2 chambered in deadly .338 lapua.
+  components:
+  - type: BallisticAmmoProvider
+    proto: CartridgePenetratingLapua
+    soundInsert:
+      path: /Audio/Weapons/Guns/MagIn/bullet_insert.ogg
+  - type: Sprite
+    layers:
+    - state: base
+      map: ["enum.GunVisualLayers.Base"]
+    - state: mag-1
+      map: ["enum.GunVisualLayers.Mag"]
+    - state: stripe
+      color: "#403f3e"
+  - type: Item
+    inhandVisuals:
+      left:
+      - state: inhand-left-mag
+      right:
+      - state: inhand-right-mag
+
+- type: entity
+  parent: BaseMagazineLapuaSuggestion
+  id: MagazineSedativeLapuaSuggestion
+  name: SCR-g2 magazine (.338 lapua sedative)
+  description: 5-round magazine for the SCR-g2 chambered in deadly .338 lapua.
+  components:
+  - type: BallisticAmmoProvider
+    proto: CartridgeSedativeLapua
+    soundInsert:
+      path: /Audio/Weapons/Guns/MagIn/bullet_insert.ogg
+  - type: Sprite
+    layers:
+    - state: base
+      map: ["enum.GunVisualLayers.Base"]
+    - state: mag-1
+      map: ["enum.GunVisualLayers.Mag"]
+    - state: stripe
+      color: "#1ed5fa"
+  - type: Item
+    inhandVisuals:
+      left:
+      - state: inhand-left-mag
+      right:
+      - state: inhand-right-mag

@@ -20,7 +20,7 @@
   - type: Appearance
   - type: SpentAmmoVisuals
   - type: StaticPrice
-    price: 200
+    price: 300
 
 - type: entity
   parent: [ BaseCartridge, BaseMajorContraband ]
@@ -69,7 +69,7 @@
       ammo:
         reagents:
         - ReagentId: Nocturine
-          Quantity: 8
+          Quantity: 8 # 1 shot = not-so-long sleep
   - type: SolutionTransfer
     maxTransferAmount: 8
   - type: SpentAmmoVisuals

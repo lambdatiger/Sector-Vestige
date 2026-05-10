@@ -21,16 +21,19 @@
     unwieldOnUse: false
   - type: GunRequiresWield
   - type: CursorOffsetRequiresWield
+  - type: SpeedModifiedOnWield
+    walkModifier: 0.5
+    sprintModifier: 0.5 # lighter than Hristov
   - type: EyeCursorOffset
-    maxOffset: 20
-    pvsIncrease: 1
+    maxOffset: 24 # slightly more than 1 whole screen
+    pvsIncrease: 1.5
   - type: Gun
     minAngle: 0
     maxAngle: 120
     angleIncrease: 38
-    angleDecay: 16
-    fireRate: 0.25
-    projectileSpeed: 48
+    angleDecay: 18 # if you wish to hit, gotta to wait a moment!
+    fireRate: 0.22
+    projectileSpeed: 55
     soundGunshot:
       path: /Audio/Weapons/Guns/Gunshots/sniper.ogg
     selectedMode: SemiAuto
@@ -44,13 +47,13 @@
     slots:
       gun_magazine:
         name: Magazine
-        startingItem: MagazinePistolViolee
+        startingItem: MagazineLapuaSuggestion
         insertSound: /Audio/Weapons/Guns/MagIn/smg_magin.ogg
         ejectSound: /Audio/Weapons/Guns/MagOut/smg_magout.ogg
         priority: 2
         whitelist:
           tags:
-          - MagazineViolee
+          - MagazineSuggestion
         whitelistFailPopup: gun-magazine-whitelist-fail
       gun_chamber:
         name: Chamber
