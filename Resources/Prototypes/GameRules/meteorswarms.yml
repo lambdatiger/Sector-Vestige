@@ -42,14 +42,14 @@
     children:
     - !type:NestedSelector
         tableId: MeteorSwarmDustEventsTable
-    - id: GameRuleMeteorSwarmSmall
-    - id: GameRuleMeteorSwarmMedium
-    - id: GameRuleMeteorSwarmLarge
-    #- id: GameRuleUristSwarm #SV disabled
-    #- id: GameRuleClownSwarm #SV disabled
-    #- id: GameRuleCowSwarm #SV disabled
-    #- id: GameRulePotatoSwarm #SV disabled
-    #- id: GameRuleFunSwarm #SV disabled
+    - id: MeteorSwarmSmall
+    - id: MeteorSwarmMedium
+    - id: MeteorSwarmLarge
+    #- id: UristSwarm #SV disabled
+    #- id: ClownSwarm #SV disabled
+    #- id: CowSwarm #SV disabled
+    #- id: PotatoSwarm #SV disabled
+    #- id: FunSwarm #SV disabled
     #- id: ImmovableRodSpawn #SV disabled
 
 - type: weightedRandomEntity
