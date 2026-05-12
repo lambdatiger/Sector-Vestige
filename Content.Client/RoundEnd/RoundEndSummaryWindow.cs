@@ -1,3 +1,29 @@
+// SPDX-FileCopyrightText: 2026 Wizards Den contributors
+// SPDX-FileCopyrightText: 2026 Sector Vestige contributors (modifications)
+// SPDX-FileCopyrightText: 2020 Exp <theexp111@gmail.com>
+// SPDX-FileCopyrightText: 2020 Víctor Aguilera Puerto <6766154+Zumorica@users.noreply.github.com>
+// SPDX-FileCopyrightText: 2020 scuffedjays <yetanotherscuffed@gmail.com>
+// SPDX-FileCopyrightText: 2021 DrSmugleaf <DrSmugleaf@users.noreply.github.com>
+// SPDX-FileCopyrightText: 2021 Galactic Chimp <63882831+GalacticChimp@users.noreply.github.com>
+// SPDX-FileCopyrightText: 2021 Pieter-Jan Briers <pieterjan.briers+git@gmail.com>
+// SPDX-FileCopyrightText: 2021 Vera Aguilera Puerto <6766154+Zumorica@users.noreply.github.com>
+// SPDX-FileCopyrightText: 2022 KIBORG04 <bossmira4@gmail.com>
+// SPDX-FileCopyrightText: 2022 Paul Ritter <ritter.paul1@googlemail.com>
+// SPDX-FileCopyrightText: 2022 ShadowCommander <10494922+ShadowCommander@users.noreply.github.com>
+// SPDX-FileCopyrightText: 2022 wrexbe <81056464+wrexbe@users.noreply.github.com>
+// SPDX-FileCopyrightText: 2023 Leon Friedrich <60421075+ElectroJr@users.noreply.github.com>
+// SPDX-FileCopyrightText: 2023 Nemanja <98561806+EmoGarbage404@users.noreply.github.com>
+// SPDX-FileCopyrightText: 2023 Sailor <109166122+Equivocateur@users.noreply.github.com>
+// SPDX-FileCopyrightText: 2023 Visne <39844191+Visne@users.noreply.github.com>
+// SPDX-FileCopyrightText: 2023 metalgearsloth <31366439+metalgearsloth@users.noreply.github.com>
+// SPDX-FileCopyrightText: 2024 Kara <lunarautomaton6@gmail.com>
+// SPDX-FileCopyrightText: 2024 Winkarst <74284083+Winkarst-cpu@users.noreply.github.com>
+// SPDX-FileCopyrightText: 2024 wafehling <wafehling@users.noreply.github.com>
+// SPDX-FileCopyrightText: 2025 Brandon Li <48413902+aspiringLich@users.noreply.github.com>
+// SPDX-FileCopyrightText: 2026 Boaz1111 <149967078+Boaz1111@users.noreply.github.com>
+//
+// SPDX-License-Identifier: MIT
+
 using System.Linq;
 using System.Numerics;
 using Content.Client.Message;
@@ -107,8 +133,8 @@ namespace Content.Client.RoundEnd
                 Orientation = LayoutOrientation.Vertical
             };
 
-            //Put observers at the bottom of the list. Put antags on top.
-            var sortedPlayersInfo = playersInfo.OrderBy(p => p.Observer).ThenBy(p => !p.Antag);
+            //Put observers at the bottom of the list. Put antags on top. // Vestige 15/04/2026 Not putting antags on top, we don't want antags showing in the end of round player manifest.
+            var sortedPlayersInfo = playersInfo.OrderBy(p => p.Observer); // .ThenBy(p => !p.Antag); // Vestige 15/04/2026 See above comment.
 
             //Create labels for each player info.
             foreach (var playerInfo in sortedPlayersInfo)
@@ -148,7 +174,7 @@ namespace Content.Client.RoundEnd
                     {
                         //TODO: On Hover display a popup detailing more play info.
                         //For example: their antag goals and if they completed them sucessfully.
-                        var icNameColor = playerInfo.Antag ? "red" : "white";
+                        var icNameColor = "white"; // Vestige 14/04/2026 Removed red name coloring if person was an antagonist, to remove antags and related things from round-end text.
                         playerInfoText.SetMarkup(
                             Loc.GetString("round-end-summary-window-player-info-if-not-observer-text",
                                 ("playerOOCName", playerInfo.PlayerOOCName),

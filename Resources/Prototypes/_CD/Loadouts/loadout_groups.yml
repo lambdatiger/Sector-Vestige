@@ -1,7 +1,11 @@
 # SPDX-FileCopyrightText: 2026 Cosmatic Drift contributors
 # SPDX-FileCopyrightText: 2026 Sector Vestige contributors (modifications)
-# SPDX-FileCopyrightText: 2026 ReboundQ3 <22770594+ReboundQ3@users.noreply.github.com>
 # SPDX-FileCopyrightText: 2025 ReboundQ3 <ReboundQ3@gmail.com>
+# SPDX-FileCopyrightText: 2026 JuneSzalkowska <juneszalkowska@gmail.com>
+# SPDX-FileCopyrightText: 2026 Nico64 <74880554+NicoSGF64@users.noreply.github.com>
+# SPDX-FileCopyrightText: 2026 ReboundQ3 <22770594+ReboundQ3@users.noreply.github.com>
+# SPDX-FileCopyrightText: 2026 lunarcomets <140772713+lunarcomets@users.noreply.github.com>
+# SPDX-FileCopyrightText: 2026 lunarcomets <lunarcomets2@gmail.com>
 #
 # SPDX-License-Identifier: MIT
 
@@ -112,8 +116,11 @@
   minLimit: 0
   loadouts:
   - SeniorResearcherLabCoat
+  - HighCutSeniorResearcher # Added by SV
   - RegularLabCoat
+  - HighCutBase # Added by SV
   - ScienceLabCoat
+  - HighCutScience # Added by SV
   - ScienceWintercoat
   - RoboticistLabCoat
   - RoboticistWintercoat
@@ -185,6 +192,7 @@
   - SeniorPhysicianLabCoat
   - SeniorPhysicianModernLabCoat
   - RegularLabCoat
+  - HighCutBase # Added by SV
   - ModernLabCoat
   - MedicalDoctorWintercoat
 
@@ -210,6 +218,18 @@
   loadouts:
   - SterileMask
   - MaskGasETUSterile
+
+# Silicon
+- type: loadoutGroup
+  id: CyborgBrain
+  name: loadout-group-cyborg-brain
+  minLimit: 1
+  maxLimit: 1
+  loadouts:
+  - PositronicBrain
+  - MMIFilled
+  - CircuitBrain
+
 
 # Wildcards
 - type: loadoutGroup

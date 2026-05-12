@@ -1,5 +1,5 @@
-// SPDX-FileCopyrightText: 2025 Wizards Den contributors
-// SPDX-FileCopyrightText: 2025 Sector Vestige contributors (modifications)
+// SPDX-FileCopyrightText: 2026 Wizards Den contributors
+// SPDX-FileCopyrightText: 2026 Sector Vestige contributors (modifications)
 // SPDX-FileCopyrightText: 2022 Flipp Syder <76629141+vulppine@users.noreply.github.com>
 // SPDX-FileCopyrightText: 2022 Kara <lunarautomaton6@gmail.com>
 // SPDX-FileCopyrightText: 2022 Rane <60792108+Elijahrane@users.noreply.github.com>
@@ -29,6 +29,10 @@
 // SPDX-FileCopyrightText: 2025 OnyxTheBrave <131422822+OnyxTheBrave@users.noreply.github.com>
 // SPDX-FileCopyrightText: 2025 ReboundQ3 <ReboundQ3@gmail.com>
 // SPDX-FileCopyrightText: 2025 slarticodefast <161409025+slarticodefast@users.noreply.github.com>
+// SPDX-FileCopyrightText: 2026 ReboundQ3 <22770594+ReboundQ3@users.noreply.github.com>
+// SPDX-FileCopyrightText: 2026 Samuka <47865393+Samuka-C@users.noreply.github.com>
+// SPDX-FileCopyrightText: 2026 pathetic meowmeow <uhhadd@gmail.com>
+// SPDX-FileCopyrightText: 2026 Boaz1111 <149967078+Boaz1111@users.noreply.github.com>
 //
 // SPDX-License-Identifier: MIT
 
@@ -57,14 +61,14 @@ namespace Content.Server.GameTicking.Rules;
 
 public sealed class ZombieRuleSystem : GameRuleSystem<ZombieRuleComponent>
 {
-    [Dependency] private readonly AntagSelectionSystem _antag = default!;
+//    [Dependency] private readonly AntagSelectionSystem _antag = default!; // Vestige 15/04/2026 Remove antags and related things from round-end text.
     [Dependency] private readonly ChatSystem _chat = default!;
     [Dependency] private readonly IGameTiming _timing = default!;
-    [Dependency] private readonly ISharedPlayerManager _player = default!;
+//    [Dependency] private readonly ISharedPlayerManager _player = default!; // Vestige 15/04/2026
     [Dependency] private readonly MobStateSystem _mobState = default!;
     [Dependency] private readonly PopupSystem _popup = default!;
     [Dependency] private readonly RoundEndSystem _roundEnd = default!;
-    [Dependency] private readonly SharedMindSystem _mindSystem = default!;
+//    [Dependency] private readonly SharedMindSystem _mindSystem = default!; // Vestige 15/04/2026
     [Dependency] private readonly SharedRoleSystem _roles = default!;
     [Dependency] private readonly StationSystem _station = default!;
     [Dependency] private readonly ZombieSystem _zombie = default!;
@@ -89,59 +93,59 @@ public sealed class ZombieRuleSystem : GameRuleSystem<ZombieRuleComponent>
         args.Append(Loc.GetString("zombie-infection-greeting"));
     }
 
-    protected override void AppendRoundEndText(EntityUid uid,
-        ZombieRuleComponent component,
-        GameRuleComponent gameRule,
-        ref RoundEndTextAppendEvent args)
-    {
-        base.AppendRoundEndText(uid, component, gameRule, ref args);
-
-        // This is just the general condition thing used for determining the win/lose text
-        var fraction = GetInfectedFraction(true, true);
-
-        if (fraction <= 0)
-            args.AddLine(Loc.GetString("zombie-round-end-amount-none"));
-        else if (fraction <= 0.25)
-            args.AddLine(Loc.GetString("zombie-round-end-amount-low"));
-        else if (fraction <= 0.5)
-            args.AddLine(Loc.GetString("zombie-round-end-amount-medium", ("percent", Math.Round((fraction * 100), 2).ToString(CultureInfo.InvariantCulture))));
-        else if (fraction < 1)
-            args.AddLine(Loc.GetString("zombie-round-end-amount-high", ("percent", Math.Round((fraction * 100), 2).ToString(CultureInfo.InvariantCulture))));
-        else
-            args.AddLine(Loc.GetString("zombie-round-end-amount-all"));
-
-        var antags = _antag.GetAntagIdentifiers(uid);
-        args.AddLine(Loc.GetString("zombie-round-end-initial-count", ("initialCount", antags.Count)));
-        foreach (var (_, data, entName) in antags)
-        {
-            args.AddLine(Loc.GetString("zombie-round-end-user-was-initial",
-                ("name", entName),
-                ("username", data.UserName)));
-        }
-
-        var healthy = GetHealthyHumans();
-        // Gets a bunch of the living players and displays them if they're under a threshold.
-        // InitialInfected is used for the threshold because it scales with the player count well.
-        if (healthy.Count <= 0 || healthy.Count > 2 * antags.Count)
-            return;
-        args.AddLine("");
-        args.AddLine(Loc.GetString("zombie-round-end-survivor-count", ("count", healthy.Count)));
-        foreach (var survivor in healthy)
-        {
-            var meta = MetaData(survivor);
-            var username = string.Empty;
-            if (_mindSystem.TryGetMind(survivor, out _, out var mind) &&
-                _player.TryGetSessionById(mind.UserId, out var session))
-            {
-                username = session.Name;
-            }
-
-            args.AddLine(Loc.GetString("zombie-round-end-user-was-survivor",
-                ("name", meta.EntityName),
-                ("username", username)));
-        }
-        args.AddLine("");
-    }
+//    protected override void AppendRoundEndText(EntityUid uid, // Vestige 14/04/2026 Commented out, round end text shouldn't show stuff related to antags.
+//        ZombieRuleComponent component,
+//        GameRuleComponent gameRule,
+//        ref RoundEndTextAppendEvent args)
+//    {
+//        base.AppendRoundEndText(uid, component, gameRule, ref args);
+//
+//        // This is just the general condition thing used for determining the win/lose text
+//        var fraction = GetInfectedFraction(true, true);
+//
+//        if (fraction <= 0)
+//            args.AddLine(Loc.GetString("zombie-round-end-amount-none"));
+//        else if (fraction <= 0.25)
+//            args.AddLine(Loc.GetString("zombie-round-end-amount-low"));
+//        else if (fraction <= 0.5)
+//            args.AddLine(Loc.GetString("zombie-round-end-amount-medium", ("percent", Math.Round((fraction * 100), 2).ToString(CultureInfo.InvariantCulture))));
+//        else if (fraction < 1)
+//            args.AddLine(Loc.GetString("zombie-round-end-amount-high", ("percent", Math.Round((fraction * 100), 2).ToString(CultureInfo.InvariantCulture))));
+//        else
+//            args.AddLine(Loc.GetString("zombie-round-end-amount-all"));
+//
+//        var antags = _antag.GetAntagIdentifiers(uid);
+//        args.AddLine(Loc.GetString("zombie-round-end-initial-count", ("initialCount", antags.Count)));
+//        foreach (var (_, data, entName) in antags)
+//        {
+//            args.AddLine(Loc.GetString("zombie-round-end-user-was-initial",
+//                ("name", entName),
+//                ("username", data.UserName)));
+//        }
+//
+//        var healthy = GetHealthyHumans();
+//        // Gets a bunch of the living players and displays them if they're under a threshold.
+//        // InitialInfected is used for the threshold because it scales with the player count well.
+//        if (healthy.Count <= 0 || healthy.Count > 2 * antags.Count)
+//            return;
+//        args.AddLine("");
+//        args.AddLine(Loc.GetString("zombie-round-end-survivor-count", ("count", healthy.Count)));
+//        foreach (var survivor in healthy)
+//        {
+//            var meta = MetaData(survivor);
+//            var username = string.Empty;
+//            if (_mindSystem.TryGetMind(survivor, out _, out var mind) &&
+//                _player.TryGetSessionById(mind.UserId, out var session))
+//            {
+//                username = session.Name;
+//            }
+//
+//            args.AddLine(Loc.GetString("zombie-round-end-user-was-survivor",
+//                ("name", meta.EntityName),
+//                ("username", username)));
+//        }
+//        args.AddLine("");
+//    }
 
     /// <summary>
     ///     The big kahoona function for checking if the round is gonna end

@@ -1,7 +1,8 @@
 # SPDX-FileCopyrightText: 2026 Sector-Vestige contributors
 # SPDX-FileCopyrightText: 2026 Sector Vestige contributors (modifications)
-# SPDX-FileCopyrightText: 2026 ReboundQ3 <22770594+ReboundQ3@users.noreply.github.com>
 # SPDX-FileCopyrightText: 2025 JuneSzalkowska <juneszalkowska@gmail.com>
+# SPDX-FileCopyrightText: 2026 JacketedGaming <kalebblack399@yahoo.com>
+# SPDX-FileCopyrightText: 2026 ReboundQ3 <22770594+ReboundQ3@users.noreply.github.com>
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -14,3 +15,15 @@
     sprite: _SV/Clothing/OuterClothing/Wintercoats/miningjacket.rsi
   - type: Clothing
     sprite: _SV/Clothing/OuterClothing/Wintercoats/miningjacket.rsi
+
+#Damaged Centcomm Winter Coat
+- type: entity
+  parent: ClothingOuterWinterCoat
+  id: ClothingOuterWinterCoatCentcommDamaged
+  name: damaged centcomm winter coat
+  description: A cozy winter coat to keep nuclear winters at bay. Although, this ones got a few too many holes in it for that now.
+  components:
+  - type: Sprite
+    sprite: _SV/Clothing/OuterClothing/Wintercoats/Damaged_Centcom_Wintercoat.rsi
+  - type: Clothing
+    sprite: _SV/Clothing/OuterClothing/Wintercoats/Damaged_Centcom_Wintercoat.rsi
