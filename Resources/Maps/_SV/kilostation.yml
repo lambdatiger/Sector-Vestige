@@ -7100,14 +7100,6 @@ entities:
     - type: Transform
       pos: 40.631317,-30.45991
       parent: 2
-- proto: ActionToggleLight
-  entities:
-  - uid: 6
-    mapInit: true
-    paused: true
-    components:
-    - type: Transform
-      parent: 5
 - proto: AirAlarm
   entities:
   - uid: 8
@@ -104162,22 +104154,8 @@ entities:
     - type: Transform
       pos: 11.227579,5.9133363
       parent: 2
-    - type: HandheldLight
-      toggleActionEntity: 6
-    - type: ContainerContainer
-      containers:
-        cell_slot: !type:ContainerSlot
-          showEnts: False
-          occludes: True
-          ent: null
-        actions: !type:Container
-          showEnts: False
-          occludes: True
-          ents:
-          - 6
     - type: Physics
       canCollide: True
-    - type: ActionsContainer
   - uid: 13887
     components:
     - type: Transform
