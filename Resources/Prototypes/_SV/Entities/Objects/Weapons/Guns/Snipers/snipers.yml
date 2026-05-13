@@ -22,8 +22,8 @@
   - type: GunRequiresWield
   - type: CursorOffsetRequiresWield
   - type: SpeedModifiedOnWield
-    walkModifier: 0.5
-    sprintModifier: 0.5 # lighter than Hristov
+    walkModifier: 0.3
+    sprintModifier: 0.3 # slightly lighter than Hristov
   - type: EyeCursorOffset
     maxOffset: 24 # slightly more than 1 whole screen
     pvsIncrease: 1.5

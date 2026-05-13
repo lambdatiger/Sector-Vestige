@@ -7,8 +7,9 @@
   - type: Projectile
     damage:
       types:
-        Piercing: 32
+        Piercing: 30
         Structural: 210 # good for basic walls and reinforced windows, struggles with rest
+    ignoreResistances: true
     penetrationThreshold: 360
     penetrationDamageTypeRequirement:
     - Structural
@@ -24,7 +25,7 @@
   - type: Projectile
     damage:
       types:
-        Piercing: 99 # it has an admin suffix, what did you expect?
+        Piercing: 66
         Structural: 45
     penetrationThreshold: 120 # pierces grilles and regular windows
     penetrationDamageTypeRequirement:
