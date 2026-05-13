@@ -1,48 +1,22 @@
-// SPDX-FileCopyrightText: 2025 Wizards Den contributors
-// SPDX-FileCopyrightText: 2025 Sector Vestige contributors (modifications)
-// SPDX-FileCopyrightText: 2022 Leon Friedrich <60421075+ElectroJr@users.noreply.github.com>
-// SPDX-FileCopyrightText: 2022 Mervill <mervills.email@gmail.com>
-// SPDX-FileCopyrightText: 2022 Rane <60792108+Elijahrane@users.noreply.github.com>
-// SPDX-FileCopyrightText: 2023 DrSmugleaf <DrSmugleaf@users.noreply.github.com>
-// SPDX-FileCopyrightText: 2023 PrPleGoo <PrPleGoo@users.noreply.github.com>
-// SPDX-FileCopyrightText: 2023 TemporalOroboros <TemporalOroboros@gmail.com>
-// SPDX-FileCopyrightText: 2024 AJCM-git <60196617+AJCM-git@users.noreply.github.com>
-// SPDX-FileCopyrightText: 2024 BuildTools <unconfigured@null.spigotmc.org>
-// SPDX-FileCopyrightText: 2024 Ed <96445749+TheShuEd@users.noreply.github.com>
-// SPDX-FileCopyrightText: 2024 Ty Ashley <42426760+TyAshley@users.noreply.github.com>
-// SPDX-FileCopyrightText: 2024 chavonadelal <156101927+chavonadelal@users.noreply.github.com>
-// SPDX-FileCopyrightText: 2024 metalgearsloth <31366439+metalgearsloth@users.noreply.github.com>
-// SPDX-FileCopyrightText: 2024 slarticodefast <161409025+slarticodefast@users.noreply.github.com>
-// SPDX-FileCopyrightText: 2024 themias <89101928+themias@users.noreply.github.com>
-// SPDX-FileCopyrightText: 2025 Pieter-Jan Briers <pieterjan.briers+git@gmail.com>
-// SPDX-FileCopyrightText: 2025 ReboundQ3 <ReboundQ3@gmail.com>
-// SPDX-FileCopyrightText: 2025 Tayrtahn <tayrtahn@gmail.com>
-// SPDX-FileCopyrightText: 2025 beck-thompson <107373427+beck-thompson@users.noreply.github.com>
-// SPDX-FileCopyrightText: 2025 qu4drivium <aaronholiver@outlook.com>
-// SPDX-FileCopyrightText: 2025 OnyxTheBrave <131422822+OnyxTheBrave@users.noreply.github.com>
-//
-// SPDX-License-Identifier: MIT
-
-using Content.Server.Access.Components;
-using Content.Server.Popups;
-using Content.Shared.UserInterface;
-using Content.Shared.Access.Components;
-using Content.Shared.Access.Systems;
-using Content.Shared.Interaction;
-using Content.Shared.StatusIcon;
-using Robust.Server.GameObjects;
-using Robust.Shared.Prototypes;
-using Content.Shared.Roles;
 using System.Diagnostics.CodeAnalysis;
+using Content.Server.Access.Components;
 using Content.Server.Clothing.Systems;
 using Content.Server.Implants;
-using Content.Server.VoiceMask;
+using Content.Server.Popups;
+using Content.Shared.Access.Components;
+using Content.Shared.Access.Systems;
+using Content.Shared.Clothing.Components;
 using Content.Shared.Implants;
+using Content.Shared.Interaction;
 using Content.Shared.Inventory;
 using Content.Shared.PDA;
 using Content.Shared._CD.NanoChat; // CD
-using Content.Shared.Lock;
+using Content.Shared.Roles;
+using Content.Shared.StatusIcon;
+using Content.Shared.UserInterface;
 using Content.Shared.VoiceMask;
+using Robust.Server.GameObjects;
+using Robust.Shared.Prototypes;
 
 namespace Content.Server.Access.Systems
 {
@@ -109,6 +83,9 @@ namespace Content.Server.Access.Systems
 
             _chameleon.SetSelectedPrototype(ent, comp.IdCard);
             SubscribeLocalEvent<AgentIDCardComponent, AgentIDCardNumberChangedMessage>(OnNumberChanged); // CD
+
+            if (TryComp<ChameleonClothingComponent>(ent, out var chameleonComp) && chameleonComp.CanBeSetByController)
+                _chameleon.SetSelectedPrototype(ent, comp.IdCard, component: chameleonComp);
         }
 
         // CD - Add number change handler

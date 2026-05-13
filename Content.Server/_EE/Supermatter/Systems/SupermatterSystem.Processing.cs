@@ -157,14 +157,15 @@ public sealed partial class SupermatterSystem
         // Irradiate stuff
         if (TryComp<RadiationSourceComponent>(uid, out var rad))
         {
-            rad.Intensity =
+            var intensity =
                 _config.GetCVar(EECCVars.SupermatterRadsBase) +
                 sm.Power
                 * Math.Max(0, 1f + transmissionBonus / 10f)
                 * 0.003f
                 * _config.GetCVar(EECCVars.SupermatterRadsModifier);
 
-            rad.Slope = Math.Clamp(rad.Intensity / 15, 0.2f, 1f);
+            _radiation.SetIntensity((uid, rad), intensity);
+            _radiation.SetSlope((uid, rad), Math.Clamp(intensity / 15, 0.2f, 1f));
         }
 
         // Power * 0.55 * a value between 1 and 0.8

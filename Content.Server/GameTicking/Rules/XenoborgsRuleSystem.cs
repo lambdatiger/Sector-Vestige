@@ -16,6 +16,7 @@ using Content.Shared.Destructible;
 using Content.Shared.GameTicking.Components;
 using Content.Shared.Mind;
 using Content.Shared.Mobs.Systems;
+using Content.Shared.Objectives.Systems;
 using Content.Shared.Xenoborgs.Components;
 using Robust.Shared.Timing;
 
@@ -26,9 +27,10 @@ public sealed class XenoborgsRuleSystem : GameRuleSystem<XenoborgsRuleComponent>
 //    [Dependency] private readonly AntagSelectionSystem _antag = default!; // Vestige 15/04/2026 Remove antags and related things from round-end text.
     [Dependency] private readonly ChatSystem _chatSystem = default!;
     [Dependency] private readonly MobStateSystem _mobState = default!;
-    [Dependency] private readonly SharedMindSystem _mindSystem = default!;
     [Dependency] private readonly RoundEndSystem _roundEnd = default!;
+    [Dependency] private readonly SharedMindSystem _mindSystem = default!;
     [Dependency] private readonly StationSystem _station = default!;
+    [Dependency] private readonly TargetSystem _target = default!;
     [Dependency] private readonly IGameTiming _timing = default!;
 
     private static readonly Color AnnouncmentColor = Color.Gold;
@@ -105,7 +107,7 @@ public sealed class XenoborgsRuleSystem : GameRuleSystem<XenoborgsRuleComponent>
     private void CheckRoundEnd(XenoborgsRuleComponent xenoborgsRuleComponent)
     {
         var numXenoborgs = GetNumberXenoborgs();
-        var numHumans = _mindSystem.GetAliveHumans().Count;
+        var numHumans = _target.GetAliveHumans().Count;
 
         xenoborgsRuleComponent.MaxNumberXenoborgs = Math.Max(xenoborgsRuleComponent.MaxNumberXenoborgs, numXenoborgs);
 
