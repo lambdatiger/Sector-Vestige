@@ -1,0 +1,11 @@
+- type: entity
+  parent: BaseLightTube
+  name: dim light tube
+  id: DimLightTube
+  description: A dim light tube for populating the darkness of maintenance.
+  components:
+  - type: LightBulb
+    color: "#ba473f"
+    lightEnergy: 0.6
+    lightRadius: 10
+    lightSoftness: 3
