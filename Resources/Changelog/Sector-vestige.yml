@@ -1759,3 +1759,9 @@ Entries:
       message: Copperhead the Syndicate Spycraft(The salv destroyer 9000)
   id: 240
   time: '2026-05-09T17:10:33.0000000+00:00'
+- author: Boaz1111
+  changes:
+    - type: Add
+      message: Ports the sofas and benches from CD.
+  id: 241
+  time: '2026-05-13T06:42:47.0000000+00:00'
