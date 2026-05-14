@@ -17,6 +17,14 @@ public sealed class AdminCharacterDocumentsEui : BaseEui
         _window.OnRefresh = () => SendMessage(new AdminSVRefreshMsg());
         _window.OnEdit = (pid, doc) => SendMessage(new AdminSVDocumentEditMsg { ProfileId = pid, Document = doc });
         _window.OnDelete = (pid, did) => SendMessage(new AdminSVDocumentDeleteMsg { ProfileId = pid, DocId = did });
+        _window.OnCreate = (pid, type, title, content, stamps) => SendMessage(new AdminSVDocumentCreateMsg
+        {
+            ProfileId = pid,
+            DocType = (int)type,
+            Title = title,
+            Content = content,
+            Stamps = stamps,
+        });
     }
 
     public override void Opened()

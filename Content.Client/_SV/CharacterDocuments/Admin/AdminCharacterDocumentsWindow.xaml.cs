@@ -24,6 +24,7 @@ public sealed partial class AdminCharacterDocumentsWindow : DefaultWindow
     public Action? OnRefresh;
     public Action<int, CharacterDocument>? OnEdit;
     public Action<int, int>? OnDelete;
+    public Action<int, DocumentType, string, string, List<CharacterDocumentStamp>>? OnCreate;
 
     public AdminCharacterDocumentsWindow()
     {
@@ -36,6 +37,7 @@ public sealed partial class AdminCharacterDocumentsWindow : DefaultWindow
             tab.Initialize(type);
             tab.OnDocumentEdit = (pid, doc) => OnEdit?.Invoke(pid, doc);
             tab.OnDocumentDelete = (pid, did) => OnDelete?.Invoke(pid, did);
+            tab.OnDocumentCreate = (pid, t, title, content, stamps) => OnCreate?.Invoke(pid, t, title, content, stamps);
             TypeTabs.AddChild(tab);
             TypeTabs.SetTabTitle(i, type.ToString());
             _tabs[type] = tab;

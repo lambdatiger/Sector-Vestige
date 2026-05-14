@@ -34,3 +34,13 @@ public sealed class AdminSVDocumentDeleteMsg : EuiMessageBase
     public int ProfileId;
     public int DocId;
 }
+
+[Serializable, NetSerializable]
+public sealed class AdminSVDocumentCreateMsg : EuiMessageBase
+{
+    public int ProfileId;
+    public int DocType;
+    public string Title = string.Empty;
+    public string Content = string.Empty;
+    public List<CharacterDocumentStamp> Stamps = new();
+}

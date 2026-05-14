@@ -5,6 +5,7 @@ using Content.Server.Database;
 using Content.Server.EUI;
 using Content.Shared._SV.CharacterDocuments;
 using Content.Shared._SV.CharacterDocuments.Admin;
+using Content.Shared._SV.CharacterDocuments.Components;
 using Content.Shared.Eui;
 
 namespace Content.Server._SV.CharacterDocuments.Admin;
@@ -12,6 +13,7 @@ namespace Content.Server._SV.CharacterDocuments.Admin;
 public sealed class AdminCharacterDocumentsEui : BaseEui
 {
     [Dependency] private readonly IServerDbManager _db = default!;
+    [Dependency] private readonly IEntityManager _entMan = default!;
 
     private List<AdminSVProfileEntry> _profiles = new();
 
@@ -45,6 +47,9 @@ public sealed class AdminCharacterDocumentsEui : BaseEui
                 break;
             case AdminSVDocumentDeleteMsg del:
                 _ = ApplyDeleteAsync(del.ProfileId, del.DocId);
+                break;
+            case AdminSVDocumentCreateMsg create:
+                _ = ApplyCreateAsync(create);
                 break;
         }
     }
@@ -95,6 +100,7 @@ public sealed class AdminCharacterDocumentsEui : BaseEui
         var existing = entry.Documents[idx];
         existing.DocTitle = incoming.DocTitle;
         existing.DocContent = incoming.DocContent;
+        existing.DocStamps = incoming.DocStamps;
         existing.DocLastEditedBy = "Central Command";
         existing.DocDateLastEdited = DateTime.Now.AddYears(200);
 
@@ -114,6 +120,35 @@ public sealed class AdminCharacterDocumentsEui : BaseEui
         StateDirty();
     }
 
+    private async Task ApplyCreateAsync(AdminSVDocumentCreateMsg msg)
+    {
+        var entry = _profiles.FirstOrDefault(p => p.ProfileId == msg.ProfileId);
+        if (entry == null)
+            return;
+
+        // Generate a fresh DocID — must not collide with existing ones.
+        // The DB autoincrements the actual primary key on insert; this in-memory ID
+        // is only used by the client UI for selection until the next ReloadAsync.
+        var newId = entry.Documents.Count == 0 ? 1 : entry.Documents.Max(d => d.DocID) + 1;
+
+        var doc = new CharacterDocument
+        {
+            DocID = newId,
+            DocType = msg.DocType,
+            DocTitle = string.IsNullOrWhiteSpace(msg.Title) ? "Untitled" : msg.Title,
+            DocAuthor = "Central Command",
+            DocLastEditedBy = "Central Command",
+            DocDateLastEdited = DateTime.Now.AddYears(200),
+            DocContent = msg.Content,
+            DocStamps = msg.Stamps ?? new List<CharacterDocumentStamp>(),
+        };
+        entry.Documents.Add(doc);
+
+        await SaveProfileAsync(entry);
+        // Pick up the real DocID assigned by the DB.
+        await ReloadAsync();
+    }
+
     private async Task SaveProfileAsync(AdminSVProfileEntry entry)
     {
         var dbDocs = entry.Documents.Select(d => new SVModel.CharacterDocument
@@ -129,5 +164,30 @@ public sealed class AdminCharacterDocumentsEui : BaseEui
         }).ToList();
 
         await _db.SaveSVCharacterDocumentsAsync(entry.ProfileId, entry.PlayerName, entry.CharacterName, dbDocs);
+
+        SyncLiveSession(entry);
+    }
+
+    /// <summary>
+    ///     If the target character is currently spawned, replace their in-memory
+    ///     document dict and broadcast a refresh so any open consoles re-render.
+    ///     Without this, admins editing online players' docs would only show up
+    ///     after the player reconnects.
+    /// </summary>
+    private void SyncLiveSession(AdminSVProfileEntry entry)
+    {
+        var query = _entMan.EntityQueryEnumerator<CharacterDocumentComponent>();
+        while (query.MoveNext(out var uid, out var comp))
+        {
+            if (comp.ProfileId != entry.ProfileId)
+                continue;
+
+            comp.Documents.Clear();
+            foreach (var doc in entry.Documents)
+                comp.Documents[doc.DocID] = doc;
+
+            _entMan.EventBus.RaiseEvent(EventSource.Local, new CharacterDocumentEditedEvent());
+            return; // at most one live entity per profile
+        }
     }
 }
