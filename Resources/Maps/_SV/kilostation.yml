@@ -4,7 +4,7 @@ meta:
   engineVersion: 275.0.0
   forkId: sector-vestige
   forkVersion: 7f4625166b7250e458fe8239b55ab7d52626a529
-  time: 05/14/2026 06:37:07
+  time: 05/14/2026 07:37:16
   entityCount: 23940
 maps:
 - 1
@@ -103,10 +103,11 @@ entities:
   - uid: 2
     components:
     - type: MetaData
-      name: grid
     - type: Transform
       pos: -0.5208333,-0.4722222
       parent: 1
+    - type: BecomesStation
+      id: KiloStation
     - type: MapGrid
       chunks:
         0,0:
@@ -8434,7 +8435,7 @@ entities:
       pos: -39.5,-25.5
       parent: 2
     - type: Door
-      secondsUntilStateChange: -145468.05
+      secondsUntilStateChange: -145500.5
       state: Opening
     - type: DeviceLinkSource
       lastSignals:
@@ -8513,7 +8514,7 @@ entities:
       pos: -8.5,22.5
       parent: 2
     - type: Door
-      secondsUntilStateChange: -855532.06
+      secondsUntilStateChange: -855564.5
       state: Opening
     - type: DeviceLinkSource
       lastSignals:
@@ -8943,7 +8944,7 @@ entities:
       pos: -0.5,-7.5
       parent: 2
     - type: Door
-      secondsUntilStateChange: -331405.97
+      secondsUntilStateChange: -331438.44
       state: Opening
     - type: DeviceLinkSource
       lastSignals:
@@ -8989,7 +8990,7 @@ entities:
       pos: -12.5,46.5
       parent: 2
     - type: Door
-      secondsUntilStateChange: -32394.432
+      secondsUntilStateChange: -32426.893
       state: Opening
     - type: DeviceLinkSource
       lastSignals:
@@ -10053,7 +10054,7 @@ entities:
       pos: 32.5,46.5
       parent: 2
     - type: Door
-      secondsUntilStateChange: -245726.94
+      secondsUntilStateChange: -245759.39
       state: Opening
     - type: DeviceLinkSource
       lastSignals:
@@ -10274,7 +10275,7 @@ entities:
       pos: 7.5,-14.5
       parent: 2
     - type: Door
-      secondsUntilStateChange: -1821.0319
+      secondsUntilStateChange: -1853.4923
       state: Opening
     - type: DeviceLinkSource
       lastSignals:
@@ -106335,11 +106336,11 @@ entities:
       parent: 2
     - type: Paper
       content: >-
-        [color=#1b67a5]░░░░░░ 
+        [color=#1b67a5]░░░░░░
 
         ░█▀▀█░  [head=3] Quartermaster Meeting Notes [/head]
 
-        ░████░ 
+        ░████░
 
         [/color]
   - uid: 14165
@@ -106409,7 +106410,7 @@ entities:
       parent: 2
     - type: Paper
       content: >-
-        [color=#1b67a5]█░█░▄█ 
+        [color=#1b67a5]█░█░▄█
 
         ░█░░██ [head=3] Head of Personnel Meeting Notes [/head]
 
@@ -106427,7 +106428,7 @@ entities:
 
         ░█░░█░ [head=3] Research Director Meeting Notes[/head]
 
-        ░▄▀▀▄░ 
+        ░▄▀▀▄░
 
         [/color]
   - uid: 14170
@@ -106437,11 +106438,11 @@ entities:
       parent: 2
     - type: Paper
       content: >-
-        [color=#1b67a5]░░▄▀░░ 
+        [color=#1b67a5]░░▄▀░░
 
         ░▄█▄▄▀ [head=3] Chief Engineer Meeting Notes[/head]
 
-        ██▀░░░ 
+        ██▀░░░
 
         [/color]
   - uid: 14171
@@ -106451,11 +106452,11 @@ entities:
       parent: 2
     - type: Paper
       content: >-
-        [color=#1b67a5]░░██░░ 
+        [color=#1b67a5]░░██░░
 
         ██████ [head=3] Chief Medical Officer Meeting Notes[/head]
 
-        ░░██░░ 
+        ░░██░░
 
         [/color]
   - uid: 14172
@@ -106465,11 +106466,11 @@ entities:
       parent: 2
     - type: Paper
       content: >-
-        [color=#1b67a5]░░██░░ 
+        [color=#1b67a5]░░██░░
 
         ▀████▀ [head=3] Captain Meeting Notes[/head]
 
-        ▄█▀▀█▄ 
+        ▄█▀▀█▄
 
         [/color]
   - uid: 14173
@@ -143606,7 +143607,7 @@ entities:
       lastSignals:
         DoorStatus: True
     - type: Door
-      secondsUntilStateChange: -1394311.1
+      secondsUntilStateChange: -1394343.6
       state: Opening
     - type: Airlock
       autoClose: False
@@ -143904,7 +143905,7 @@ entities:
       lastSignals:
         DoorStatus: True
     - type: Door
-      secondsUntilStateChange: -694478.2
+      secondsUntilStateChange: -694510.6
       state: Opening
     - type: Airlock
       autoClose: False
