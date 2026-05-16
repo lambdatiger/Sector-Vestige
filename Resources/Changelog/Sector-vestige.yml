@@ -1779,3 +1779,9 @@ Entries:
       message: Fixed certain gauze arm markings incorrectly using the "Overlay" layer
   id: 243
   time: '2026-05-16T15:51:00.0000000+00:00'
+- author: lambdatiger
+  changes:
+    - type: Tweak
+      message: Changed Packed_SM internal station ID.
+  id: 244
+  time: '2026-05-16T15:51:52.0000000+00:00'
