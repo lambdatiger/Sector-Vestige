@@ -1791,3 +1791,13 @@ Entries:
       message: Fixed the electropack.
   id: 245
   time: '2026-05-18T15:50:54.0000000+00:00'
+- author: akirrer
+  changes:
+    - type: Add
+      message: Added a new Syndicate sniper rifle.
+    - type: Add
+      message: Added a new caliber, .338 lapua.
+    - type: Tweak
+      message: Tweaked large ammo casing sprites to accept colored tips.
+  id: 246
+  time: '2026-05-18T16:37:44.0000000+00:00'
