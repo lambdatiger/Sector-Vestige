@@ -8,7 +8,7 @@
   name: SCR-g2 'Suggestion'
   parent: [BaseWeaponSubMachineGun, BaseSyndicateContraband]
   id: WeaponSniperSCRSuggestion
-  description: A new-generation Syndicate sniper rifle. You don't know much about it, but given that it feeds from .338 Lapua, it certainly packs a punch. There's a small Pommersk Eagle logo near the trigger.
+  description: A new-generation Syndicate sniper rifle. You don't know much about it, but given that it feeds from .338 PMS, it certainly packs a punch. There's a small Pommersk Eagle logo near the trigger.
   suffix: Admin
   components:
   - type: Sprite
@@ -53,7 +53,7 @@
     slots:
       gun_magazine:
         name: Magazine
-        startingItem: MagazineLapuaSuggestion
+        startingItem: MagazinePMSSuggestion
         insertSound: /Audio/Weapons/Guns/MagIn/smg_magin.ogg
         ejectSound: /Audio/Weapons/Guns/MagOut/smg_magout.ogg
         priority: 2
@@ -66,7 +66,7 @@
         priority: 1
         whitelist:
           tags:
-          - CartridgeLapua
+          - CartridgePMS
   - type: MagazineVisuals
     magState: mag
     steps: 1

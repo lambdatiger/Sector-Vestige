@@ -6,15 +6,15 @@
 
 - type: entity
   parent: [ BaseCartridge, BaseMajorContraband ]
-  id: CartridgePenetratingLapua
-  name: cartridge (.338 lapua penetrative)
-  description: A high-power cartridge used by high-precision rifles.
+  id: CartridgePenetratingPMS
+  name: cartridge (.338 PMSP)
+  description: A high-power cartridge used by high-precision rifles. The cartridge has etched credentials to contact Pommersk Eagle for business inquiries.
   components:
   - type: Tag
     tags:
-    - CartridgeLapua
+    - CartridgePMS
   - type: CartridgeAmmo
-    proto: BulletPenetratingLapua
+    proto: BulletPenetratingPMS
   - type: Sprite
     sprite: Objects/Weapons/Guns/Ammunition/Casings/large_casing.rsi
     layers:
@@ -30,15 +30,15 @@
 
 - type: entity
   parent: [ BaseCartridge, BaseMajorContraband ]
-  id: CartridgeBaseLapua
-  name: cartridge (.338 lapua)
-  description: A high-power cartridge used by high-precision rifles.
+  id: CartridgeBasePMS
+  name: cartridge (.338 Pommersk Eagle Special)
+  description: A high-power cartridge used by high-precision rifles. The cartridge has etched credentials to contact Pommersk Eagle for business inquiries.
   components:
   - type: Tag
     tags:
-    - CartridgeLapua
+    - CartridgePMS
   - type: CartridgeAmmo
-    proto: BulletBaseLapua
+    proto: BulletBasePMS
   - type: Sprite
     sprite: Objects/Weapons/Guns/Ammunition/Casings/large_casing.rsi
     layers:
@@ -51,13 +51,13 @@
 
 - type: entity
   parent: [ BaseCartridge, BaseMajorContraband ]
-  id: CartridgeSedativeLapua
-  name: cartridge (.338 lapua sedative)
+  id: CartridgeSedativePMS
+  name: cartridge (.338 PMSS)
   description: A high-power cartridge used by high-precision rifles. This special cartridge features an injector to fill the target with a substance of choice. Also features caseless technology.
   components:
   - type: Tag
     tags:
-    - CartridgeLapua
+    - CartridgePMS
   - type: Sprite
     sprite: Objects/Weapons/Guns/Ammunition/Casings/large_casing.rsi
     layers:
@@ -67,7 +67,7 @@
       map: [ "enum.AmmoVisualLayers.Tip" ]
       color: "#1ed5fa"
   - type: CartridgeAmmo
-    proto: BulletSedativeLapua
+    proto: BulletSedativePMS
     deleteOnSpawn: true
   - type: ChemicalAmmo
   - type: SolutionContainerManager

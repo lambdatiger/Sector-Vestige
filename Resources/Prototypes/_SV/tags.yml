@@ -15,4 +15,4 @@
 - type: Tag
   id: MagazineSuggestion # Magazine for SCR-g2 'Suggestion'
 - type: Tag
-  id: CartridgeLapua # Cartridge for SCR-g2
+  id: CartridgePMS # Cartridge for SCR-g2
