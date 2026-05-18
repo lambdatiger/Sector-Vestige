@@ -428,10 +428,6 @@
   - type: DeviceLinkSink
     ports:
       - Trigger
-  - type: SuitSensor #SV Added tracking for the electropack - Start
-    randomMode: false
-    controlsLocked: true
-    mode: SensorCords #SV Added tracking for the electopack - End
 
 # Debug
 - type: entity
