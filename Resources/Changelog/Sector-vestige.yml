@@ -1785,3 +1785,9 @@ Entries:
       message: Changed Packed_SM internal station ID.
   id: 244
   time: '2026-05-16T15:51:52.0000000+00:00'
+- author: ReboundQ3
+  changes:
+    - type: Fix
+      message: Fixed the electropack.
+  id: 245
+  time: '2026-05-18T15:50:54.0000000+00:00'
