@@ -90,6 +90,11 @@ namespace Content.Server.Database
                 .Property(log => log.OrganMarkings)
                 .HasConversion(jsonByteArrayConverter);
 
+            // SV: lobby-authored general flavour block, JSON on SVProfile.
+            modelBuilder.Entity<SVModel.SVProfile>()
+                .Property(log => log.CharacterDocumentGeneral)
+                .HasConversion(jsonByteArrayConverter);
+
             // EF core can make this automatically unique on sqlite but not psql.
             modelBuilder.Entity<IPIntelCache>()
                 .HasIndex(p => p.Address)

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 
@@ -26,6 +27,13 @@ public static class SVModel
         /// The character's name. Can change between rounds.
         /// </summary>
         public string CharacterName { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Lobby-authored character flavour data serialized as JSON
+        /// (height, weight, emergency contact, allergies, etc.).
+        /// </summary>
+        [Column(TypeName = "jsonb")]
+        public JsonDocument? CharacterDocumentGeneral { get; set; }
 
         [JsonIgnore]
         public List<CharacterDocument> CharacterDocuments { get; set; } = new();

@@ -1416,6 +1416,10 @@ namespace Content.Server.Database.Migrations.Postgres
                         .HasColumnType("integer")
                         .HasColumnName("profile_id");
 
+                    b.Property<JsonDocument>("CharacterDocumentGeneral")
+                        .HasColumnType("jsonb")
+                        .HasColumnName("character_document_general");
+
                     b.Property<string>("CharacterName")
                         .IsRequired()
                         .HasColumnType("text")

@@ -1340,6 +1340,10 @@ namespace Content.Server.Database.Migrations.Sqlite
                         .HasColumnType("INTEGER")
                         .HasColumnName("profile_id");
 
+                    b.Property<byte[]>("CharacterDocumentGeneral")
+                        .HasColumnType("jsonb")
+                        .HasColumnName("character_document_general");
+
                     b.Property<string>("CharacterName")
                         .IsRequired()
                         .HasColumnType("TEXT")

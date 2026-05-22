@@ -21,6 +21,12 @@ public sealed class CharacterDocumentScan : BoundUserInterfaceMessage
 {
     public NetEntity Player;
     public string DocTitle = string.Empty;
+    /// <summary>
+    /// Doc type to tag the scanned document as. Null = use the console's primary type.
+    /// Multi-type consoles (Central Command) set this to the active tab so scans land
+    /// in the tab the user is viewing rather than always the primary type.
+    /// </summary>
+    public int? DocType;
 }
 
 [Serializable, NetSerializable]

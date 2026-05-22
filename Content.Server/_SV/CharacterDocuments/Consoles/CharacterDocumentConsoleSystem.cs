@@ -42,10 +42,8 @@ public sealed class CharacterDocumentConsoleSystem : EntitySystem
     [Dependency] private readonly CharacterDocumentSystem _characterDocumentSystem = default!;
     [Dependency] private readonly ItemSlotsSystem _itemSlotsSystem = default!;
     [Dependency] private readonly AudioSystem _audio = default!;
-    [Dependency] private readonly PopupSystem _popupSystem = default!;
     [Dependency] private readonly MetaDataSystem _metaData = default!;
     [Dependency] private readonly PaperSystem _paperSystem = default!;
-    [Dependency] private readonly AppearanceSystem _appearanceSystem = default!;
     [Dependency] private readonly CriminalRecordsSystem _criminalRecords = default!;
     [Dependency] private readonly RadioSystem _radio = default!;
     [Dependency] private readonly StationRecordsSystem _stationRecords = default!;
@@ -83,30 +81,31 @@ public sealed class CharacterDocumentConsoleSystem : EntitySystem
         while (query.MoveNext(out var uid, out var comp))
         {
             var station = _sharedStationSystem.GetOwningStation(uid);
-            if (station == null) continue;
+            // Cross-map consoles (e.g. CentComm) may not have an owning station entity
+            // at all if their map isn't registered as a station, so we still let them
+            // through and `BuildPlayerListing` aggregates from every CharacterDocumentStation.
+            if (station == null && !HasComp<CrossMapDocumentAccessComponent>(uid)) continue;
 
-            if (!TryComp<CharacterDocumentStationComponent>(station, out var stationComponent))
+            if (!TryGetStationOrCrossMap(uid, station, out var stationComponent))
                 continue;
 
-            var netPlayerEntities = new Dictionary<NetEntity, string>();
-            foreach (var (playerUid, name) in stationComponent.PlayerEntities)
-                netPlayerEntities.Add(GetNetEntity(playerUid), name);
+            var netPlayerEntities = BuildPlayerListing(uid, stationComponent);
 
             var player = GetEntity(comp.SelectedPlayer);
             if (TryComp<CharacterDocumentComponent>(player, out var docComp))
             {
                 var filteredDocs = docComp.Documents
-                    .Where(d => d.Value.DocType == (int)comp.DocumentType)
+                    .Where(d => ConsoleHandles(comp, d.Value.DocType))
                     .ToDictionary(d => d.Key, d => d.Value);
 
                 bool paperinserted = comp.PaperSlot.ContainerSlot?.ContainedEntity != null;
-                var state = new CharacterDocumentConsoleState(netPlayerEntities, comp.SelectedPlayer, filteredDocs, null, paperinserted, comp.DocumentType);
+                var state = new CharacterDocumentConsoleState(netPlayerEntities, comp.SelectedPlayer, filteredDocs, null, paperinserted, comp.DocumentType, additionalDocumentTypes: comp.AdditionalDocumentTypes, selectedPlayerGeneral: docComp.CharacterDocumentGeneral);
                 _userInterfaceSystem.SetUiState(uid, CharacterDocumentConsoleUiKey.Key, state);
             }
             else
             {
                 bool paperinserted = comp.PaperSlot.ContainerSlot?.ContainedEntity != null;
-                var characterDocumentConsoleState = new CharacterDocumentConsoleState(netPlayerEntities, null, null, null, paperinserted, comp.DocumentType);
+                var characterDocumentConsoleState = new CharacterDocumentConsoleState(netPlayerEntities, null, null, null, paperinserted, comp.DocumentType, additionalDocumentTypes: comp.AdditionalDocumentTypes);
                 _userInterfaceSystem.SetUiState(uid, CharacterDocumentConsoleUiKey.Key, characterDocumentConsoleState);
             }
         }
@@ -121,17 +120,18 @@ public sealed class CharacterDocumentConsoleSystem : EntitySystem
     public void OnBuiOpened(EntityUid uid, CharacterDocumentConsoleComponent comp, BoundUIOpenedEvent args)
     {
         var station = _sharedStationSystem.GetOwningStation(uid);
-        if (station == null) return;
+        // Cross-map consoles (e.g. CentComm) may not have an owning station entity
+        // at all if their map isn't registered as a station, so we still let them
+        // through and `BuildPlayerListing` aggregates from every CharacterDocumentStation.
+        if (station == null && !HasComp<CrossMapDocumentAccessComponent>(uid)) return;
 
-        if (!TryComp<CharacterDocumentStationComponent>(station, out var stationComponent))
+        if (!TryGetStationOrCrossMap(uid, station, out var stationComponent))
             return;
 
-        var netPlayerEntities = new Dictionary<NetEntity, string>();
-        foreach (var (playerUid, name) in stationComponent.PlayerEntities)
-            netPlayerEntities.Add(GetNetEntity(playerUid), name);
+        var netPlayerEntities = BuildPlayerListing(uid, stationComponent);
 
         bool paperinserted = comp.PaperSlot.ContainerSlot?.ContainedEntity != null || false;
-        var characterDocumentConsoleState = new CharacterDocumentConsoleState(netPlayerEntities, null, null, null, paperinserted, comp.DocumentType);
+        var characterDocumentConsoleState = new CharacterDocumentConsoleState(netPlayerEntities, null, null, null, paperinserted, comp.DocumentType, additionalDocumentTypes: comp.AdditionalDocumentTypes);
         _userInterfaceSystem.SetUiState(uid, CharacterDocumentConsoleUiKey.Key, characterDocumentConsoleState);
     }
 
@@ -141,38 +141,40 @@ public sealed class CharacterDocumentConsoleSystem : EntitySystem
         comp.SelectedDocument = null;
 
         var station = _sharedStationSystem.GetOwningStation(uid);
-        if (station == null) return;
+        // Cross-map consoles (e.g. CentComm) may not have an owning station entity
+        // at all if their map isn't registered as a station, so we still let them
+        // through and `BuildPlayerListing` aggregates from every CharacterDocumentStation.
+        if (station == null && !HasComp<CrossMapDocumentAccessComponent>(uid)) return;
 
-        if (!TryComp<CharacterDocumentStationComponent>(station, out var stationComponent))
+        if (!TryGetStationOrCrossMap(uid, station, out var stationComponent))
             return;
 
-        var netPlayerEntities = new Dictionary<NetEntity, string>();
-        foreach (var (playerUid, name) in stationComponent.PlayerEntities)
-            netPlayerEntities.Add(GetNetEntity(playerUid), name);
+        var netPlayerEntities = BuildPlayerListing(uid, stationComponent);
 
         bool paperinserted = comp.PaperSlot.ContainerSlot?.ContainedEntity != null || false;
-        var characterDocumentConsoleState = new CharacterDocumentConsoleState(netPlayerEntities, null, null, null, paperinserted, comp.DocumentType);
+        var characterDocumentConsoleState = new CharacterDocumentConsoleState(netPlayerEntities, null, null, null, paperinserted, comp.DocumentType, additionalDocumentTypes: comp.AdditionalDocumentTypes);
         _userInterfaceSystem.SetUiState(uid, CharacterDocumentConsoleUiKey.Key, characterDocumentConsoleState);
     }
 
     public void OnSelectedPlayer(EntityUid uid, CharacterDocumentConsoleComponent comp, SelectCharacterDocumentPlayer args)
     {
         var station = _sharedStationSystem.GetOwningStation(uid);
-        if (station == null) return;
+        // Cross-map consoles (e.g. CentComm) may not have an owning station entity
+        // at all if their map isn't registered as a station, so we still let them
+        // through and `BuildPlayerListing` aggregates from every CharacterDocumentStation.
+        if (station == null && !HasComp<CrossMapDocumentAccessComponent>(uid)) return;
 
-        if (!TryComp<CharacterDocumentStationComponent>(station, out var stationComponent))
+        if (!TryGetStationOrCrossMap(uid, station, out var stationComponent))
             return;
 
         var player = GetEntity(args.Player);
         if (!TryComp<CharacterDocumentComponent>(player, out var documentComponent))
             return;
 
-        var netPlayerEntities = new Dictionary<NetEntity, string>();
-        foreach (var (playerUid, name) in stationComponent.PlayerEntities)
-            netPlayerEntities.Add(GetNetEntity(playerUid), name);
+        var netPlayerEntities = BuildPlayerListing(uid, stationComponent);
 
         var filteredDocs = documentComponent.Documents
-            .Where(d => d.Value.DocType == (int)comp.DocumentType)
+            .Where(d => ConsoleHandles(comp, d.Value.DocType))
             .ToDictionary(d => d.Key, d => d.Value);
 
         comp.SelectedPlayer = args.Player;
@@ -182,16 +184,19 @@ public sealed class CharacterDocumentConsoleSystem : EntitySystem
             ? GetCriminalStatus(uid, documentComponent)
             : (SecurityStatus.None, null);
 
-        var characterDocumentConsoleState = new CharacterDocumentConsoleState(netPlayerEntities, args.Player, filteredDocs, null, paperinserted, comp.DocumentType, secStatus, secReason);
+        var characterDocumentConsoleState = new CharacterDocumentConsoleState(netPlayerEntities, args.Player, filteredDocs, null, paperinserted, comp.DocumentType, secStatus, secReason, additionalDocumentTypes: comp.AdditionalDocumentTypes, selectedPlayerGeneral: documentComponent.CharacterDocumentGeneral);
         _userInterfaceSystem.SetUiState(uid, CharacterDocumentConsoleUiKey.Key, characterDocumentConsoleState);
     }
 
     public void OnSelectedDocument(EntityUid uid, CharacterDocumentConsoleComponent comp, SelectCharacterDocument args)
     {
         var station = _sharedStationSystem.GetOwningStation(uid);
-        if (station == null) return;
+        // Cross-map consoles (e.g. CentComm) may not have an owning station entity
+        // at all if their map isn't registered as a station, so we still let them
+        // through and `BuildPlayerListing` aggregates from every CharacterDocumentStation.
+        if (station == null && !HasComp<CrossMapDocumentAccessComponent>(uid)) return;
 
-        if (!TryComp<CharacterDocumentStationComponent>(station, out var stationComponent))
+        if (!TryGetStationOrCrossMap(uid, station, out var stationComponent))
             return;
 
         var player = GetEntity(args.Player);
@@ -201,12 +206,10 @@ public sealed class CharacterDocumentConsoleSystem : EntitySystem
         documentComponent.Documents.TryGetValue(args.DocID, out var selecteddoc);
         comp.SelectedDocument = selecteddoc;
 
-        var netPlayerEntities = new Dictionary<NetEntity, string>();
-        foreach (var (playerUid, name) in stationComponent.PlayerEntities)
-            netPlayerEntities.Add(GetNetEntity(playerUid), name);
+        var netPlayerEntities = BuildPlayerListing(uid, stationComponent);
 
         var filteredDocs = documentComponent.Documents
-            .Where(d => d.Value.DocType == (int)comp.DocumentType)
+            .Where(d => ConsoleHandles(comp, d.Value.DocType))
             .ToDictionary(d => d.Key, d => d.Value);
 
         bool paperinserted = comp.PaperSlot.ContainerSlot?.ContainedEntity != null;
@@ -215,7 +218,7 @@ public sealed class CharacterDocumentConsoleSystem : EntitySystem
             ? GetCriminalStatus(uid, documentComponent)
             : (SecurityStatus.None, null);
 
-        var characterDocumentConsoleState = new CharacterDocumentConsoleState(netPlayerEntities, args.Player, filteredDocs, selecteddoc, paperinserted, comp.DocumentType, secStatus, secReason);
+        var characterDocumentConsoleState = new CharacterDocumentConsoleState(netPlayerEntities, args.Player, filteredDocs, selecteddoc, paperinserted, comp.DocumentType, secStatus, secReason, additionalDocumentTypes: comp.AdditionalDocumentTypes, selectedPlayerGeneral: documentComponent.CharacterDocumentGeneral);
         _userInterfaceSystem.SetUiState(uid, CharacterDocumentConsoleUiKey.Key, characterDocumentConsoleState);
     }
 
@@ -244,13 +247,21 @@ public sealed class CharacterDocumentConsoleSystem : EntitySystem
 
         var actorName = GetActorIdentity(args.Actor);
 
+        // Multi-type consoles (Central Command) tell us which tab is active in args.DocType.
+        // Single-type consoles leave it null and we fall back to the primary type. Either way
+        // we sanity-check the requested type is one this console actually handles, so a
+        // malicious / stale client can't scan e.g. a Syndicate doc on the medical computer.
+        var scanType = args.DocType.HasValue && ConsoleHandles(comp, args.DocType.Value)
+            ? args.DocType.Value
+            : (int)comp.DocumentType;
+
         var providedDocument = new CharacterDocument()
         {
             DocTitle = args.DocTitle,
             DocAuthor = actorName,
             DocLastEditedBy = actorName,
             DocContent = paperComponent.Content,
-            DocType = (int)comp.DocumentType,
+            DocType = scanType,
             DocStamps = stamps
         };
 
@@ -282,27 +293,29 @@ public sealed class CharacterDocumentConsoleSystem : EntitySystem
 
     public void OnDocumentPrint(EntityUid uid, CharacterDocumentConsoleComponent comp, CharacterDocumentPrint args)
     {
-        string paper = string.Empty;
-        switch (comp.DocumentType)
+        // Prefer the doc the client actually clicked Print on (carried in the message).
+        // Multi-type consoles (e.g. Central Command) need this so a Security doc printed
+        // from the CentCom terminal still uses the Security header rather than the
+        // console's primary DocumentType.
+        var printDoc = args.CharacterDocument ?? comp.SelectedDocument;
+        var printType = printDoc != null
+            ? (DocumentType)printDoc.DocType
+            : comp.DocumentType;
+
+        var paper = printType switch
         {
-            case DocumentType.Employment:
-                paper = "SVPaperDocumentationEmployment";
-                break;
-            case DocumentType.Security:
-                paper = "SVPaperDocumentationSecurity";
-                break;
-            case DocumentType.Medical:
-                paper = "SVPaperDocumentationMedical";
-                break;
-            case DocumentType.CentralCommand:
-                paper = "SVPaperDocumentationCentcomm";
-                break;
-        }
+            DocumentType.Employment => "SVPaperDocumentationEmployment",
+            DocumentType.Security => "SVPaperDocumentationSecurity",
+            DocumentType.Medical => "SVPaperDocumentationMedical",
+            DocumentType.CentralCommand => "SVPaperDocumentationCentcomm",
+            DocumentType.Syndicate => "SVPaperDocumentationSyndicate",
+            _ => "SVPaperDocumentation",
+        };
         var printed = Spawn(paper, uid.ToCoordinates());
 
         var stamps = new List<StampDisplayInfo>();
         string stampState = string.Empty;
-        if (comp.SelectedDocument?.DocStamps is { Count: > 0 } docStamps)
+        if (printDoc?.DocStamps is { Count: > 0 } docStamps)
         {
             stampState = docStamps[0].DocStampState;
             foreach (var stamp in docStamps)
@@ -313,8 +326,8 @@ public sealed class CharacterDocumentConsoleSystem : EntitySystem
             return;
         else
         {
-            _metaData.SetEntityName(printed, comp.SelectedDocument?.DocTitle ?? "Error in Printing, please report to NT R&D");
-            _paperSystem.SetContent(printed, comp.SelectedDocument?.DocContent ?? "Error in Printing, please report to NT R&D");
+            _metaData.SetEntityName(printed, printDoc?.DocTitle ?? "Error in Printing, please report to NT R&D");
+            _paperSystem.SetContent(printed, printDoc?.DocContent ?? "Error in Printing, please report to NT R&D");
             foreach (StampDisplayInfo stamp in stamps)
             {
                 _paperSystem.TryStamp((printed, paperComponent), stamp, stampState);
@@ -349,17 +362,18 @@ public sealed class CharacterDocumentConsoleSystem : EntitySystem
         _audio.PlayPvs(comp.SuccessSound, uid);
 
         var station = _sharedStationSystem.GetOwningStation(uid);
-        if (station == null) return;
+        // Cross-map consoles (e.g. CentComm) may not have an owning station entity
+        // at all if their map isn't registered as a station, so we still let them
+        // through and `BuildPlayerListing` aggregates from every CharacterDocumentStation.
+        if (station == null && !HasComp<CrossMapDocumentAccessComponent>(uid)) return;
 
-        if (!TryComp<CharacterDocumentStationComponent>(station, out var stationComponent))
+        if (!TryGetStationOrCrossMap(uid, station, out var stationComponent))
             return;
 
         if (!TryComp<CharacterDocumentComponent>(player, out var documentComponent))
             return;
 
-        var netPlayerEntities = new Dictionary<NetEntity, string>();
-        foreach (var (playerUid, name) in stationComponent.PlayerEntities)
-            netPlayerEntities.Add(GetNetEntity(playerUid), name);
+        var netPlayerEntities = BuildPlayerListing(uid, stationComponent);
 
         await _characterDocumentSystem.UpdateDocument(player, newCharacterDoc);
         comp.SelectedDocument = documentComponent.Documents.TryGetValue(newCharacterDoc.DocID, out var reloadedDoc)
@@ -367,11 +381,11 @@ public sealed class CharacterDocumentConsoleSystem : EntitySystem
             : newCharacterDoc;
 
         var filteredDocs = documentComponent.Documents
-            .Where(d => d.Value.DocType == (int)comp.DocumentType)
+            .Where(d => ConsoleHandles(comp, d.Value.DocType))
             .ToDictionary(d => d.Key, d => d.Value);
 
         bool paperinserted = comp.PaperSlot.ContainerSlot?.ContainedEntity != null;
-        var characterDocumentConsoleState = new CharacterDocumentConsoleState(netPlayerEntities, args.Player, filteredDocs, newCharacterDoc, paperinserted, comp.DocumentType);
+        var characterDocumentConsoleState = new CharacterDocumentConsoleState(netPlayerEntities, args.Player, filteredDocs, newCharacterDoc, paperinserted, comp.DocumentType, additionalDocumentTypes: comp.AdditionalDocumentTypes, selectedPlayerGeneral: documentComponent.CharacterDocumentGeneral);
         _userInterfaceSystem.SetUiState(uid, CharacterDocumentConsoleUiKey.Key, characterDocumentConsoleState);
     }
 
@@ -390,37 +404,34 @@ public sealed class CharacterDocumentConsoleSystem : EntitySystem
     private void RefreshSlotState(EntityUid uid, CharacterDocumentConsoleComponent comp)
     {
         var station = _sharedStationSystem.GetOwningStation(uid);
-        if (station == null) return;
+        // Cross-map consoles (e.g. CentComm) may not have an owning station entity
+        // at all if their map isn't registered as a station, so we still let them
+        // through and `BuildPlayerListing` aggregates from every CharacterDocumentStation.
+        if (station == null && !HasComp<CrossMapDocumentAccessComponent>(uid)) return;
 
-        if (!TryComp<CharacterDocumentStationComponent>(station, out var stationComponent))
+        if (!TryGetStationOrCrossMap(uid, station, out var stationComponent))
             return;
 
-        var netPlayerEntities = new Dictionary<NetEntity, string>();
-
-        foreach (var (playerUid, name) in stationComponent.PlayerEntities)
-            netPlayerEntities.Add(GetNetEntity(playerUid), name);
+        var netPlayerEntities = BuildPlayerListing(uid, stationComponent);
 
         var isPaperInserted = comp.PaperSlot.Item.HasValue;
         if (isPaperInserted)
-        {
-            comp.InsertingTimeRemaining = comp.InsertionTime;
             _itemSlotsSystem.SetLock(uid, comp.PaperSlot, false);
-        }
 
         var player = GetEntity(comp.SelectedPlayer);
 
         if (TryComp<CharacterDocumentComponent>(player, out var docComp))
         {
             var filteredDocs = docComp.Documents
-                .Where(d => d.Value.DocType == (int)comp.DocumentType)
+                .Where(d => ConsoleHandles(comp, d.Value.DocType))
                 .ToDictionary(d => d.Key, d => d.Value);
 
-            var state = new CharacterDocumentConsoleState(netPlayerEntities, comp.SelectedPlayer, filteredDocs, comp.SelectedDocument, isPaperInserted, comp.DocumentType);
+            var state = new CharacterDocumentConsoleState(netPlayerEntities, comp.SelectedPlayer, filteredDocs, comp.SelectedDocument, isPaperInserted, comp.DocumentType, additionalDocumentTypes: comp.AdditionalDocumentTypes, selectedPlayerGeneral: docComp.CharacterDocumentGeneral);
             _userInterfaceSystem.SetUiState(uid, CharacterDocumentConsoleUiKey.Key, state);
         }
         else
         {
-            var state = new CharacterDocumentConsoleState(netPlayerEntities, null, null, comp.SelectedDocument, isPaperInserted, comp.DocumentType);
+            var state = new CharacterDocumentConsoleState(netPlayerEntities, null, null, comp.SelectedDocument, isPaperInserted, comp.DocumentType, additionalDocumentTypes: comp.AdditionalDocumentTypes);
             _userInterfaceSystem.SetUiState(uid, CharacterDocumentConsoleUiKey.Key, state);
         }
     }
@@ -465,24 +476,17 @@ public sealed class CharacterDocumentConsoleSystem : EntitySystem
         // Refresh UI so the status label updates immediately
         if (TryComp<CharacterDocumentStationComponent>(station, out var stationComp))
         {
-            var netPlayerEntities = new Dictionary<NetEntity, string>();
-            foreach (var (playerUid, name) in stationComp.PlayerEntities)
-                netPlayerEntities.Add(GetNetEntity(playerUid), name);
+            var netPlayerEntities = BuildPlayerListing(uid, stationComp);
 
             var filteredDocs = docComp.Documents
-                .Where(d => d.Value.DocType == (int)comp.DocumentType)
+                .Where(d => ConsoleHandles(comp, d.Value.DocType))
                 .ToDictionary(d => d.Key, d => d.Value);
 
             var (newStatus, newReason) = GetCriminalStatus(uid, docComp);
             bool paperInserted = comp.PaperSlot.ContainerSlot?.ContainedEntity != null;
-            var refreshState = new CharacterDocumentConsoleState(netPlayerEntities, args.Player, filteredDocs, comp.SelectedDocument, paperInserted, comp.DocumentType, newStatus, newReason);
+            var refreshState = new CharacterDocumentConsoleState(netPlayerEntities, args.Player, filteredDocs, comp.SelectedDocument, paperInserted, comp.DocumentType, newStatus, newReason, additionalDocumentTypes: comp.AdditionalDocumentTypes, selectedPlayerGeneral: docComp.CharacterDocumentGeneral);
             _userInterfaceSystem.SetUiState(uid, CharacterDocumentConsoleUiKey.Key, refreshState);
         }
-    }
-
-    private void RefreshSecurityConsoleState(EntityUid uid, CharacterDocumentConsoleComponent comp)
-    {
-
     }
 
     private (SecurityStatus status, string? reason) GetCriminalStatus(EntityUid consoleUid, CharacterDocumentComponent docComp)
@@ -506,34 +510,64 @@ public sealed class CharacterDocumentConsoleSystem : EntitySystem
         return (record.Status, record.Reason);
     }
 
+    /// <summary>
+    ///     True if this console can display documents of the given type — either its primary
+    ///     DocumentType or any of the AdditionalDocumentTypes (used by multi-type consoles
+    ///     like Central Command).
+    /// </summary>
+    private static bool ConsoleHandles(CharacterDocumentConsoleComponent comp, int docType)
+    {
+        if (docType == (int)comp.DocumentType)
+            return true;
+        for (var i = 0; i < comp.AdditionalDocumentTypes.Count; i++)
+        {
+            if (docType == (int)comp.AdditionalDocumentTypes[i])
+                return true;
+        }
+        return false;
+    }
 
+    /// <summary>
+    ///     Build the (NetEntity → name) crew listing this console should expose.
+    ///     Consoles with <see cref="CrossMapDocumentAccessComponent"/> aggregate
+    ///     every station's roster (so CentComm terminals see main-station crew
+    ///     even though they're on a different map). Everyone else gets only
+    ///     their owning station's roster.
+    /// </summary>
+    private Dictionary<NetEntity, string> BuildPlayerListing(EntityUid consoleUid, CharacterDocumentStationComponent? ownStation)
+    {
+        var listing = new Dictionary<NetEntity, string>();
 
-    // private void ProcessInsertingAnimation(EntityUid uid, float frameTime, CharacterDocumentConsoleComponent comp)
-    // {
-    //     if (comp.InsertingTimeRemaining <= 0)
-    //         return;
+        if (HasComp<CrossMapDocumentAccessComponent>(consoleUid))
+        {
+            var query = EntityQueryEnumerator<CharacterDocumentStationComponent>();
+            while (query.MoveNext(out _, out var anyStation))
+            {
+                foreach (var (playerUid, name) in anyStation.PlayerEntities)
+                    listing[GetNetEntity(playerUid)] = name;
+            }
+            return listing;
+        }
 
-    //     comp.InsertingTimeRemaining -= frameTime;
-    //     UpdateAppearance(uid, comp);
-    // }
+        if (ownStation == null)
+            return listing;
 
-    // private void UpdateAppearance(EntityUid uid, CharacterDocumentConsoleComponent? component = null)
-    // {
-    //     if (!Resolve(uid, ref component))
-    //         return;
+        foreach (var (playerUid, name) in ownStation.PlayerEntities)
+            listing[GetNetEntity(playerUid)] = name;
+        return listing;
+    }
 
-    //     if (TryComp<FaxableObjectComponent>(component.PaperSlot.Item, out var faxable))
-    //         component.InsertingState = faxable.InsertingState;
-
-
-    //     if (component.InsertingTimeRemaining > 0)
-    //     {
-    //         _appearanceSystem.SetData(uid, CharacterDocumentConsoleVisuals.VisualState, CharacterDocumentConsoleVisualState.Inserting);
-    //         Dirty(uid, component);
-    //     }
-    //     else if (component.PrintingTimeRemaining > 0)
-    //         _appearanceSystem.SetData(uid, CharacterDocumentConsoleVisuals.VisualState, CharacterDocumentConsoleVisualState.Printing);
-    //     else
-    //         _appearanceSystem.SetData(uid, CharacterDocumentConsoleVisuals.VisualState, CharacterDocumentConsoleVisualState.Normal);
-    // }
+    /// <summary>
+    ///     Returns true if the console can proceed with serving a request.
+    ///     For normal consoles that means the owning station must carry a
+    ///     <see cref="CharacterDocumentStationComponent"/>. Cross-map consoles
+    ///     bypass that requirement since they aggregate from every station.
+    /// </summary>
+    private bool TryGetStationOrCrossMap(EntityUid consoleUid, EntityUid? station, out CharacterDocumentStationComponent? stationComp)
+    {
+        stationComp = null;
+        if (station != null)
+            TryComp(station.Value, out stationComp);
+        return stationComp != null || HasComp<CrossMapDocumentAccessComponent>(consoleUid);
+    }
 }

@@ -153,6 +153,42 @@ namespace Content.Server.Preferences.Managers
                 ? RecordsSerialization.Deserialize(profile.CDProfile.CharacterRecords, profile.CDProfile.CharacterRecordEntries)
                 : PlayerProvidedCharacterRecords.DefaultRecords();
 
+            // SV: hydrate the lobby-visible SV documents from the persistent store.
+            List<Content.Shared._SV.CharacterDocuments.CharacterDocument>? svDocs = null;
+            if (profile.SVProfile?.CharacterDocuments is { Count: > 0 } svRows)
+            {
+                svDocs = svRows
+                    .Select(d => new Content.Shared._SV.CharacterDocuments.CharacterDocument
+                    {
+                        DocID = d.DocID,
+                        DocType = d.DocType,
+                        DocTitle = d.DocTitle,
+                        DocAuthor = d.DocAuthor,
+                        DocLastEditedBy = d.DocLastEditedBy,
+                        DocDateLastEdited = d.DocDateLastEdited,
+                        DocContent = d.DocContent,
+                        DocStamps = Content.Server._SV.CharacterDocuments.CharacterDocumentDeserializer.DeserializeStamps(d.DocStamps),
+                    })
+                    .ToList();
+            }
+
+            // SV: hydrate the lobby-visible General flavour block from the persistent JSON.
+            Content.Shared._SV.CharacterDocuments.CharacterDocumentGeneral? svGeneral = null;
+            if (profile.SVProfile?.CharacterDocumentGeneral != null)
+            {
+                try
+                {
+                    svGeneral = profile.SVProfile.CharacterDocumentGeneral
+                        .Deserialize<Content.Shared._SV.CharacterDocuments.CharacterDocumentGeneral>();
+                    svGeneral?.EnsureValid();
+                }
+                catch
+                {
+                    // Corrupt blob — fall back to defaults rather than blocking login.
+                    svGeneral = null;
+                }
+            }
+
             foreach (var role in profile.Loadouts)
             {
                 var loadout = new RoleLoadout(role.RoleName)
@@ -195,8 +231,9 @@ namespace Content.Server.Preferences.Managers
                 antags.ToHashSet(),
                 traits.ToHashSet(),
                 loadouts,
-                cdRecords
-            );
+                cdRecords,
+                svDocs, // SV: hydrated from SVProfile.CharacterDocuments
+                svGeneral); // SV: hydrated from SVProfile JSON column
         }
 
         private async void HandleSelectCharacterMessage(MsgSelectCharacter message)
@@ -413,6 +450,29 @@ namespace Content.Server.Preferences.Managers
             prefsData.Prefs = SanitizePreferences(session, prefsData.Prefs, _dependencies);
 
             prefsData.PrefsLoaded = true;
+
+            var msg = new MsgPreferencesAndSettings();
+            msg.Preferences = prefsData.Prefs;
+            msg.Settings = new GameSettings
+            {
+                MaxCharacterSlots = MaxCharacterSlots
+            };
+            _netManager.ServerSendMessage(msg, session.Channel);
+        }
+
+        /// <summary>
+        ///     SV: Re-fetch a player's preferences from the DB and push a fresh
+        ///     <see cref="MsgPreferencesAndSettings"/> to them. Used by the admin
+        ///     character-documents tool so that admin-side edits show up in the
+        ///     player's lobby UI without requiring a reconnect.
+        /// </summary>
+        public async Task RefreshPreferencesForUserAsync(ICommonSession session)
+        {
+            if (!_cachedPlayerPrefs.TryGetValue(session.UserId, out var prefsData))
+                return;
+
+            var prefs = await GetOrCreatePreferencesAsync(session.UserId, CancellationToken.None);
+            prefsData.Prefs = SanitizePreferences(session, ConvertPreferences(prefs), _dependencies);
 
             var msg = new MsgPreferencesAndSettings();
             msg.Preferences = prefsData.Prefs;

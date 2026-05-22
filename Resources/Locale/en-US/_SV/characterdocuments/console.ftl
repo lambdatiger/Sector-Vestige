@@ -10,6 +10,58 @@ sv-document-console-delete-button-confirm = Confirm?
 sv-document-console-status-button = Set Status
 sv-admin-character-documents-button = Character Documents
 
+# Window titles per console type
+sv-document-console-window-title-employment = Employment Documentation Computer
+sv-document-console-window-title-medical = Medical Documentation Computer
+sv-document-console-window-title-security = Security Documentation Computer
+sv-document-console-window-title-centralcommand = Central Command Documentation Computer
+sv-document-console-window-title-syndicate = Syndicate Documentation Computer
+sv-document-console-window-title-admin = Administrative Documentation Computer
+sv-document-console-window-title-fallback = Documentation Computer
+
+# General-info panel
+sv-document-console-general-heading = General Information
+
+# Lobby tab — player-authored documents
+sv-document-lobby-tab-title = Documents
+sv-document-lobby-tab-hint = These documents are added to your character and are editable ingame, please keep these believable and somewhat grounded.
+
+sv-document-lobby-general-tab-title = General
+
+# General flavour fields shown in the General tab
+sv-document-lobby-general-heading = General information
+sv-document-lobby-general-height = Height (cm):
+sv-document-lobby-general-weight = Weight (kg):
+sv-document-lobby-general-emergency-contact = Emergency contact:
+sv-document-lobby-general-work-authorization = Work authorization:
+sv-document-lobby-general-identifying-features = Identifying features:
+sv-document-lobby-general-allergies = Allergies:
+sv-document-lobby-general-drug-allergies = Drug allergies:
+sv-document-lobby-general-postmortem = Postmortem instructions:
+sv-document-lobby-tab-employment = Employment
+sv-document-lobby-tab-medical = Medical
+sv-document-lobby-tab-security = Security
+sv-document-lobby-tab-centralcommand = Central Command
+sv-document-lobby-tab-syndicate = Syndicate
+sv-document-lobby-tab-admin = Admin
+sv-document-lobby-add = Add
+sv-document-lobby-edit = Edit
+sv-document-lobby-remove = Remove
+sv-document-lobby-up = Up
+sv-document-lobby-down = Down
+sv-document-lobby-edit-popup-title = Edit Document
+sv-document-lobby-edit-popup-title-label = Title:
+sv-document-lobby-edit-popup-title-placeholder = Document title...
+sv-document-lobby-edit-popup-author-label = Author:
+sv-document-lobby-edit-popup-author-placeholder = Leave blank to use your character name
+sv-document-lobby-edit-popup-content-label = Content:
+sv-document-lobby-edit-popup-save = Save
+sv-document-lobby-edit-popup-title-required = A title is required.
+sv-document-lobby-edit-popup-content-required = Some content is required.
+sv-document-lobby-edit-popup-content-too-long = Content too long: {$current} / {$max}
+sv-document-lobby-preview-empty = (no document selected)
+sv-document-lobby-preview-author-default = (your character)
+
 sv-document-console-security-status-label = Status:
 sv-document-console-security-reason-label = Reason:
 sv-document-console-security-none = None

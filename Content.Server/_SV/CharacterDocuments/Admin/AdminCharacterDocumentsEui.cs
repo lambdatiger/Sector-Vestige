@@ -3,10 +3,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using Content.Server.Database;
 using Content.Server.EUI;
+using Content.Server.Preferences.Managers;
 using Content.Shared._SV.CharacterDocuments;
 using Content.Shared._SV.CharacterDocuments.Admin;
 using Content.Shared._SV.CharacterDocuments.Components;
 using Content.Shared.Eui;
+using Robust.Server.Player;
 
 namespace Content.Server._SV.CharacterDocuments.Admin;
 
@@ -14,6 +16,8 @@ public sealed class AdminCharacterDocumentsEui : BaseEui
 {
     [Dependency] private readonly IServerDbManager _db = default!;
     [Dependency] private readonly IEntityManager _entMan = default!;
+    [Dependency] private readonly IPlayerManager _playerManager = default!;
+    [Dependency] private readonly IServerPreferencesManager _prefs = default!;
 
     private List<AdminSVProfileEntry> _profiles = new();
 
@@ -64,6 +68,7 @@ public sealed class AdminCharacterDocumentsEui : BaseEui
             .Select(p => new AdminSVProfileEntry
             {
                 ProfileId = p.ProfileId,
+                UserId = p.Profile?.Preference?.UserId ?? Guid.Empty,
                 PlayerName = p.PlayerName,
                 CharacterName = p.CharacterName,
                 Documents = p.CharacterDocuments
@@ -86,6 +91,9 @@ public sealed class AdminCharacterDocumentsEui : BaseEui
         StateDirty();
     }
 
+    private const int TitleMaxLen = 256;
+    private const int ContentMaxLen = 8192;
+
     private async Task ApplyEditAsync(int profileId, CharacterDocument incoming)
     {
         var entry = _profiles.FirstOrDefault(p => p.ProfileId == profileId);
@@ -96,16 +104,15 @@ public sealed class AdminCharacterDocumentsEui : BaseEui
         if (idx < 0)
             return;
 
-        // preserve original author + ID, only change editable fields
+        // Mutate in-memory only as a scratchpad; the canonical state comes from PersistAsync's reload.
         var existing = entry.Documents[idx];
-        existing.DocTitle = incoming.DocTitle;
-        existing.DocContent = incoming.DocContent;
-        existing.DocStamps = incoming.DocStamps;
+        existing.DocTitle = Clamp(incoming.DocTitle, TitleMaxLen);
+        existing.DocContent = Clamp(incoming.DocContent, ContentMaxLen);
+        existing.DocStamps = incoming.DocStamps ?? new List<CharacterDocumentStamp>();
         existing.DocLastEditedBy = "Central Command";
         existing.DocDateLastEdited = DateTime.Now.AddYears(200);
 
-        await SaveProfileAsync(entry);
-        StateDirty();
+        await PersistAsync(profileId, entry);
     }
 
     private async Task ApplyDeleteAsync(int profileId, int docId)
@@ -116,8 +123,7 @@ public sealed class AdminCharacterDocumentsEui : BaseEui
 
         entry.Documents.RemoveAll(d => d.DocID == docId);
 
-        await SaveProfileAsync(entry);
-        StateDirty();
+        await PersistAsync(profileId, entry);
     }
 
     private async Task ApplyCreateAsync(AdminSVDocumentCreateMsg msg)
@@ -126,30 +132,37 @@ public sealed class AdminCharacterDocumentsEui : BaseEui
         if (entry == null)
             return;
 
-        // Generate a fresh DocID — must not collide with existing ones.
-        // The DB autoincrements the actual primary key on insert; this in-memory ID
-        // is only used by the client UI for selection until the next ReloadAsync.
-        var newId = entry.Documents.Count == 0 ? 1 : entry.Documents.Max(d => d.DocID) + 1;
+        // Reject unknown document types from a malicious or stale client.
+        if (!Enum.IsDefined(typeof(DocumentType), msg.DocType))
+            return;
 
-        var doc = new CharacterDocument
+        // The DocID here is throwaway — the DB autoincrements on insert, and the
+        // canonical id arrives via PersistAsync's reload before anyone sees state.
+        var throwawayId = entry.Documents.Count == 0 ? 1 : entry.Documents.Max(d => d.DocID) + 1;
+
+        entry.Documents.Add(new CharacterDocument
         {
-            DocID = newId,
+            DocID = throwawayId,
             DocType = msg.DocType,
-            DocTitle = string.IsNullOrWhiteSpace(msg.Title) ? "Untitled" : msg.Title,
+            DocTitle = Clamp(string.IsNullOrWhiteSpace(msg.Title) ? "Untitled" : msg.Title, TitleMaxLen),
             DocAuthor = "Central Command",
             DocLastEditedBy = "Central Command",
             DocDateLastEdited = DateTime.Now.AddYears(200),
-            DocContent = msg.Content,
+            DocContent = Clamp(msg.Content ?? string.Empty, ContentMaxLen),
             DocStamps = msg.Stamps ?? new List<CharacterDocumentStamp>(),
-        };
-        entry.Documents.Add(doc);
+        });
 
-        await SaveProfileAsync(entry);
-        // Pick up the real DocID assigned by the DB.
-        await ReloadAsync();
+        await PersistAsync(msg.ProfileId, entry);
     }
 
-    private async Task SaveProfileAsync(AdminSVProfileEntry entry)
+    /// <summary>
+    ///     Single canonical save path. Persists the entry to the DB, reloads the
+    ///     admin cache so canonical autoincrement DocIDs replace any throwaway
+    ///     in-memory ones, then syncs the live player session with the canonical
+    ///     state and finally pushes state to admin clients. Nobody — neither admin
+    ///     UI nor live console — ever sees the throwaway IDs.
+    /// </summary>
+    private async Task PersistAsync(int profileId, AdminSVProfileEntry entry)
     {
         var dbDocs = entry.Documents.Select(d => new SVModel.CharacterDocument
         {
@@ -165,7 +178,44 @@ public sealed class AdminCharacterDocumentsEui : BaseEui
 
         await _db.SaveSVCharacterDocumentsAsync(entry.ProfileId, entry.PlayerName, entry.CharacterName, dbDocs);
 
-        SyncLiveSession(entry);
+        await ReloadAsync();
+
+        var fresh = _profiles.FirstOrDefault(p => p.ProfileId == profileId);
+        if (fresh != null)
+            SyncLiveSession(fresh);
+
+        // Push fresh preferences to the affected player (if connected) so their
+        // lobby tab + customization menu reflect the admin edit immediately.
+        // Prefer the reloaded entry's UserId — `entry` here is the pre-reload
+        // copy and may have an empty UserId on rows that pre-date this fix.
+        await RefreshPlayerPrefsAsync(fresh ?? entry);
+    }
+
+    /// <summary>
+    ///     Pushes fresh preferences to the affected player so their open lobby UI
+    ///     re-renders the new docs. Looks up the session by UserId rather than by name —
+    ///     names can drift in casing or whitespace between save and login (especially
+    ///     for OAuth-style usernames), UserId never does.
+    /// </summary>
+    private async Task RefreshPlayerPrefsAsync(AdminSVProfileEntry entry)
+    {
+        if (entry.UserId == Guid.Empty)
+            return;
+
+        foreach (var session in _playerManager.Sessions)
+        {
+            if (session.UserId.UserId == entry.UserId)
+            {
+                await _prefs.RefreshPreferencesForUserAsync(session);
+                return;
+            }
+        }
+    }
+
+    private static string Clamp(string? s, int maxLen)
+    {
+        if (string.IsNullOrEmpty(s)) return string.Empty;
+        return s.Length > maxLen ? s[..maxLen] : s;
     }
 
     /// <summary>

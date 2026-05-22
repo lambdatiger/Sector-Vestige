@@ -5,7 +5,7 @@
                       xmlns:gfx="clr-namespace:Robust.Client.Graphics;assembly=Robust.Client"
                       MinSize="1055 900"
                       SetSize="1055 900"
-                      Title="Employment Documentation Computer" >
+                      Title="{Loc 'sv-document-console-window-title-fallback'}" >
             <BoxContainer Orientation="Vertical">
                 <BoxContainer VerticalExpand="true">
                     <!-- Left bar - List all availible profiles/crew -->
@@ -41,9 +41,9 @@
                                             <Label Name="DocSecurityReasonLabel" Text="{Loc 'sv-document-console-security-reason-label'}" Visible="False"/>
                                         </BoxContainer>
                                         <BoxContainer HorizontalExpand="True" Orientation="Vertical" StyleClasses="BorderedWindowPanel">
-                                            <Label Name="DocAuthorLabelValue" Text="{Loc 'sv-document-console-author-label-value'}" ClipText="True"/>
-                                            <Label Name="DocLastEditedByLabelValue" Text="{Loc 'sv-document-console-editedby-label-value'}" ClipText="True"/>
-                                            <Label Name="DocDateLabelValue" Text="{Loc 'sv-document-console-date-label-value'}" ClipText="True"/>
+                                            <Label Name="DocAuthorLabelValue" Text="{Loc 'sv-document-console-author-label-value-none'}" ClipText="True"/>
+                                            <Label Name="DocLastEditedByLabelValue" Text="{Loc 'sv-document-console-editedby-label-value-none'}" ClipText="True"/>
+                                            <Label Name="DocDateLabelValue" Text="{Loc 'sv-document-console-date-label-value-none'}" ClipText="True"/>
                                             <Label Name="DocSecurityStatusLabelValue" Text="-" Visible="False" ClipText="True"/>
                                             <Label Name="DocSecurityReasonLabelValue" Text="-" Visible="False" ClipText="True"/>
                                         </BoxContainer>
@@ -63,9 +63,44 @@
                                 <Button Name="StatusButton" Text="{Loc 'sv-document-console-status-button'}" HorizontalExpand="True" Visible="False"/>
                             </BoxContainer>
                         </BoxContainer>
+                        <!-- General flavour fields panel. Same visual structure as the
+                             Author panel above (labels column + bordered values column),
+                             but full-width and using RichTextLabel so long allergies/postmortem
+                             text wraps instead of getting clipped. Hidden when no general
+                             fields are relevant for the active tab. -->
+                        <PanelContainer Name="GeneralInfoPanel" HorizontalExpand="True" Margin="0 5 0 0" Visible="False">
+                            <BoxContainer Orientation="Vertical">
+                                <BoxContainer>
+                                    <BoxContainer HorizontalAlignment="Left" Orientation="Vertical" Margin="0 0 5 0">
+                                        <Label Name="DocGenHeightLabel" Text="{Loc 'sv-document-lobby-general-height'}" Visible="False"/>
+                                        <Label Name="DocGenWeightLabel" Text="{Loc 'sv-document-lobby-general-weight'}" Visible="False"/>
+                                        <Label Name="DocGenContactLabel" Text="{Loc 'sv-document-lobby-general-emergency-contact'}" Visible="False"/>
+                                        <Label Name="DocGenWorkAuthLabel" Text="{Loc 'sv-document-lobby-general-work-authorization'}" Visible="False"/>
+                                        <Label Name="DocGenIdFeaturesLabel" Text="{Loc 'sv-document-lobby-general-identifying-features'}" Visible="False"/>
+                                        <Label Name="DocGenAllergiesLabel" Text="{Loc 'sv-document-lobby-general-allergies'}" Visible="False"/>
+                                        <Label Name="DocGenDrugAllergiesLabel" Text="{Loc 'sv-document-lobby-general-drug-allergies'}" Visible="False"/>
+                                        <Label Name="DocGenPostmortemLabel" Text="{Loc 'sv-document-lobby-general-postmortem'}" Visible="False"/>
+                                    </BoxContainer>
+                                    <BoxContainer HorizontalExpand="True" Orientation="Vertical" StyleClasses="BorderedWindowPanel">
+                                        <RichTextLabel Name="DocGenHeightValue" Visible="False" HorizontalExpand="True"/>
+                                        <RichTextLabel Name="DocGenWeightValue" Visible="False" HorizontalExpand="True"/>
+                                        <RichTextLabel Name="DocGenContactValue" Visible="False" HorizontalExpand="True"/>
+                                        <RichTextLabel Name="DocGenWorkAuthValue" Visible="False" HorizontalExpand="True"/>
+                                        <RichTextLabel Name="DocGenIdFeaturesValue" Visible="False" HorizontalExpand="True"/>
+                                        <RichTextLabel Name="DocGenAllergiesValue" Visible="False" HorizontalExpand="True"/>
+                                        <RichTextLabel Name="DocGenDrugAllergiesValue" Visible="False" HorizontalExpand="True"/>
+                                        <RichTextLabel Name="DocGenPostmortemValue" Visible="False" HorizontalExpand="True"/>
+                                    </BoxContainer>
+                                </BoxContainer>
+                            </BoxContainer>
+                        </PanelContainer>
                     </BoxContainer>
                     <!-- Right bar - List all the availible documents for the selectedplayer -->
                     <BoxContainer Orientation="Vertical" Margin="5" MinWidth="300" MaxWidth="300">
+                        <!-- Per-type filter tabs (only shown on multi-type consoles like Central Command).
+                             Columns=2 so each button gets ~half the column width — enough for the longest
+                             label ("CentralCommand") and still readable. -->
+                        <GridContainer Name="DocumentTypeTabs" Columns="2" HorizontalExpand="True" Visible="False"/>
                         <Label Name="DocumentListingStatus" Visible="False" Text="{Loc 'sv-document-console-no-document-selected'}"/>
                         <ScrollContainer VerticalExpand="True">
                             <ItemList Name="DocumentListing"/>

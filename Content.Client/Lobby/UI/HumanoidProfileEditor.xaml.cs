@@ -25,6 +25,7 @@ using Robust.Shared.ContentPack;
 using Robust.Shared.Enums;
 using Robust.Shared.Prototypes;
 using Direction = Robust.Shared.Maths.Direction;
+using SVDocumentEditorGui = Content.Client._SV.CharacterDocuments.Lobby.SVDocumentEditorGui;
 
 namespace Content.Client.Lobby.UI
 {
@@ -42,6 +43,7 @@ namespace Content.Client.Lobby.UI
         private readonly JobRequirementsManager _requirements;
         private readonly LobbyUIController _controller;
         private readonly RecordEditorGui _recordsTab; //CD: Records Tab
+        private readonly SVDocumentEditorGui _svDocumentsTab; // SV: player-authored documents tab
 
         private readonly SpriteSystem _sprite;
 
@@ -343,6 +345,15 @@ namespace Content.Client.Lobby.UI
 
             #endregion CosmaticRecords
 
+            #region SVDocuments
+
+            // SV: player-authored character documents tab. Mirrors CD's records editor architecturally.
+            _svDocumentsTab = new SVDocumentEditorGui(UpdateProfileSVDocuments, UpdateProfileSVDocumentGeneral);
+            TabContainer.AddChild(_svDocumentsTab);
+            TabContainer.SetTabTitle(TabContainer.ChildCount - 1, Loc.GetString("sv-document-lobby-tab-title"));
+
+            #endregion SVDocuments
+
             RefreshFlavorText();
 
             #region Dummy
@@ -447,6 +458,7 @@ namespace Content.Client.Lobby.UI
 
             UpdateHeightControls();// CD: Height Control
             _recordsTab.Update(profile); // CD: Records Tab
+            _svDocumentsTab.Update(profile); // SV: player-authored documents tab
 
             RefreshAntags();
             RefreshJobs();

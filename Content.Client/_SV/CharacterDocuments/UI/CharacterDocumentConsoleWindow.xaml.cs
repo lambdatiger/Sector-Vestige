@@ -87,7 +87,9 @@ public sealed partial class CharacterDocumentConsoleWindow : DefaultWindow
         ScanButton.OnPressed += _ =>
         {
             var popup = new CharacterDocumentTitlePopup();
-            popup.OnConfirmed += title => OnButtonScanPressed?.Invoke(_selectedPlayer, title);
+            // Pass the active tab's DocumentType so scans on a multi-type console land
+            // in the tab the user is viewing rather than always the primary type.
+            popup.OnConfirmed += title => OnButtonScanPressed?.Invoke(_selectedPlayer, title, _activeTypeFilter);
             popup.OpenCentered();
         };
 
@@ -185,6 +187,20 @@ public sealed partial class CharacterDocumentConsoleWindow : DefaultWindow
 
     public void UpdateState(CharacterDocumentConsoleState state)
     {
+        // Title reflects the console's primary DocumentType. Multi-type consoles
+        // (e.g. CentComm) keep their primary title even when the user clicks a
+        // different tab — the tab itself communicates the active filter.
+        Title = state.DocumentType switch
+        {
+            DocumentType.Employment => Loc.GetString("sv-document-console-window-title-employment"),
+            DocumentType.Medical => Loc.GetString("sv-document-console-window-title-medical"),
+            DocumentType.Security => Loc.GetString("sv-document-console-window-title-security"),
+            DocumentType.CentralCommand => Loc.GetString("sv-document-console-window-title-centralcommand"),
+            DocumentType.Syndicate => Loc.GetString("sv-document-console-window-title-syndicate"),
+            DocumentType.Admin => Loc.GetString("sv-document-console-window-title-admin"),
+            _ => Loc.GetString("sv-document-console-window-title-fallback"),
+        };
+
         _isPopulating = true;
         CrewListing.Clear();
         DocumentListing.Clear();
@@ -236,6 +252,16 @@ public sealed partial class CharacterDocumentConsoleWindow : DefaultWindow
 
         _isPopulating = false;
 
+        // Build the per-type tab strip when the console has additional doc types
+        // (e.g. Central Command). Single-type consoles keep it hidden.
+        RebuildDocumentTabs(state);
+
+        _cachedDocuments = state.SelectedPlayerDocuments;
+        _lastSelectedDoc = state.SelectedDocument;
+        _cachedGeneral = state.SelectedPlayerGeneral;
+        _consolePrimaryType = state.DocumentType;
+        RefreshGeneralFields();
+
         if (state.SelectedPlayerDocuments == null)
         {
             DocumentListingStatus.Visible = false;
@@ -243,29 +269,7 @@ public sealed partial class CharacterDocumentConsoleWindow : DefaultWindow
         }
         else
         {
-            _isPopulating = true;
-            DocumentListing.Clear();
-            foreach (var (uid, doc) in state.SelectedPlayerDocuments.OrderBy(x => x.Value.DocTitle))
-            {
-                DocumentListing.AddItem(doc.DocTitle, null, true, doc.DocID);
-            }
-            DocumentListingStatus.Visible = false;
-            DocumentListing.Visible = true;
-
-            if (state.SelectedDocument != null)
-            {
-                _selectedDocument = state.SelectedDocument;
-                for (var i = 0; i < DocumentListing.Count; i++)
-                {
-                    if (DocumentListing[i].Metadata is int docId && docId == state.SelectedDocument.DocID)
-                    {
-                        DocumentListing[i].Selected = true;
-                        break;
-                    }
-                }
-            }
-
-            _isPopulating = false;
+            PopulateDocumentListing();
         }
 
         if (state.SelectedDocument == null)
@@ -300,14 +304,157 @@ public sealed partial class CharacterDocumentConsoleWindow : DefaultWindow
         }
     }
 
+    private void RebuildDocumentTabs(CharacterDocumentConsoleState state)
+    {
+        // Single-type consoles: hide the strip entirely and clear filter so all docs (1 type) show.
+        if (state.AdditionalDocumentTypes.Count == 0)
+        {
+            DocumentTypeTabs.Visible = false;
+            DocumentTypeTabs.RemoveAllChildren();
+            _activeTypeFilter = null;
+            return;
+        }
+
+        // Default to the primary type if nothing's selected yet, or if the selection
+        // no longer belongs to this console (e.g. console reused with different types).
+        var allTypes = new List<DocumentType> { state.DocumentType };
+        allTypes.AddRange(state.AdditionalDocumentTypes);
+        if (_activeTypeFilter == null || !allTypes.Contains(_activeTypeFilter.Value))
+            _activeTypeFilter = state.DocumentType;
+
+        DocumentTypeTabs.RemoveAllChildren();
+        DocumentTypeTabs.Visible = true;
+        foreach (var type in allTypes)
+        {
+            var btn = new Button
+            {
+                Text = type.ToString(),
+                HorizontalExpand = true,
+                ToggleMode = true,
+                Pressed = type == _activeTypeFilter,
+            };
+            // Local copy so the closure binds to the right value.
+            var localType = type;
+            btn.OnPressed += _ =>
+            {
+                _activeTypeFilter = localType;
+                // Re-render every tab to update pressed states.
+                foreach (var child in DocumentTypeTabs.Children)
+                    if (child is Button b)
+                        b.Pressed = b.Text == localType.ToString();
+                PopulateDocumentListing();
+                RefreshGeneralFields();
+            };
+            DocumentTypeTabs.AddChild(btn);
+        }
+    }
+
+    /// <summary>
+    ///     Show / hide General flavour fields (height, allergies, etc) based on the active
+    ///     tab type. Per-type mapping: each in-world console only shows the fields that
+    ///     match its purpose so a Security console doesn't display drug allergies, etc.
+    /// </summary>
+    private void RefreshGeneralFields()
+    {
+        var activeType = _activeTypeFilter ?? _consolePrimaryType;
+        var g = _cachedGeneral;
+
+        // Per-type rules. Medical is the broadest (it's the "body / wellness" tab);
+        // Security gets only stuff useful for ID; Employment gets work auth.
+        // Visibility is driven purely by tab type now — the panel sits there even
+        // when no player is selected, with dash placeholders, so it doesn't pop in
+        // and out as the user clicks crew members.
+        var showHeight = activeType == DocumentType.Medical || activeType == DocumentType.Security;
+        var showWeight = activeType == DocumentType.Medical || activeType == DocumentType.Security;
+        var showContact = activeType == DocumentType.Medical;
+        var showWorkAuth = activeType == DocumentType.Employment;
+        var showIdFeatures = activeType == DocumentType.Security;
+        var showAllergies = activeType == DocumentType.Medical;
+        var showDrugAllergies = activeType == DocumentType.Medical;
+        var showPostmortem = activeType == DocumentType.Medical;
+
+        DocGenHeightLabel.Visible = DocGenHeightValue.Visible = showHeight;
+        DocGenWeightLabel.Visible = DocGenWeightValue.Visible = showWeight;
+        DocGenContactLabel.Visible = DocGenContactValue.Visible = showContact;
+        DocGenWorkAuthLabel.Visible = DocGenWorkAuthValue.Visible = showWorkAuth;
+        DocGenIdFeaturesLabel.Visible = DocGenIdFeaturesValue.Visible = showIdFeatures;
+        DocGenAllergiesLabel.Visible = DocGenAllergiesValue.Visible = showAllergies;
+        DocGenDrugAllergiesLabel.Visible = DocGenDrugAllergiesValue.Visible = showDrugAllergies;
+        DocGenPostmortemLabel.Visible = DocGenPostmortemValue.Visible = showPostmortem;
+
+        // Hide the whole panel only when the tab has no general fields at all
+        // (CentralCommand / Syndicate / Admin). For Medical / Security / Employment
+        // it stays visible so the layout doesn't shift on player select.
+        GeneralInfoPanel.Visible = showHeight || showWeight || showContact || showWorkAuth
+            || showIdFeatures || showAllergies || showDrugAllergies || showPostmortem;
+
+        // Always populate values — actual data if a player is selected, dashes otherwise.
+        DocGenHeightValue.Text = g != null && g.Height > 0 ? $"{g.Height} cm" : "-";
+        DocGenWeightValue.Text = g != null && g.Weight > 0 ? $"{g.Weight} kg" : "-";
+        DocGenContactValue.Text = g != null && !string.IsNullOrEmpty(g.EmergencyContactName) ? g.EmergencyContactName : "-";
+        DocGenWorkAuthValue.Text = g != null ? (g.HasWorkAuthorization ? "Yes" : "No") : "-";
+        DocGenIdFeaturesValue.Text = g != null && !string.IsNullOrEmpty(g.IdentifyingFeatures) ? g.IdentifyingFeatures : "-";
+        DocGenAllergiesValue.Text = g != null && !string.IsNullOrEmpty(g.Allergies) ? g.Allergies : "-";
+        DocGenDrugAllergiesValue.Text = g != null && !string.IsNullOrEmpty(g.DrugAllergies) ? g.DrugAllergies : "-";
+        DocGenPostmortemValue.Text = g != null && !string.IsNullOrEmpty(g.PostmortemInstructions) ? g.PostmortemInstructions : "-";
+    }
+
+    private void PopulateDocumentListing()
+    {
+        if (_cachedDocuments == null)
+        {
+            DocumentListing.Clear();
+            return;
+        }
+
+        _isPopulating = true;
+        DocumentListing.Clear();
+
+        IEnumerable<KeyValuePair<int, CharacterDocument>> rows = _cachedDocuments;
+        if (_activeTypeFilter is { } filter)
+            rows = rows.Where(kv => kv.Value.DocType == (int) filter);
+
+        foreach (var (_, doc) in rows.OrderBy(x => x.Value.DocTitle))
+            DocumentListing.AddItem(doc.DocTitle, null, true, doc.DocID);
+
+        DocumentListingStatus.Visible = false;
+        DocumentListing.Visible = true;
+
+        if (_lastSelectedDoc != null)
+        {
+            _selectedDocument = _lastSelectedDoc;
+            for (var i = 0; i < DocumentListing.Count; i++)
+            {
+                if (DocumentListing[i].Metadata is int docId && docId == _lastSelectedDoc.DocID)
+                {
+                    DocumentListing[i].Selected = true;
+                    break;
+                }
+            }
+        }
+
+        _isPopulating = false;
+    }
+
     private NetEntity _selectedPlayer;
     private Dictionary<NetEntity, string> _cachedPlayerList = new();
     private CharacterDocument? _selectedDocument;
     private bool _confirmingDelete;
     private bool _editing;
+
+    /// <summary>Currently-selected type filter for multi-type consoles. Null = no filter (single-type).</summary>
+    private DocumentType? _activeTypeFilter;
+    /// <summary>Last received documents, kept to re-filter when the user switches tabs.</summary>
+    private Dictionary<int, CharacterDocument>? _cachedDocuments;
+    /// <summary>Last selection on the player, for use when tab changes re-populate the listing.</summary>
+    private CharacterDocument? _lastSelectedDoc;
+    /// <summary>Cached general flavour block for the selected player, kept so tab switches can re-render without a server round-trip.</summary>
+    private CharacterDocumentGeneral? _cachedGeneral;
+    /// <summary>Console's primary type — used as the fallback active type when no tab strip is shown.</summary>
+    private DocumentType _consolePrimaryType;
     public Action<NetEntity>? OnPlayerSelected;
     public Action<NetEntity, int>? OnDocumentSelected;
-    public Action<NetEntity, string>? OnButtonScanPressed;
+    public Action<NetEntity, string, DocumentType?>? OnButtonScanPressed;
     public Action<NetEntity, CharacterDocument>? OnButtonPrintPressed;
     public Action<NetEntity, CharacterDocument>? OnButtonDeletePressed;
     public Action<NetEntity, CharacterDocument>? OnButtonEditPressed;

@@ -11,7 +11,6 @@ namespace Content.Server._SV.CharacterDocuments;
 public sealed partial class CharacterDocumentStationSystem : EntitySystem
 {
     [Dependency] private readonly SharedStationSystem _sharedStationSystem = default!;
-    [Dependency] private readonly NpcFactionSystem _factions = default!;
 
 
     public override void Initialize()
@@ -34,7 +33,6 @@ public sealed partial class CharacterDocumentStationSystem : EntitySystem
         if (!stationComp.PlayerEntities.ContainsKey(args.Mob))
         {
             stationComp.PlayerEntities.Add(args.Mob, playercomp.ProfileName);
-            playercomp.EntityUid = args.Mob;
             Log.Debug($"Added {playercomp.ProfileName} to the list of {args.Station} it now has a count of {stationComp.PlayerEntities.Count}");
         }
     }
@@ -50,7 +48,6 @@ public sealed partial class CharacterDocumentStationSystem : EntitySystem
             if (!stationComp.PlayerEntities.ContainsKey(uid))
             {
                 stationComp.PlayerEntities.Add(uid, component.ProfileName);
-                component.EntityUid = uid;
                 Log.Debug($"Added {component.ProfileName} to the list of {station.Id} it now has a count of {stationComp.PlayerEntities.Count}");
             }
         }

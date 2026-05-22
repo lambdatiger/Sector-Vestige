@@ -13,6 +13,12 @@ public sealed class AdminCharacterDocumentsEuiState : EuiStateBase
 public sealed class AdminSVProfileEntry
 {
     public int ProfileId;
+    /// <summary>
+    /// Owning player's stable account UserId. Resolved from Profile → Preference at load time.
+    /// Used server-side for live-session lookup instead of <see cref="PlayerName"/> — names can
+    /// drift in casing/whitespace between save and login, UserId never does.
+    /// </summary>
+    public Guid UserId;
     public string PlayerName = string.Empty;
     public string CharacterName = string.Empty;
     public List<CharacterDocument> Documents = new();

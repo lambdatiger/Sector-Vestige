@@ -13,33 +13,42 @@ public enum DocumentType
     Admin,
 }
 
+[DataDefinition]
 [Serializable, NetSerializable]
 public sealed partial class CharacterDocument
 {
-    [DataField("readOnly")]
+    [DataField]
     public int DocID;
-    [DataField("readOnly")]
+
+    [DataField]
     public int DocType = (int)DocumentType.Employment;
-    [DataField("readOnly")]
-    public string DocTitle = null!;
-    [DataField("readOnly")]
-    public string DocAuthor = null!;
-    [DataField("readOnly")]
-    public string DocLastEditedBy = "";
-    [DataField("readOnly")]
+
+    [DataField]
+    public string DocTitle = string.Empty;
+
+    [DataField]
+    public string DocAuthor = string.Empty;
+
+    [DataField]
+    public string DocLastEditedBy = string.Empty;
+
+    [DataField]
     public DateTime DocDateLastEdited = DateTime.Today.AddYears(200); //Today plus 200 years
-    [DataField("readOnly")]
-    public string DocContent = "";
-    [DataField("readOnly")]
+
+    [DataField]
+    public string DocContent = string.Empty;
+
+    [DataField]
     public List<CharacterDocumentStamp> DocStamps = new();
 }
 
+[DataDefinition]
 [Serializable, NetSerializable]
-public struct CharacterDocumentStamp()
+public partial struct CharacterDocumentStamp()
 {
-    [DataField("readOnly")]
+    [DataField]
     public StampDisplayInfo DocStamp = default;
-    [DataField("readOnly")]
-    public string DocStampState = null!;
 
+    [DataField]
+    public string DocStampState = string.Empty;
 }

@@ -64,3 +64,12 @@
   components:
   - type: PaperVisuals
     headerImagePath: "/Textures/_SV/Interface/Paper/centcomm_1.png"
+
+- type: entity
+  id: SVPaperDocumentationSyndicate
+  parent: SVPaperDocumentation
+  name: Syndicate Documentation Paper
+  description: Paper used for unofficial Syndicate documentation
+  components:
+  - type: PaperVisuals
+    headerImagePath: "/Textures/_SV/Interface/Paper/syndicate_1.png"

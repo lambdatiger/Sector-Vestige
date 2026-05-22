@@ -2,7 +2,6 @@
 using Content.Shared._SV.CharacterDocuments;
 using Content.Shared.Containers.ItemSlots;
 using Content.Shared.Security;
-using Content.Shared.StationRecords;
 using Robust.Shared.Audio;
 
 namespace Content.Server._SV.CharacterDocuments.Consoles;
@@ -10,14 +9,16 @@ namespace Content.Server._SV.CharacterDocuments.Consoles;
 [RegisterComponent]
 public sealed partial class CharacterDocumentConsoleComponent : Component
 {
-    [ViewVariables(VVAccess.ReadOnly)]
-    public int? SelectedIndex;
-
-    [ViewVariables(VVAccess.ReadOnly)]
-    public StationRecordsFilter? Filter;
-
     [DataField(required: true), ViewVariables(VVAccess.ReadOnly)]
     public DocumentType DocumentType;
+
+    /// <summary>
+    /// Extra document types this console can view in addition to <see cref="DocumentType"/>.
+    /// Used by multi-type consoles like the Central Command computer. The primary
+    /// <see cref="DocumentType"/> is what newly scanned docs are tagged as.
+    /// </summary>
+    [DataField, ViewVariables(VVAccess.ReadOnly)]
+    public List<DocumentType> AdditionalDocumentTypes = new();
 
     [DataField, ViewVariables(VVAccess.ReadOnly)]
     public NetEntity SelectedPlayer;
@@ -31,30 +32,6 @@ public sealed partial class CharacterDocumentConsoleComponent : Component
     /// </summary>
     [DataField(required: true)]
     public ItemSlot PaperSlot = new();
-
-    /// <summary>
-    /// Sprite to use when inserting an object.
-    /// </summary>
-    [DataField, AutoNetworkedField]
-    public string InsertingState = "inserting";
-
-    /// <summary>
-    /// How long the inserting animation will play
-    /// </summary>
-    [ViewVariables]
-    public float InsertionTime = 1.88f; // 0.02 off for correct animation
-
-    /// <summary>
-    /// Remaining time of inserting animation
-    /// </summary>
-    [DataField]
-    public float InsertingTimeRemaining;
-
-    /// <summary>
-    /// Remaining time of printing animation
-    /// </summary>
-    [DataField]
-    public float PrintingTimeRemaining;
 
     /// <summary>
     /// Sound to play when we print something out

@@ -101,6 +101,11 @@ namespace Content.Server.Database
                     .ThenInclude(h => h.CDProfile)
                     .ThenInclude(cd => cd != null ? cd.CharacterRecordEntries : null)
                 // END CD
+                // SV: pull the SV character documents alongside the profile so the lobby
+                // editor can display & edit them in-place. Stays null for first-time chars.
+                .Include(p => p.Profiles)
+                    .ThenInclude(h => h.SVProfile)
+                    .ThenInclude(sv => sv!.CharacterDocuments)
                 .Include(p => p.Profiles)
                     .ThenInclude(h => h.Loadouts)
                     .ThenInclude(l => l.Groups)
@@ -156,6 +161,9 @@ namespace Content.Server.Database
             var oldProfile = db.DbContext.Profile
                 .Include(p => p.CDProfile) // CD: Store CD info
                     .ThenInclude(cd => cd != null ? cd.CharacterRecordEntries : null)
+                // SV: pull existing SV documents so ConvertProfiles can preserve stamps on edited rows.
+                .Include(p => p.SVProfile)
+                    .ThenInclude(sv => sv!.CharacterDocuments)
                 .Include(p => p.Preference)
                 .Where(p => p.Preference.UserId == userId.UserId)
                 .Include(p => p.Jobs)
@@ -176,6 +184,18 @@ namespace Content.Server.Database
                     .SingleAsync(p => p.UserId == userId.UserId);
 
                 prefs.Profiles.Add(newProfile);
+            }
+
+            // SV: stamp the owning player's username onto SVProfile.PlayerName so
+            // the admin browser shows the right owner. Without this the row gets
+            // an empty PlayerName on imports / new characters.
+            if (newProfile.SVProfile != null)
+            {
+                var username = await db.DbContext.Player
+                    .Where(p => p.UserId == userId.UserId)
+                    .Select(p => p.LastSeenUserName)
+                    .FirstOrDefaultAsync();
+                newProfile.SVProfile.PlayerName = username ?? string.Empty;
             }
 
             await db.DbContext.SaveChangesAsync();
@@ -222,7 +242,9 @@ namespace Content.Server.Database
 
         /// <summary>
         ///     Loads every SV profile in the database along with all their character documents.
-        ///     Used by the admin offline-browse UI; do not use on hot paths.
+        ///     Includes the owning Profile + Preference so the admin EUI can resolve each
+        ///     entry to a stable UserId (used for live-session lookups instead of fragile
+        ///     name matching). Used by the admin offline-browse UI; do not use on hot paths.
         /// </summary>
         public async Task<List<SVModel.SVProfile>> GetAllSVCharacterDocumentsAsync(CancellationToken cancel = default)
         {
@@ -230,6 +252,7 @@ namespace Content.Server.Database
 
             var profiles = await db.DbContext.SVProfiles
                 .Include(p => p.CharacterDocuments)
+                .Include(p => p.Profile).ThenInclude(profile => profile.Preference)
                 .AsNoTracking()
                 .ToListAsync(cancel);
 
@@ -306,7 +329,9 @@ namespace Content.Server.Database
                 })
                 .ToList();
 
-            return (null, documents);
+            // SV: piggyback the General flavour-block JSON in the previously-unused
+            // first tuple slot, so callers get docs + General in one fetch.
+            return (testProfile.CharacterDocumentGeneral, documents);
         }
 
         public async Task DeleteSlotAndSetSelectedIndex(NetUserId userId, int deleteSlot, int newSlot)
@@ -418,6 +443,81 @@ namespace Content.Server.Database
                 profile.CDProfile.CharacterRecordEntries.AddRange(RecordsSerialization.GetEntries(humanoid.CDCharacterRecords));
             }
             // END CD
+
+            // SV: persist lobby edits to SV character documents into SVProfile.
+            // The lobby never sends stamps so we preserve stamps from any existing row
+            // matched by DocID — that way in-world stamps survive a lobby edit.
+            if (humanoid.SVCharacterDocuments != null || humanoid.SVCharacterDocumentGeneral != null)
+            {
+                profile.SVProfile ??= new SVModel.SVProfile { ProfileId = profile.Id };
+                profile.SVProfile.CharacterName = humanoid.Name;
+
+                if (humanoid.SVCharacterDocuments != null)
+                {
+                    // Syndicate + CentralCommand docs are HRP-critical and must NEVER be
+                    // mutated by lobby saves — only the in-game console flow and the
+                    // admin EUI can touch them. The lobby UI hides the buttons, but a
+                    // modded client could still POST forged ones, so the server has to
+                    // enforce it too. Snapshot the existing restricted-type rows, then
+                    // re-add them after Clear() before applying the client's payload.
+                    var restrictedTypes = new HashSet<int>
+                    {
+                        (int)Content.Shared._SV.CharacterDocuments.DocumentType.Syndicate,
+                        (int)Content.Shared._SV.CharacterDocuments.DocumentType.CentralCommand,
+                    };
+
+                    var preservedRestricted = profile.SVProfile.CharacterDocuments
+                        .Where(d => restrictedTypes.Contains(d.DocType))
+                        .Select(d => new SVModel.CharacterDocument
+                        {
+                            DocType = d.DocType,
+                            DocTitle = d.DocTitle,
+                            DocAuthor = d.DocAuthor,
+                            DocLastEditedBy = d.DocLastEditedBy,
+                            DocDateLastEdited = d.DocDateLastEdited,
+                            DocContent = d.DocContent,
+                            DocStamps = d.DocStamps,
+                        })
+                        .ToList();
+
+                    var existingStampsById = profile.SVProfile.CharacterDocuments
+                        .Where(d => d.DocID != 0)
+                        .ToDictionary(d => d.DocID, d => d.DocStamps);
+
+                    profile.SVProfile.CharacterDocuments.Clear();
+
+                    // Re-add preserved restricted docs first; the client can never touch these.
+                    foreach (var preserved in preservedRestricted)
+                        profile.SVProfile.CharacterDocuments.Add(preserved);
+
+                    // Now apply the client's payload, but silently drop any restricted-type
+                    // entries — those can only originate from the in-game / admin paths.
+                    foreach (var doc in humanoid.SVCharacterDocuments)
+                    {
+                        if (restrictedTypes.Contains(doc.DocType))
+                            continue;
+
+                        var stamps = doc.DocID != 0 && existingStampsById.TryGetValue(doc.DocID, out var prev)
+                            ? prev
+                            : Content.Server._SV.CharacterDocuments.CharacterDocumentSerializer.SerializeStamp(doc.DocStamps);
+                        profile.SVProfile.CharacterDocuments.Add(new SVModel.CharacterDocument
+                        {
+                            DocType = doc.DocType,
+                            DocTitle = doc.DocTitle,
+                            DocAuthor = doc.DocAuthor,
+                            DocLastEditedBy = doc.DocLastEditedBy,
+                            DocDateLastEdited = doc.DocDateLastEdited,
+                            DocContent = doc.DocContent,
+                            DocStamps = stamps,
+                        });
+                    }
+                }
+
+                // Serialize the General flavour block as JSON on the SV profile.
+                profile.SVProfile.CharacterDocumentGeneral = humanoid.SVCharacterDocumentGeneral == null
+                    ? null
+                    : JsonSerializer.SerializeToDocument(humanoid.SVCharacterDocumentGeneral);
+            }
 
             profile.Loadouts.Clear();
 
