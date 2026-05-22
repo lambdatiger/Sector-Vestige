@@ -15,8 +15,6 @@ using Content.Shared.Preferences;
 using Content.Shared.Preferences.Loadouts;
 using Content.Shared.Roles;
 using Content.Shared.Traits;
-using Content.Server._CD.Records;
-using Content.Shared._CD.Records;
 using Robust.Server.Player;
 using Robust.Shared.Configuration;
 using Robust.Shared.Enums;
@@ -148,11 +146,6 @@ namespace Content.Server.Preferences.Managers
 
             var loadouts = new Dictionary<string, RoleLoadout>();
 
-            // CD: get character records or create default records
-            var cdRecords = profile.CDProfile?.CharacterRecords != null
-                ? RecordsSerialization.Deserialize(profile.CDProfile.CharacterRecords, profile.CDProfile.CharacterRecordEntries)
-                : PlayerProvidedCharacterRecords.DefaultRecords();
-
             // SV: hydrate the lobby-visible SV documents from the persistent store.
             List<Content.Shared._SV.CharacterDocuments.CharacterDocument>? svDocs = null;
             if (profile.SVProfile?.CharacterDocuments is { Count: > 0 } svRows)
@@ -215,7 +208,7 @@ namespace Content.Server.Preferences.Managers
                 profile.CharacterName,
                 profile.FlavorText,
                 species,
-                profile.CDProfile?.Height ?? 1.0f,
+                profile.Height,
                 profile.Age,
                 sex,
                 gender,
@@ -231,7 +224,6 @@ namespace Content.Server.Preferences.Managers
                 antags.ToHashSet(),
                 traits.ToHashSet(),
                 loadouts,
-                cdRecords,
                 svDocs, // SV: hydrated from SVProfile.CharacterDocuments
                 svGeneral); // SV: hydrated from SVProfile JSON column
         }

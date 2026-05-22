@@ -65,10 +65,6 @@ using Robust.Shared.Prototypes;
 using Robust.Shared.Serialization.Manager;
 using Robust.Shared.Utility;
 
-// CD: imports
-using Content.Server._CD.Records;
-using Content.Shared._CD.Records;
-
 namespace Content.Server.Database
 {
     public abstract class ServerDbBase
@@ -96,11 +92,6 @@ namespace Content.Server.Database
                 .Include(p => p.Profiles).ThenInclude(h => h.Jobs)
                 .Include(p => p.Profiles).ThenInclude(h => h.Antags)
                 .Include(p => p.Profiles).ThenInclude(h => h.Traits)
-                // CD: Store CD info
-                .Include(p => p.Profiles)
-                    .ThenInclude(h => h.CDProfile)
-                    .ThenInclude(cd => cd != null ? cd.CharacterRecordEntries : null)
-                // END CD
                 // SV: pull the SV character documents alongside the profile so the lobby
                 // editor can display & edit them in-place. Stays null for first-time chars.
                 .Include(p => p.Profiles)
@@ -159,8 +150,6 @@ namespace Content.Server.Database
             }
 
             var oldProfile = db.DbContext.Profile
-                .Include(p => p.CDProfile) // CD: Store CD info
-                    .ThenInclude(cd => cd != null ? cd.CharacterRecordEntries : null)
                 // SV: pull existing SV documents so ConvertProfiles can preserve stamps on edited rows.
                 .Include(p => p.SVProfile)
                     .ThenInclude(sv => sv!.CharacterDocuments)
@@ -432,17 +421,9 @@ namespace Content.Server.Database
                         .Select(t => new Trait {TraitName = t})
             );
 
-            // CD: CD Character Data
-            profile.CDProfile ??= new CDModel.CDProfile();
-            profile.CDProfile.Height = humanoid.Height;
-            // There are JsonIgnore annotations to ensure that entries are not stored as JSON.
-            profile.CDProfile.CharacterRecords = JsonSerializer.SerializeToDocument(humanoid.CDCharacterRecords ?? PlayerProvidedCharacterRecords.DefaultRecords());
-            if (humanoid.CDCharacterRecords != null)
-            {
-                profile.CDProfile.CharacterRecordEntries.Clear();
-                profile.CDProfile.CharacterRecordEntries.AddRange(RecordsSerialization.GetEntries(humanoid.CDCharacterRecords));
-            }
-            // END CD
+            // Height (formerly persisted on CDProfile; flattened onto Profile after the
+            // CD records rip — CDProfile no longer exists).
+            profile.Height = humanoid.Height;
 
             // SV: persist lobby edits to SV character documents into SVProfile.
             // The lobby never sends stamps so we preserve stamps from any existing row

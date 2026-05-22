@@ -1,7 +1,6 @@
 using System.Globalization; //CD: Height
 using System.Linq; //CD: Height
 using System.Numerics; //CD: Height
-using Content.Client._CD.Records.UI;
 using Content.Client.Humanoid;
 using Content.Client.Message;
 using Content.Client.Players.PlayTimeTracking;
@@ -42,7 +41,6 @@ namespace Content.Client.Lobby.UI
         private readonly MarkingManager _markingManager;
         private readonly JobRequirementsManager _requirements;
         private readonly LobbyUIController _controller;
-        private readonly RecordEditorGui _recordsTab; //CD: Records Tab
         private readonly SVDocumentEditorGui _svDocumentsTab; // SV: player-authored documents tab
 
         private readonly SpriteSystem _sprite;
@@ -100,8 +98,7 @@ namespace Content.Client.Lobby.UI
             IPrototypeManager prototypeManager,
             IResourceManager resManager,
             JobRequirementsManager requirements,
-            MarkingManager markings,
-            RecordEditorGui recordsTab) // CD: Records Tab
+            MarkingManager markings)
         {
             RobustXamlLoader.Load(this);
             _sawmill = logManager.GetSawmill("profile.editor");
@@ -111,7 +108,6 @@ namespace Content.Client.Lobby.UI
             _playerManager = playerManager;
             _prototypeManager = prototypeManager;
             _markingManager = markings;
-            _recordsTab = recordsTab; //CD: Records Tab
             _preferencesManager = preferencesManager;
             _resManager = resManager;
             _requirements = requirements;
@@ -337,14 +333,6 @@ namespace Content.Client.Lobby.UI
 
             #endregion Markings
 
-            #region CosmaticRecords
-
-            _recordsTab = new RecordEditorGui(UpdateProfileRecords);
-            TabContainer.AddChild(_recordsTab);
-            TabContainer.SetTabTitle(TabContainer.ChildCount - 1, Loc.GetString("humanoid-profile-editor-cd-records-tab"));
-
-            #endregion CosmaticRecords
-
             #region SVDocuments
 
             // SV: player-authored character documents tab. Mirrors CD's records editor architecturally.
@@ -456,8 +444,7 @@ namespace Content.Client.Lobby.UI
             UpdateSaveButton();
             UpdateMarkings();
 
-            UpdateHeightControls();// CD: Height Control
-            _recordsTab.Update(profile); // CD: Records Tab
+            UpdateHeightControls();
             _svDocumentsTab.Update(profile); // SV: player-authored documents tab
 
             RefreshAntags();

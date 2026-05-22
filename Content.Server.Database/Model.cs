@@ -102,20 +102,6 @@ namespace Content.Server.Database
                 .HasIndex(p => new {p.Slot, PrefsId = p.PreferenceId})
                 .IsUnique();
 
-            // CD: CD Character Data
-            modelBuilder.Entity<CDModel.CDProfile>()
-                .HasOne(p => p.Profile)
-                .WithOne(p => p.CDProfile)
-                .HasForeignKey<CDModel.CDProfile>(p => p.ProfileId)
-                .IsRequired();
-
-            modelBuilder.Entity<CDModel.CharacterRecordEntry>()
-                .HasOne(e => e.CDProfile)
-                .WithMany(e => e.CharacterRecordEntries)
-                .HasForeignKey(e => e.CDProfileId)
-                .IsRequired();
-            // END CD
-
             // SV: CharacterDocuments START
             modelBuilder.Entity<SVModel.SVProfile>()
                 .HasOne(p => p.Profile)
@@ -430,7 +416,12 @@ namespace Content.Server.Database
         public int PreferenceId { get; set; }
         public Preference Preference { get; set; } = null!;
 
-        public CDModel.CDProfile? CDProfile { get; set; }
+        /// <summary>
+        ///     Character height multiplier. Persisted directly on Profile since the
+        ///     CDProfile table (and the CD records system that owned it) was ripped.
+        /// </summary>
+        public float Height { get; set; } = 1f;
+
         public SVModel.SVProfile? SVProfile { get; set; }
     }
 

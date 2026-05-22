@@ -21,9 +21,6 @@ using Robust.Shared.Utility;
 using Robust.Shared;
 using YamlDotNet.RepresentationModel;
 
-// CD: Imports
-using Content.Shared._CD.Records;
-
 namespace Content.Shared.Preferences
 {
     /// <summary>
@@ -133,9 +130,6 @@ namespace Content.Shared.Preferences
         [DataField("cosmaticDriftCharacterHeight")]
         public float Height = 1f;
 
-        [DataField("cosmaticDriftCharacterRecords")]
-        public PlayerProvidedCharacterRecords? CDCharacterRecords;
-
         // SV - CharacterDocuments
         [DataField("svCharacterDocuments")]
         public List<_SV.CharacterDocuments.CharacterDocument>? SVCharacterDocuments;
@@ -159,7 +153,6 @@ namespace Content.Shared.Preferences
             HashSet<ProtoId<AntagPrototype>> antagPreferences,
             HashSet<ProtoId<TraitPrototype>> traitPreferences,
             Dictionary<string, RoleLoadout> loadouts,
-            PlayerProvidedCharacterRecords? cdCharacterRecords, // CD character records
             List<_SV.CharacterDocuments.CharacterDocument>? svCharacterDocuments = null, // SV character documents
             _SV.CharacterDocuments.CharacterDocumentGeneral? svCharacterDocumentGeneral = null) // SV character documents
         {
@@ -177,7 +170,6 @@ namespace Content.Shared.Preferences
             _antagPreferences = antagPreferences;
             _traitPreferences = traitPreferences;
             _loadouts = loadouts;
-            CDCharacterRecords = cdCharacterRecords; // CD character records
             SVCharacterDocuments = svCharacterDocuments; // SV character documents
             SVCharacterDocumentGeneral = svCharacterDocumentGeneral; // SV character documents
 
@@ -212,7 +204,6 @@ namespace Content.Shared.Preferences
                 new HashSet<ProtoId<AntagPrototype>>(other.AntagPreferences),
                 new HashSet<ProtoId<TraitPrototype>>(other.TraitPreferences),
                 new Dictionary<string, RoleLoadout>(other.Loadouts),
-                other.CDCharacterRecords,
                 other.SVCharacterDocuments,
                 other.SVCharacterDocumentGeneral)
         {
@@ -492,11 +483,6 @@ namespace Content.Shared.Preferences
             };
         }
 
-        public HumanoidCharacterProfile WithCDCharacterRecords(PlayerProvidedCharacterRecords records)
-        {
-            return new HumanoidCharacterProfile(this) { CDCharacterRecords = records };
-        }
-
         // SV: returns a clone of this profile with the supplied SV documents list.
         public HumanoidCharacterProfile WithSVCharacterDocuments(List<Content.Shared._SV.CharacterDocuments.CharacterDocument>? docs)
         {
@@ -532,8 +518,6 @@ namespace Content.Shared.Preferences
             if (!_traitPreferences.SequenceEqual(other._traitPreferences)) return false;
             if (!Loadouts.SequenceEqual(other.Loadouts)) return false;
             if (FlavorText != other.FlavorText) return false;
-            if (CDCharacterRecords != null && other.CDCharacterRecords != null &&
-                !CDCharacterRecords.MemberwiseEquals(other.CDCharacterRecords)) return false;
             // SV: lobby SV docs participate in the dirty check so edits enable the Save button.
             if (!SVDocsEqual(SVCharacterDocuments, other.SVCharacterDocuments))
                 return false;
@@ -727,15 +711,6 @@ namespace Content.Shared.Preferences
 
             _traitPreferences.Clear();
             _traitPreferences.UnionWith(GetValidTraits(traits, prototypeManager));
-
-            if (CDCharacterRecords == null)
-            {
-                CDCharacterRecords = PlayerProvidedCharacterRecords.DefaultRecords();
-            }
-            else
-            {
-                CDCharacterRecords!.EnsureValid();
-            }
 
             // SV: sanitize lobby-sent SV documents and the General block.
             // We trust admins but not raw wire payloads — clamp lengths, drop unknown types.
