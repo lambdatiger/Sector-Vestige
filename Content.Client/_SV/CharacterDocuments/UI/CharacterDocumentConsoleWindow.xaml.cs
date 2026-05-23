@@ -135,7 +135,7 @@ public sealed partial class CharacterDocumentConsoleWindow : DefaultWindow
                 PrintButton.Disabled = true;
                 ScanButton.Disabled = true;
                 DeleteButton.Disabled = true;
-                EditButton.Text = "Save";
+                EditButton.Text = Loc.GetString("sv-document-console-edit-button-save");
                 EditButton.AddStyleClass(StyleClass.Negative);
 
             }
@@ -169,7 +169,7 @@ public sealed partial class CharacterDocumentConsoleWindow : DefaultWindow
                 PrintButton.Disabled = false;
                 DeleteButton.Disabled = _selectedDocument == null;
                 EditButton.RemoveStyleClass(StyleClass.Negative);
-                EditButton.Text = "Edit";
+                EditButton.Text = Loc.GetString("sv-document-console-edit-button");
 
                 if (newDocument.DocTitle == _selectedDocument?.DocTitle && newDocContent == _selectedDocument.DocContent)
                     return;
@@ -392,7 +392,9 @@ public sealed partial class CharacterDocumentConsoleWindow : DefaultWindow
         DocGenHeightValue.Text = g != null && g.Height > 0 ? $"{g.Height} cm" : "-";
         DocGenWeightValue.Text = g != null && g.Weight > 0 ? $"{g.Weight} kg" : "-";
         DocGenContactValue.Text = g != null && !string.IsNullOrEmpty(g.EmergencyContactName) ? g.EmergencyContactName : "-";
-        DocGenWorkAuthValue.Text = g != null ? (g.HasWorkAuthorization ? "Yes" : "No") : "-";
+        DocGenWorkAuthValue.Text = g != null
+            ? Loc.GetString(g.HasWorkAuthorization ? "sv-document-general-yes" : "sv-document-general-no")
+            : "-";
         DocGenIdFeaturesValue.Text = g != null && !string.IsNullOrEmpty(g.IdentifyingFeatures) ? g.IdentifyingFeatures : "-";
         DocGenAllergiesValue.Text = g != null && !string.IsNullOrEmpty(g.Allergies) ? g.Allergies : "-";
         DocGenDrugAllergiesValue.Text = g != null && !string.IsNullOrEmpty(g.DrugAllergies) ? g.DrugAllergies : "-";

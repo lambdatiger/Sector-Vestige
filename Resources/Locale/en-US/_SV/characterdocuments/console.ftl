@@ -5,6 +5,7 @@ sv-document-console-title-input = Title
 sv-document-console-scan-button = Scan
 sv-document-console-print-button = Print
 sv-document-console-edit-button = Edit
+sv-document-console-edit-button-save = Save
 sv-document-console-delete-button = Delete
 sv-document-console-delete-button-confirm = Confirm?
 sv-document-console-status-button = Set Status
@@ -21,6 +22,8 @@ sv-document-console-window-title-fallback = Documentation Computer
 
 # General-info panel
 sv-document-console-general-heading = General Information
+sv-document-general-yes = Yes
+sv-document-general-no = No
 
 # Lobby tab — player-authored documents
 sv-document-lobby-tab-title = Documents

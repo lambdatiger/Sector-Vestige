@@ -166,7 +166,7 @@ public sealed partial class AdminCharacterDocumentsTab : Control
 
         StampEditorRow.Visible = true;
 
-        EditButton.Text = "Save";
+        EditButton.Text = Loc.GetString("sv-document-console-edit-button-save");
         EditButton.AddStyleClass(StyleClass.Negative);
         EditButton.Disabled = false;
         DeleteButton.Disabled = true;
@@ -391,7 +391,7 @@ public sealed partial class AdminCharacterDocumentsTab : Control
 
         EditButton.Disabled = false;
         DeleteButton.Disabled = false;
-        EditButton.Text = "Edit";
+        EditButton.Text = Loc.GetString("sv-document-console-edit-button");
         EditButton.RemoveStyleClass(StyleClass.Negative);
         _editing = false;
     }
@@ -414,7 +414,7 @@ public sealed partial class AdminCharacterDocumentsTab : Control
         StampDisplay.RemoveAllChildren();
         EditButton.Disabled = true;
         DeleteButton.Disabled = true;
-        EditButton.Text = "Edit";
+        EditButton.Text = Loc.GetString("sv-document-console-edit-button");
         EditButton.RemoveStyleClass(StyleClass.Negative);
         _editing = false;
     }
@@ -459,7 +459,7 @@ public sealed partial class AdminCharacterDocumentsTab : Control
             ContentEdit.Editable = true;
             TitleInput.Editable = true;
             TitleInput.ModulateSelfOverride = Color.FromHex("#ff6666");
-            EditButton.Text = "Save";
+            EditButton.Text = Loc.GetString("sv-document-console-edit-button-save");
             EditButton.AddStyleClass(StyleClass.Negative);
             DeleteButton.Disabled = true;
             CreateButton.Disabled = true;
@@ -497,7 +497,7 @@ public sealed partial class AdminCharacterDocumentsTab : Control
             StampDisplay.Visible = true;
             TitleInput.Editable = false;
             TitleInput.ModulateSelfOverride = null;
-            EditButton.Text = "Edit";
+            EditButton.Text = Loc.GetString("sv-document-console-edit-button");
             EditButton.RemoveStyleClass(StyleClass.Negative);
             DeleteButton.Disabled = false;
             CreateButton.Disabled = false;

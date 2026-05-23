@@ -1,8 +1,10 @@
 <Control xmlns="https://spacestation14.io"
          xmlns:paper="clr-namespace:Content.Client.Paper.UI">
     <BoxContainer Orientation="Horizontal" HorizontalExpand="True" VerticalExpand="True">
-        <!-- Left: list + buttons -->
-        <BoxContainer Orientation="Vertical" MinWidth="320" MaxWidth="320" VerticalExpand="True">
+        <!-- Left: list + buttons. Wider than the natural button-strip width so the
+             list dominates the layout — otherwise the preview pane on the right
+             feels disproportionately large when no document is selected. -->
+        <BoxContainer Orientation="Vertical" MinWidth="420" MaxWidth="420" VerticalExpand="True">
             <ItemList Name="EntrySelector" HorizontalExpand="True" VerticalExpand="True" MinSize="0 200"/>
             <BoxContainer Orientation="Horizontal">
                 <Button Name="AddButton" StyleClasses="OpenBoth" Text="{Loc 'sv-document-lobby-add'}"/>

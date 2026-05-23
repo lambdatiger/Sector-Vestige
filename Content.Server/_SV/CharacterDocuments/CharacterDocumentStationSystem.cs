@@ -1,10 +1,6 @@
-using Content.Server.Database;
 using Content.Shared._SV.CharacterDocuments.Components;
 using Content.Shared.GameTicking;
-using Content.Shared.NPC.Prototypes;
-using Content.Shared.NPC.Systems;
 using Content.Shared.Station;
-using Robust.Shared.Prototypes;
 
 namespace Content.Server._SV.CharacterDocuments;
 
