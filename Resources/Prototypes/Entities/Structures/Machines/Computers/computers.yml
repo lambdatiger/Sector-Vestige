@@ -376,9 +376,12 @@
       # blacklist:
       #   components:
       #     - CargoSlip
+  - type: ItemSlots #SV - CharacterDocuments
   - type: ContainerContainer #SV - CharacterDocuments
     containers:
-      Paper: !type:ContainerSlot
+      board: !type:Container
+        ents: []
+      Paper: !type:ContainerSlot {}
   - type: UserInterface
     interfaces:
         enum.CharacterDocumentConsoleUiKey.Key:
@@ -427,6 +430,12 @@
       # blacklist:
       #   components:
       #     - CargoSlip
+  - type: ItemSlots #SV - CharacterDocuments
+  - type: ContainerContainer #SV - CharacterDocuments
+    containers:
+      board: !type:Container
+        ents: []
+      Paper: !type:ContainerSlot {}
   - type: UserInterface
     interfaces:
         enum.CharacterDocumentConsoleUiKey.Key:
@@ -457,7 +466,9 @@
   - type: ItemSlots #SV - CharacterDocuments
   - type: ContainerContainer #SV - CharacterDocuments
     containers:
-      Paper: !type:ContainerSlot
+      board: !type:Container
+        ents: []
+      Paper: !type:ContainerSlot {}
   - type: UserInterface
     interfaces:
         enum.CharacterDocumentConsoleUiKey.Key:
@@ -521,7 +532,9 @@
   - type: ItemSlots
   - type: ContainerContainer
     containers:
-      Paper: !type:ContainerSlot
+      board: !type:Container
+        ents: []
+      Paper: !type:ContainerSlot {}
   - type: UserInterface
     interfaces:
         enum.CharacterDocumentConsoleUiKey.Key:
@@ -568,7 +581,9 @@
   - type: ItemSlots
   - type: ContainerContainer
     containers:
-      Paper: !type:ContainerSlot
+      board: !type:Container
+        ents: []
+      Paper: !type:ContainerSlot {}
   - type: UserInterface
     interfaces:
         enum.CharacterDocumentConsoleUiKey.Key:
