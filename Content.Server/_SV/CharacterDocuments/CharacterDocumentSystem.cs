@@ -58,7 +58,7 @@ public sealed partial class CharacterDocumentSystem : EntitySystem
     {
         if (!HasComp<StationRecordsComponent>(args.Station))
         {
-            Log.Error("Station does not have StationRecordsComponent PlayerDocs will not work");
+            Log.Warning("Station does not have StationRecordsComponent PlayerDocs will not work");
             return;
         }
 
@@ -97,14 +97,14 @@ public sealed partial class CharacterDocumentSystem : EntitySystem
         var prefs = await _db.GetPlayerPreferencesAsync(netUserId, CancellationToken.None);
         if (prefs == null)
         {
-            Log.Error($"Could not load preferences for player {playerName} ({characterName})");
+            Log.Warning($"Could not load preferences for player {playerName} ({characterName})");
             return;
         }
 
         var profile = prefs.Profiles.FirstOrDefault(p => p.CharacterName == characterName);
         if (profile == null)
         {
-            Log.Error($"Could not find profile '{characterName}' for player {playerName}");
+            Log.Debug($"Could not find profile '{characterName}' for player {playerName}");
             return;
         }
 
