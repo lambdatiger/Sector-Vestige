@@ -1,5 +1,5 @@
-// SPDX-FileCopyrightText: 2025 Wizards Den contributors
-// SPDX-FileCopyrightText: 2025 Sector Vestige contributors (modifications)
+// SPDX-FileCopyrightText: 2026 Wizards Den contributors
+// SPDX-FileCopyrightText: 2026 Sector Vestige contributors (modifications)
 // SPDX-FileCopyrightText: 2022 Flipp Syder <76629141+vulppine@users.noreply.github.com>
 // SPDX-FileCopyrightText: 2022 Júlio César Ueti <52474532+Mirino97@users.noreply.github.com>
 // SPDX-FileCopyrightText: 2022 Kara <lunarautomaton6@gmail.com>
@@ -47,11 +47,14 @@
 // SPDX-FileCopyrightText: 2024 themias <89101928+themias@users.noreply.github.com>
 // SPDX-FileCopyrightText: 2024 wrexbe <wrexbe@protonmail.com>
 // SPDX-FileCopyrightText: 2025 Nemanja <98561806+EmoGarbage404@users.noreply.github.com>
-// SPDX-FileCopyrightText: 2025 OnyxTheBrave <131422822+OnyxTheBrave@users.noreply.github.com>
 // SPDX-FileCopyrightText: 2025 ReboundQ3 <ReboundQ3@gmail.com>
+// SPDX-FileCopyrightText: 2025 Samuka <47865393+Samuka-C@users.noreply.github.com>
 // SPDX-FileCopyrightText: 2025 Super <84590915+SuperGDPWYL@users.noreply.github.com>
 // SPDX-FileCopyrightText: 2025 Tayrtahn <tayrtahn@gmail.com>
 // SPDX-FileCopyrightText: 2025 slarticodefast <161409025+slarticodefast@users.noreply.github.com>
+// SPDX-FileCopyrightText: 2026 Boaz1111 <149967078+Boaz1111@users.noreply.github.com>
+// SPDX-FileCopyrightText: 2026 OnyxTheBrave <131422822+OnyxTheBrave@users.noreply.github.com>
+// SPDX-FileCopyrightText: 2026 SlamBamActionman <83650252+SlamBamActionman@users.noreply.github.com>
 //
 // SPDX-License-Identifier: MIT
 
@@ -60,31 +63,45 @@ using Content.Server.Communications;
 using Content.Server.GameTicking.Rules.Components;
 using Content.Server.Nuke;
 using Content.Server.NukeOps;
+using Content.Server.Pinpointer;
 using Content.Server.Popups;
 using Content.Server.Roles;
 using Content.Server.RoundEnd;
 using Content.Server.Shuttles.Events;
 using Content.Server.Shuttles.Systems;
 using Content.Server.Station.Components;
+using Content.Server.StationRecords.Systems;
 using Content.Server.Store.Systems;
+using Content.Shared.Access.Systems;
 using Content.Shared.GameTicking.Components;
+using Content.Shared.Mind;
+using Content.Shared.Mind.Components;
 using Content.Shared.Mobs;
 using Content.Shared.Mobs.Components;
 using Content.Shared.NPC.Components;
 using Content.Shared.NPC.Systems;
 using Content.Shared.Nuke;
 using Content.Shared.NukeOps;
+using Content.Shared.Roles;
 using Content.Shared.Roles.Components;
+using Content.Shared.Roles.Jobs;
+using Content.Shared.Station;
+using Content.Shared.Station.Components;
+using Content.Shared.StationRecords;
 using Content.Shared.Store;
+using Content.Shared.Store.Components;
 using Content.Shared.Tag;
 using Content.Shared.Zombies;
+using Robust.Server.Player;
+using Robust.Shared.Containers;
 using Robust.Shared.Map;
+using Robust.Shared.Network;
+using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
 using Robust.Shared.Utility;
+using System.Data;
 using System.Linq;
-using Content.Shared.Station.Components;
-using Content.Shared.Store.Components;
-using Robust.Shared.Prototypes;
+using System.Text;
 
 namespace Content.Server.GameTicking.Rules;
 
@@ -92,9 +109,16 @@ public sealed class NukeopsRuleSystem : GameRuleSystem<NukeopsRuleComponent>
 {
     [Dependency] private readonly AntagSelectionSystem _antag = default!;
     [Dependency] private readonly EmergencyShuttleSystem _emergency = default!;
+    [Dependency] private readonly SharedIdCardSystem _idCard = default!;
+    [Dependency] private readonly SharedJobSystem _jobs = default!;
+    [Dependency] private readonly IPlayerManager _player = default!;
+    [Dependency] private readonly SharedMindSystem _mind = default!;
     [Dependency] private readonly NpcFactionSystem _npcFaction = default!;
     [Dependency] private readonly PopupSystem _popupSystem = default!;
     [Dependency] private readonly RoundEndSystem _roundEndSystem = default!;
+    [Dependency] private readonly SharedRoleSystem _roles = default!;
+    [Dependency] private readonly SharedStationSystem _station = default!;
+    [Dependency] private readonly StationRecordsSystem _records = default!;
     [Dependency] private readonly StoreSystem _store = default!;
     [Dependency] private readonly TagSystem _tag = default!;
 
@@ -148,30 +172,30 @@ public sealed class NukeopsRuleSystem : GameRuleSystem<NukeopsRuleComponent>
     }
 
     #region Event Handlers
-    protected override void AppendRoundEndText(EntityUid uid,
-        NukeopsRuleComponent component,
-        GameRuleComponent gameRule,
-        ref RoundEndTextAppendEvent args)
-    {
-        var winText = Loc.GetString($"nukeops-{component.WinType.ToString().ToLower()}");
-        args.AddLine(winText);
-
-        foreach (var cond in component.WinConditions)
-        {
-            var text = Loc.GetString($"nukeops-cond-{cond.ToString().ToLower()}");
-            args.AddLine(text);
-        }
-
-        args.AddLine(Loc.GetString("nukeops-list-start"));
-
-        var antags = _antag.GetAntagIdentifiers(uid);
-
-        foreach (var (_, sessionData, name) in antags)
-        {
-            args.AddLine(Loc.GetString("nukeops-list-name-user", ("name", name), ("user", sessionData.UserName)));
-        }
-        args.AddLine("");
-    }
+//    protected override void AppendRoundEndText(EntityUid uid, // Vestige 14/04/2026 Remove antags and related things from round-end text.
+//        NukeopsRuleComponent component,
+//        GameRuleComponent gameRule,
+//        ref RoundEndTextAppendEvent args)
+//    {
+//        var winText = Loc.GetString($"nukeops-{component.WinType.ToString().ToLower()}");
+//        args.AddLine(winText);
+//
+//        foreach (var cond in component.WinConditions)
+//        {
+//            var text = Loc.GetString($"nukeops-cond-{cond.ToString().ToLower()}");
+//            args.AddLine(text);
+//        }
+//
+//        args.AddLine(Loc.GetString("nukeops-list-start"));
+//
+//        var antags = _antag.GetAntagIdentifiers(uid);
+//
+//        foreach (var (_, sessionData, name) in antags)
+//        {
+//            args.AddLine(Loc.GetString("nukeops-list-name-user", ("name", name), ("user", sessionData.UserName)));
+//        }
+//        args.AddLine("");
+//    }
 
     private void OnNukeExploded(NukeExplodedEvent ev)
     {
@@ -606,6 +630,74 @@ public sealed class NukeopsRuleSystem : GameRuleSystem<NukeopsRuleComponent>
         }
 
         return null;
+    }
+
+    private void GetDiskCarrierData(EntityUid carrier,
+        out string name,
+        out string job,
+        out string username)
+    {
+        name = Name(carrier);
+        job = Loc.GetString("job-name-unknown");
+        username = "unknown"; // magic word in Fluent selector
+
+        Entity<MindComponent>? mind = null;
+
+        if (_mind.TryGetMind(carrier, out _, out var mindComp))
+        {
+            mind = (carrier, mindComp);
+        }
+        else
+        {
+            var allMinds = EntityQueryEnumerator<MindComponent>();
+            while (allMinds.MoveNext(out _, out mindComp))
+            {
+                if (mindComp.CharacterName != name)
+                    continue;
+
+                mind = (carrier, mindComp);
+                break;
+            }
+        }
+
+        if (mind is not null)
+        {
+            NetUserId? userId = mind.Value.Comp.UserId;
+            if (userId is not null && _player.TryGetPlayerData(userId.Value, out var sessionData))
+                username = sessionData.UserName;
+
+            // Role/job is the trickiest since it can be unknown in some cases
+            // For example, after "make ghost role" verb
+            var roles = _roles.MindGetAllRoleInfo(mind.Value.Owner);
+            if (roles.Count > 0)
+            {
+                job = Loc.GetString(roles.First().Name);
+                return;
+            }
+
+            if (_jobs.MindTryGetJobName(mind, out var jobName))
+            {
+                job = jobName;
+                return;
+            }
+        }
+
+        // Try station records
+        var xform = Transform(carrier);
+        var station = _station.GetStationInMap(xform.MapID);
+        if (station != null && _records.GetRecordByName(station.Value, name) is { } id)
+        {
+            var key = new StationRecordKey(id, station.Value);
+            if (_records.TryGetRecord<GeneralStationRecord>(key, out var record))
+            {
+                job = record.JobTitle;
+                return;
+            }
+        }
+
+        // Fallback to ID
+        if (_idCard.TryFindIdCard(carrier, out var idCard))
+            job = idCard.Comp.LocalizedJobTitle ?? job;
     }
 }
 

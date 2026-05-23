@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -12,7 +13,6 @@ using Robust.Shared.Timing;
 using Robust.Shared.Utility;
 using Robust.UnitTesting;
 using Robust.UnitTesting.Pool;
-using System.IO;
 
 namespace Content.YAMLLinter
 {
@@ -24,7 +24,8 @@ namespace Content.YAMLLinter
 
     internal static class Program
     {
-        private static readonly YamlLinterTestContext TestCtx = new();
+        private static readonly ExternalTestContext TestContext = new("YAML Linter", StreamWriter.Null);
+
         private static async Task<int> Main(string[] _)
         {
             GameDataScrounger.NoScrounging = true; // Ugly hack for YAML Linter.
@@ -66,7 +67,7 @@ namespace Content.YAMLLinter
         private static async Task<(Dictionary<string, HashSet<ErrorNode>> YamlErrors, List<string> FieldErrors)>
             ValidateClient()
         {
-            await using var pair = await PoolManager.GetServerClient(testContext: TestCtx);
+            await using var pair = await PoolManager.GetServerClient(testContext: TestContext);
             var client = pair.Client;
             var result = await ValidateInstance(client);
             await pair.CleanReturnAsync();
@@ -76,7 +77,7 @@ namespace Content.YAMLLinter
         private static async Task<(Dictionary<string, HashSet<ErrorNode>> YamlErrors, List<string> FieldErrors)>
             ValidateServer()
         {
-            await using var pair = await PoolManager.GetServerClient(testContext: TestCtx);
+            await using var pair = await PoolManager.GetServerClient(testContext: TestContext);
             var server = pair.Server;
             var result = await ValidateInstance(server);
             await pair.CleanReturnAsync();
@@ -188,7 +189,7 @@ namespace Content.YAMLLinter
         private static async Task<(Assembly[] clientAssemblies, Assembly[] serverAssemblies)>
             GetClientServerAssemblies()
         {
-            await using var pair = await PoolManager.GetServerClient(testContext: TestCtx);
+            await using var pair = await PoolManager.GetServerClient(testContext: TestContext);
 
             var result = (GetAssemblies(pair.Client), GetAssemblies(pair.Server));
 

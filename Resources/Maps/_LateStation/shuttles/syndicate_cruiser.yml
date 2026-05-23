@@ -1491,6 +1491,16 @@ entities:
           - 0
           - 0
         - volume: 2500
+          temperature: 293.14975
+          moles:
+            Oxygen: 20.078888
+            Nitrogen: 75.53487
+        - volume: 2500
+          temperature: 293.14975
+          moles:
+            Oxygen: 20.078888
+            Nitrogen: 75.53487
+        - volume: 2500
           temperature: 293.15
           moles:
           - 0
@@ -1571,6 +1581,8 @@ entities:
     - type: SalvageShuttle
     - type: ImplicitRoof
     - type: ExplosionAirtightGrid
+    - type: TileHistory
+      chunkHistory: {}
 - proto: AirAlarm
   entities:
   - uid: 1828

@@ -1,0 +1,53 @@
+# SPDX-FileCopyrightText: 2026 Sector-Vestige contributors
+# SPDX-FileCopyrightText: 2026 Sector Vestige contributors (modifications)
+# SPDX-FileCopyrightText: 2026 JacketedGaming <kalebblack399@yahoo.com>
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+# damaged centcomm turtleneck
+- type: entity
+  parent: ClothingUniformBase
+  id: ClothingUniformJumpsuitDamagedCentcommTurtleneck
+  name: damaged centcomm turtleneck
+  description: A cozy centcomm turtle neck stained with your own blood. I don't think that's gonna come out anytime soon.
+  components:
+  - type: Sprite
+    sprite: _SV/Clothing/Uniforms/Jumpsuit/damaged_centcomm_turtle.rsi
+  - type: Clothing
+    sprite: _SV/Clothing/Uniforms/Jumpsuit/damaged_centcomm_turtle.rsi
+
+# damaged centcomm officer jumpsuit
+- type: entity
+  parent: ClothingUniformBase
+  id: ClothingUniformJumpsuitDamagedCentcomOfficerJumpsuit
+  name: damaged centcomm officer jumpsuit
+  description: A centcomm officer jumpsuit stained with your own blood. I don't think that's gonna come out anytime soon.
+  components:
+  - type: Sprite
+    sprite: _SV/Clothing/Uniforms/Jumpsuit/damaged_centcom_officer.rsi
+  - type: Clothing
+    sprite: _SV/Clothing/Uniforms/Jumpsuit/damaged_centcom_officer.rsi
+
+# damaged centcom offical jumpsuit
+- type: entity
+  parent: ClothingUniformBase
+  id: ClothingUniformJumpsuitDamagedCentcomOfficalJumpsuit
+  name: damaged centcomm offical jumpsuit
+  description: A centcomm offical jumpsuit stained with your own blood. I don't think that's gonna come out anytime soon.
+  components:
+  - type: Sprite
+    sprite: _SV/Clothing/Uniforms/Jumpsuit/damaged_centcom_official.rsi
+  - type: Clothing
+    sprite: _SV/Clothing/Uniforms/Jumpsuit/damaged_centcom_official.rsi
+
+# damaged centcom formal jumpsuit
+- type: entity
+  parent: ClothingUniformBase
+  id: ClothingUniformJumpsuitDamagedCentcomFormalSuit
+  name: damaged centcomm formal suit
+  description: A centcomm formal suit stained with your own blood. I don't think that's gonna come out anytime soon.
+  components:
+  - type: Sprite
+    sprite: _SV/Clothing/Uniforms/Jumpsuit/damaged_centcomformal.rsi
+  - type: Clothing
+    sprite: _SV/Clothing/Uniforms/Jumpsuit/damaged_centcomformal.rsi

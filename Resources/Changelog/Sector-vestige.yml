@@ -1591,3 +1591,213 @@ Entries:
       message: Supermatter off gas event. The supermatter can now emit gases randomly.
   id: 219
   time: '2026-03-19T15:06:49.0000000+00:00'
+- author: BackeTako
+  changes:
+    - type: Add
+      message: Gila Personal item
+  id: 220
+  time: '2026-03-21T13:53:00.0000000+00:00'
+- author: s3ptemb3rr
+  changes:
+    - type: Add
+      message: Added leopard tail from RMC14
+  id: 221
+  time: '2026-04-01T06:56:43.0000000+00:00'
+- author: NicoSGF64
+  changes:
+    - type: Add
+      message: Added the senior researcher high-cut labcoat.
+    - type: Add
+      message: >-
+        Medical doctors, senior physicians and senior researchers now have
+        access to more labcoats.
+    - type: Fix
+      message: >-
+        Medical doctors no longer can commit stolen valor and wear the senior
+        physician labcoat.
+  id: 222
+  time: '2026-04-04T09:55:19.0000000+00:00'
+- author: cooldolphin
+  changes:
+    - type: Add
+      message: Tiger tail, double tiger tail, big cat tail, double normal cat tail.
+    - type: Fix
+      message: Leopard tail locale issue.
+  id: 223
+  time: '2026-04-04T15:25:05.0000000+00:00'
+- author: cooldolphin
+  changes:
+    - type: Add
+      message: You can pick up a lanyard in your trinket loadout now.
+  id: 224
+  time: '2026-04-05T15:35:56.0000000+00:00'
+- author: JacketedGaming
+  changes:
+    - type: Add
+      message: Some damaged Central Clothing.
+  id: 225
+  time: '2026-04-11T20:28:02.0000000+00:00'
+- author: NicoSGF64
+  changes:
+    - type: Add
+      message: The HoP has a new beret as well as new uniforms.
+    - type: Add
+      message: >-
+        All medical roles except for psychologists and medical interns now can
+        have gloves on their loadouts.
+    - type: Fix
+      message: Senior courier can no longer start shoeless.
+    - type: Fix
+      message: >-
+        Paramedics now can access their corresponding clothing both from their
+        loadout screen as well as opening the ETU can now included on their
+        locker.
+    - type: Fix
+      message: >-
+        Captains won't be forced to wear leather shoes anymore nor will a pair
+        appear on the floor magically.
+    - type: Tweak
+      message: >-
+        The CE, RD now have been assigned their corresponding berets instead of
+        generic departmental ones.
+  id: 226
+  time: '2026-04-12T15:51:49.0000000+00:00'
+- author: cooldolphin
+  changes:
+    - type: Add
+      message: Painkillers now available in medical at the start of the shift.
+  id: 227
+  time: '2026-04-15T17:28:43.0000000+00:00'
+- author: Boaz1111
+  changes:
+    - type: Add
+      message: Added synth markings from CD!
+  id: 228
+  time: '2026-04-16T13:29:15.0000000+00:00'
+- author: Boaz1111
+  changes:
+    - type: Remove
+      message: The end of round menu no longer shows information regarding antagonists.
+  id: 229
+  time: '2026-04-16T13:51:35.0000000+00:00'
+- author: Boaz1111
+  changes:
+    - type: Fix
+      message: Fixed some knives not fixing in lockers.
+  id: 230
+  time: '2026-04-18T16:07:25.0000000+00:00'
+- author: Zamshi8
+  changes:
+    - type: Add
+      message: Added new pickup, drop and equip sounds to some items and clothing
+  id: 231
+  time: '2026-04-24T18:22:52.0000000+00:00'
+- author: Mixmaster49
+  changes:
+    - type: Tweak
+      message: Less severe ion storms
+  id: 232
+  time: '2026-04-27T15:35:50.0000000+00:00'
+- author: lunarcomets
+  changes:
+    - type: Add
+      message: >-
+        feeding starving silicons by adding new screens and holograms for the AI
+        to choose from
+  id: 233
+  time: '2026-04-27T15:49:03.0000000+00:00'
+- author: lunarcomets
+  changes:
+    - type: Add
+      message: >-
+        AIs can now select which lawset they start with, and Cyborgs can now
+        select which type of brain their body has. Both are available via their
+        respective loadouts.
+  id: 234
+  time: '2026-04-27T16:22:31.0000000+00:00'
+- author: lunarcomets
+  changes:
+    - type: Add
+      message: added subtype support for cyborgs
+    - type: Add
+      message: >-
+        spidermin and qualified doctor subtypes are now available for mining and
+        medical cyborgs, respectively 
+  id: 235
+  time: '2026-05-01T14:41:40.0000000+00:00'
+- author: Rose-Diere
+  changes:
+    - type: Tweak
+      message: Reptillians can now eat Chili and Chili con Carnival
+  id: 236
+  time: '2026-05-06T07:35:41.0000000+00:00'
+- author: Zamshi8
+  changes:
+    - type: Tweak
+      message: added some sounds to foxfolk to keep consistency with other species
+  id: 237
+  time: '2026-05-07T17:21:42.0000000+00:00'
+- author: BackeTako
+  changes:
+    - type: Add
+      message: Frostbitey Personal Item
+  id: 238
+  time: '2026-05-08T14:13:04.0000000+00:00'
+- author: purpleskittleo
+  changes:
+    - type: Add
+      message: Added two news ambiences.
+    - type: Add
+      message: Added four new event tracks. Have fun!
+  id: 239
+  time: '2026-05-08T14:20:34.0000000+00:00'
+- author: Sophia12434
+  changes:
+    - type: Add
+      message: Mamba the Syndicate Battlecruiser
+    - type: Add
+      message: Copperhead the Syndicate Spycraft(The salv destroyer 9000)
+  id: 240
+  time: '2026-05-09T17:10:33.0000000+00:00'
+- author: Boaz1111
+  changes:
+    - type: Add
+      message: Ports the sofas and benches from CD.
+  id: 241
+  time: '2026-05-13T06:42:47.0000000+00:00'
+- author: NicoSGF64
+  changes:
+    - type: Add
+      message: >-
+        Ported chat indicators for talking on radio, talking on LOOC, emoting,
+        whispering and writing on paper from Delta-V
+  id: 242
+  time: '2026-05-16T15:48:02.0000000+00:00'
+- author: Blackern5000
+  changes:
+    - type: Fix
+      message: Fixed certain gauze arm markings incorrectly using the "Overlay" layer
+  id: 243
+  time: '2026-05-16T15:51:00.0000000+00:00'
+- author: lambdatiger
+  changes:
+    - type: Tweak
+      message: Changed Packed_SM internal station ID.
+  id: 244
+  time: '2026-05-16T15:51:52.0000000+00:00'
+- author: ReboundQ3
+  changes:
+    - type: Fix
+      message: Fixed the electropack.
+  id: 245
+  time: '2026-05-18T15:50:54.0000000+00:00'
+- author: akirrer
+  changes:
+    - type: Add
+      message: Added a new Syndicate sniper rifle.
+    - type: Add
+      message: Added a new caliber, .338 lapua.
+    - type: Tweak
+      message: Tweaked large ammo casing sprites to accept colored tips.
+  id: 246
+  time: '2026-05-18T16:37:44.0000000+00:00'

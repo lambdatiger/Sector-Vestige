@@ -1,5 +1,5 @@
-// SPDX-FileCopyrightText: 2025 Wizards Den contributors
-// SPDX-FileCopyrightText: 2025 Sector Vestige contributors (modifications)
+// SPDX-FileCopyrightText: 2026 Wizards Den contributors
+// SPDX-FileCopyrightText: 2026 Sector Vestige contributors (modifications)
 // SPDX-FileCopyrightText: 2023 DrSmugleaf <DrSmugleaf@users.noreply.github.com>
 // SPDX-FileCopyrightText: 2023 Pieter-Jan Briers <pieterjan.briers@gmail.com>
 // SPDX-FileCopyrightText: 2023 Vasilis <vasilis@pikachu.systems>
@@ -20,9 +20,13 @@
 // SPDX-FileCopyrightText: 2025 Princess Cheeseballs <66055347+Princess-Cheeseballs@users.noreply.github.com>
 // SPDX-FileCopyrightText: 2025 Princess Cheeseballs <66055347+Pronana@users.noreply.github.com>
 // SPDX-FileCopyrightText: 2025 ReboundQ3 <ReboundQ3@gmail.com>
+// SPDX-FileCopyrightText: 2025 Samuka <47865393+Samuka-C@users.noreply.github.com>
 // SPDX-FileCopyrightText: 2025 ScarKy0 <106310278+ScarKy0@users.noreply.github.com>
 // SPDX-FileCopyrightText: 2025 ScarKy0 <scarky0@onet.eu>
 // SPDX-FileCopyrightText: 2025 slarticodefast <161409025+slarticodefast@users.noreply.github.com>
+// SPDX-FileCopyrightText: 2026 Boaz1111 <149967078+Boaz1111@users.noreply.github.com>
+// SPDX-FileCopyrightText: 2026 ReboundQ3 <22770594+ReboundQ3@users.noreply.github.com>
+// SPDX-FileCopyrightText: 2026 pathetic meowmeow <uhhadd@gmail.com>
 //
 // SPDX-License-Identifier: MIT
 
@@ -118,36 +122,36 @@ public sealed class RevolutionaryRuleSystem : GameRuleSystem<RevolutionaryRuleCo
         }
     }
 
-    protected override void AppendRoundEndText(EntityUid uid,
-        RevolutionaryRuleComponent component,
-        GameRuleComponent gameRule,
-        ref RoundEndTextAppendEvent args)
-    {
-        base.AppendRoundEndText(uid, component, gameRule, ref args);
+//    protected override void AppendRoundEndText(EntityUid uid, // Vestige 14/04/2026 Remove antags and related things from round-end text.
+//        RevolutionaryRuleComponent component,
+//        GameRuleComponent gameRule,
+//        ref RoundEndTextAppendEvent args)
+//    {
+//        base.AppendRoundEndText(uid, component, gameRule, ref args);
+//
+//        var revsLost = CheckRevsLose();
+//        var commandLost = CheckCommandLose();
+//        // This is (revsLost, commandsLost) concatted together
+//        // (moony wrote this comment idk what it means)
+//        var index = (commandLost ? 1 : 0) | (revsLost ? 2 : 0);
+//        args.AddLine(Loc.GetString(Outcomes[index]));
+//
+//        var sessionData = _antag.GetAntagIdentifiers(uid);
+//        args.AddLine(Loc.GetString("rev-headrev-count", ("initialCount", sessionData.Count)));
+//        foreach (var (mind, data, name) in sessionData)
+//        {
+//            _role.MindHasRole<RevolutionaryRoleComponent>(mind, out var role);
+//            var count = CompOrNull<RevolutionaryRoleComponent>(role)?.ConvertedCount ?? 0;
+//
+//            args.AddLine(Loc.GetString("rev-headrev-name-user",
+//                ("name", name),
+//                ("username", data.UserName),
+//                ("count", count)));
 
-        var revsLost = CheckRevsLose();
-        var commandLost = CheckCommandLose();
-        // This is (revsLost, commandsLost) concatted together
-        // (moony wrote this comment idk what it means)
-        var index = (commandLost ? 1 : 0) | (revsLost ? 2 : 0);
-        args.AddLine(Loc.GetString(Outcomes[index]));
-
-        var sessionData = _antag.GetAntagIdentifiers(uid);
-        args.AddLine(Loc.GetString("rev-headrev-count", ("initialCount", sessionData.Count)));
-        foreach (var (mind, data, name) in sessionData)
-        {
-            _role.MindHasRole<RevolutionaryRoleComponent>(mind, out var role);
-            var count = CompOrNull<RevolutionaryRoleComponent>(role)?.ConvertedCount ?? 0;
-
-            args.AddLine(Loc.GetString("rev-headrev-name-user",
-                ("name", name),
-                ("username", data.UserName),
-                ("count", count)));
-
-            // TODO: someone suggested listing all alive? revs maybe implement at some point
-        }
-        args.AddLine("");
-    }
+//            // TODO: someone suggested listing all alive? revs maybe implement at some point
+//        }
+//        args.AddLine("");
+//    }
 
     private void OnGetBriefing(EntityUid uid, RevolutionaryRoleComponent comp, ref GetBriefingEvent args)
     {
@@ -174,7 +178,8 @@ public sealed class RevolutionaryRuleSystem : GameRuleSystem<RevolutionaryRuleCo
             !HasComp<HumanoidProfileComponent>(ev.Target) &&
             !alwaysConvertible ||
             !_mobState.IsAlive(ev.Target) ||
-            HasComp<ZombieComponent>(ev.Target))
+            HasComp<ZombieComponent>(ev.Target) ||
+            !HasComp<RevolutionaryConverterComponent>(ev.Used))
         {
             return;
         }

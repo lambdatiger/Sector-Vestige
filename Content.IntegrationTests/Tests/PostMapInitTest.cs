@@ -22,7 +22,6 @@
 // SPDX-FileCopyrightText: 2024 778b <33431126+778b@users.noreply.github.com>
 // SPDX-FileCopyrightText: 2024 Ed <96445749+TheShuEd@users.noreply.github.com>
 // SPDX-FileCopyrightText: 2024 Emisse <99158783+Emisse@users.noreply.github.com>
-// SPDX-FileCopyrightText: 2024 Errant <35878406+Errant-4@users.noreply.github.com>
 // SPDX-FileCopyrightText: 2024 FluffMe <dex.stb@gmail.com>
 // SPDX-FileCopyrightText: 2024 Golinth <amh2023@gmail.com>
 // SPDX-FileCopyrightText: 2024 Jacob Scott <scott@wearejacob.com>
@@ -30,11 +29,11 @@
 // SPDX-FileCopyrightText: 2024 Leon Friedrich <60421075+ElectroJr@users.noreply.github.com>
 // SPDX-FileCopyrightText: 2024 Rainfey <rainfey0+github@gmail.com>
 // SPDX-FileCopyrightText: 2024 Southbridge <7013162+southbridge-fur@users.noreply.github.com>
-// SPDX-FileCopyrightText: 2024 TytosB <54259736+TytosB@users.noreply.github.com>
 // SPDX-FileCopyrightText: 2025 Anzuneth <malachigene@gmail.com>
 // SPDX-FileCopyrightText: 2025 ArtisticRoomba <145879011+ArtisticRoomba@users.noreply.github.com>
 // SPDX-FileCopyrightText: 2025 Deerstop <edainturner@gmail.com>
 // SPDX-FileCopyrightText: 2025 ElectroJr <leonsfriedrich@gmail.com>
+// SPDX-FileCopyrightText: 2025 Errant <35878406+Errant-4@users.noreply.github.com>
 // SPDX-FileCopyrightText: 2025 IProduceWidgets <107586145+IProduceWidgets@users.noreply.github.com>
 // SPDX-FileCopyrightText: 2025 Killerqu00 <killerqueen1777@gmail.com>
 // SPDX-FileCopyrightText: 2025 KravinDes <cib20@humboldt.edu>
@@ -43,7 +42,6 @@
 // SPDX-FileCopyrightText: 2025 Lachryphage <stuart.e.clough@gmail.com>
 // SPDX-FileCopyrightText: 2025 Pieter-Jan Briers <pieterjan.briers+git@gmail.com>
 // SPDX-FileCopyrightText: 2025 Pok <113675512+Pok27@users.noreply.github.com>
-// SPDX-FileCopyrightText: 2025 ReboundQ3 <22770594+ReboundQ3@users.noreply.github.com>
 // SPDX-FileCopyrightText: 2025 ReboundQ3 <ReboundQ3@gmail.com>
 // SPDX-FileCopyrightText: 2025 Rellu225 <1blackrilfe1@gmail.com>
 // SPDX-FileCopyrightText: 2025 SlamBamActionman <83650252+SlamBamActionman@users.noreply.github.com>
@@ -57,6 +55,12 @@
 // SPDX-FileCopyrightText: 2025 metalgearsloth <31366439+metalgearsloth@users.noreply.github.com>
 // SPDX-FileCopyrightText: 2025 qu4drivium <aaronholiver@outlook.com>
 // SPDX-FileCopyrightText: 2025 tanuko <signar2005@gmail.com>
+// SPDX-FileCopyrightText: 2026 OnyxTheBrave <131422822+OnyxTheBrave@users.noreply.github.com>
+// SPDX-FileCopyrightText: 2026 ReboundQ3 <22770594+ReboundQ3@users.noreply.github.com>
+// SPDX-FileCopyrightText: 2026 Sophia12434 (GitHub)
+// SPDX-FileCopyrightText: 2026 Sophia12434 <sanesthetheskeleton@gmail.com>
+// SPDX-FileCopyrightText: 2026 TytosB <54259736+TytosB@users.noreply.github.com>
+// SPDX-FileCopyrightText: 2026 lambdatiger <11843718+lambdatiger@users.noreply.github.com>
 // SPDX-FileCopyrightText: 2026 lambdatiger <spam.stnuocca.sl@gmail.com>
 //
 // SPDX-License-Identifier: MIT
@@ -65,6 +69,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Content.IntegrationTests.Fixtures;
+using Content.IntegrationTests.Fixtures.Attributes;
 using Content.IntegrationTests.Utility;
 using YamlDotNet.RepresentationModel;
 using Content.Server.Administration.Systems;
@@ -92,8 +98,14 @@ using Robust.Shared.Utility;
 namespace Content.IntegrationTests.Tests
 {
     [TestFixture]
-    public sealed class PostMapInitTest
+    public sealed class PostMapInitTest : GameTest
     {
+        public override PoolSettings PoolSettings => new PoolSettings()
+        {
+            Connected = true,
+            Dirty = true,
+        };
+
         private const bool SkipTestMaps = true;
         private const string TestMapsPath = "/Maps/Test/";
 
@@ -127,6 +139,8 @@ namespace Content.IntegrationTests.Tests
             {"/Maps/Shuttles/ShuttleEvent/instigator.yml", ["ShuttleGunFriendship"]},
             {"/Maps/_LateStation/shuttles/avenger.yml", ["ShuttleGunSvalinnMachineGun", "ShuttleGunDuster"]},
             {"/Maps/_SV/cluster.yml", ["RubberStampMime"]},
+            {"/Maps/_SV/Shuttles/Syndicate/big/Mamba.yml", ["RubberStampSyndicate", "ShuttleGunDuster", "ShuttleGunDusterCircuitboard"]}, //SV Custom Syndi shuttle
+            {"/Maps/_SV/Shuttles/Syndicate/big/CopperHead.yml", ["RubberStampSyndicate", "ShuttleGunDuster", "ShuttleGunDusterCircuitboard"]}, //SV Custom Syndi shuttle
         };
 
         /// <summary>
@@ -161,16 +175,16 @@ namespace Content.IntegrationTests.Tests
         /// Asserts that specific files have been saved as grids and not maps.
         /// </summary>
         [Test, TestCaseSource(nameof(Grids))]
+        [EnsureCVar(Side.Server, typeof(CCVars), nameof(CCVars.GridFill), false)]
         public async Task GridsLoadableTest(string mapFile)
         {
-            await using var pair = await PoolManager.GetServerClient();
+            var pair = Pair;
             var server = pair.Server;
 
             var entManager = server.ResolveDependency<IEntityManager>();
             var mapLoader = entManager.System<MapLoaderSystem>();
             var mapSystem = entManager.System<SharedMapSystem>();
             var cfg = server.ResolveDependency<IConfigurationManager>();
-            Assert.That(cfg.GetCVar(CCVars.GridFill), Is.False);
             var path = new ResPath(mapFile);
 
             await server.WaitPost(() =>
@@ -187,9 +201,6 @@ namespace Content.IntegrationTests.Tests
 
                 mapSystem.DeleteMap(mapId);
             });
-            await server.WaitRunTicks(1);
-
-            await pair.CleanReturnAsync();
         }
 
         /// <summary>
@@ -197,16 +208,16 @@ namespace Content.IntegrationTests.Tests
         /// </summary>
         [Test]
         [TestCaseSource(nameof(ShuttleMapFiles))]
+        [EnsureCVar(Side.Server, typeof(CCVars), nameof(CCVars.GridFill), false)]
         public async Task ShuttlesLoadableTest(ResPath path)
         {
-            await using var pair = await PoolManager.GetServerClient();
+            var pair = Pair;
             var server = pair.Server;
 
             var entManager = server.ResolveDependency<IEntityManager>();
             var mapLoader = entManager.System<MapLoaderSystem>();
             var mapSystem = entManager.System<SharedMapSystem>();
             var cfg = server.ResolveDependency<IConfigurationManager>();
-            Assert.That(cfg.GetCVar(CCVars.GridFill), Is.False);
 
             await server.WaitPost(() =>
             {
@@ -226,17 +237,13 @@ namespace Content.IntegrationTests.Tests
                     mapSystem.DeleteMap(mapId);
                 });
             });
-
-            await server.WaitRunTicks(1);
-
-            await pair.CleanReturnAsync();
         }
 
         [Test]
         [TestCaseSource(nameof(AllMapFiles))]
         public async Task NoSavedPostMapInitTest(ResPath map)
         {
-            await using var pair = await PoolManager.GetServerClient();
+            var pair = Pair;
             var server = pair.Server;
 
             var resourceManager = server.ResolveDependency<IResourceManager>();
@@ -250,7 +257,6 @@ namespace Content.IntegrationTests.Tests
             // ReSharper disable once RedundantLogicalConditionalExpressionOperand
             if (SkipTestMaps && rootedPath.ToString().StartsWith(TestMapsPath, StringComparison.Ordinal))
             {
-                await pair.CleanReturnAsync();
                 return; // We just pass immediately.
             }
 
@@ -307,8 +313,6 @@ namespace Content.IntegrationTests.Tests
             await server.WaitPost(() => mapSys.InitializeMap(id));
             Assert.That(loader.TrySaveMap(id, path));
             Assert.That(IsPreInit(path, loader, deps, ev.RenamedPrototypes, ev.DeletedPrototypes), Is.False);
-
-            await pair.CleanReturnAsync();
         }
 
         private bool IsWhitelistedForMap(EntProtoId protoId, ResPath map)
@@ -393,12 +397,10 @@ namespace Content.IntegrationTests.Tests
         }
 
         [Test, TestCaseSource(nameof(GameMaps))]
+        [EnsureCVar(Side.Server, typeof(CCVars), nameof(CCVars.GridFill), false)]
         public async Task GameMapsLoadableTest(string mapProto)
         {
-            await using var pair = await PoolManager.GetServerClient(new PoolSettings
-            {
-                Dirty = true // Stations spawn a bunch of nullspace entities and maps like centcomm.
-            });
+            var pair = Pair;
             var server = pair.Server;
 
             var mapManager = server.ResolveDependency<IMapManager>();
@@ -409,7 +411,6 @@ namespace Content.IntegrationTests.Tests
             var ticker = entManager.EntitySysManager.GetEntitySystem<GameTicker>();
             var shuttleSystem = entManager.EntitySysManager.GetEntitySystem<ShuttleSystem>();
             var cfg = server.ResolveDependency<IConfigurationManager>();
-            Assert.That(cfg.GetCVar(CCVars.GridFill), Is.False);
 
             await server.WaitPost(() =>
             {
@@ -513,9 +514,6 @@ namespace Content.IntegrationTests.Tests
                     throw new Exception($"Failed to delete map {mapProto}", ex);
                 }
             });
-            await server.WaitRunTicks(1);
-
-            await pair.CleanReturnAsync();
         }
 
 
@@ -545,36 +543,17 @@ namespace Content.IntegrationTests.Tests
         }
 
         [Test]
-        public async Task AllMapsTested()
-        {
-            await using var pair = await PoolManager.GetServerClient();
-            var server = pair.Server;
-            var protoMan = server.ResolveDependency<IPrototypeManager>();
-
-            var gameMaps = protoMan.EnumeratePrototypes<GameMapPrototype>()
-                .Where(x => !pair.IsTestPrototype(x))
-                .Select(x => x.ID)
-                .ToHashSet();
-
-            Assert.That(gameMaps.Remove(PoolManager.TestMap));
-
-            Assert.That(gameMaps, Is.EquivalentTo(GameMaps.ToHashSet()), "Game map prototype missing from test cases.");
-
-            await pair.CleanReturnAsync();
-        }
-
-        [Test]
         [TestCaseSource(nameof(AllMapFiles))]
+        [EnsureCVar(Side.Server, typeof(CCVars), nameof(CCVars.GridFill), false)]
         public async Task NonGameMapsLoadableTest(ResPath mapPath)
         {
-            await using var pair = await PoolManager.GetServerClient();
+            var pair = Pair;
             var server = pair.Server;
 
             var mapLoader = server.ResolveDependency<IEntitySystemManager>().GetEntitySystem<MapLoaderSystem>();
             var resourceManager = server.ResolveDependency<IResourceManager>();
             var protoManager = server.ResolveDependency<IPrototypeManager>();
             var cfg = server.ResolveDependency<IConfigurationManager>();
-            Assert.That(cfg.GetCVar(CCVars.GridFill), Is.False);
 
             var gameMaps = protoManager.EnumeratePrototypes<GameMapPrototype>().Select(o => o.MapPath).ToHashSet();
 
@@ -583,7 +562,6 @@ namespace Content.IntegrationTests.Tests
             {
                 // TODO: You might be able to save like, 1-2 seconds of test time if you eliminate these before
                 //       actually needing a pair.
-                await pair.CleanReturnAsync();
                 return;
             }
 
@@ -591,7 +569,6 @@ namespace Content.IntegrationTests.Tests
 
             if (SkipTestMaps && rootedPath.ToString().StartsWith(TestMapsPath, StringComparison.Ordinal))
             {
-                await pair.CleanReturnAsync();
                 return;
             }
 
@@ -634,9 +611,6 @@ namespace Content.IntegrationTests.Tests
                     }
                 });
             });
-
-            await server.WaitRunTicks(1);
-            await pair.CleanReturnAsync();
         }
 
         /// <summary>

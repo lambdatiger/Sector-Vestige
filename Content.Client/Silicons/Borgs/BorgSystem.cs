@@ -13,6 +13,7 @@ using Content.Shared.Alert;
 using Content.Shared.Mobs;
 using Content.Shared.Power.EntitySystems;
 using Content.Shared.PowerCell;
+using Content.Shared.PowerCell.Components;
 using Content.Shared.Silicons.Borgs;
 using Content.Shared.Silicons.Borgs.Components;
 using Robust.Client.GameObjects;
@@ -33,6 +34,8 @@ public sealed partial class BorgSystem : SharedBorgSystem
     [Dependency] private readonly AlertsSystem _alerts = default!;
     [Dependency] private readonly IGameTiming _timing = default!;
     [Dependency] private readonly IPlayerManager _player = default!;
+    [Dependency] private readonly EntityQuery<BorgChassisComponent> _chassisQuery = default!;
+    [Dependency] private readonly EntityQuery<PowerCellSlotComponent> _slotQuery = default!;
 
     public override void Initialize()
     {
