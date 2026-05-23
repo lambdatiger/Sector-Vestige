@@ -20,7 +20,7 @@ public sealed partial class CharacterDocumentConsoleComponent : Component
     [DataField, ViewVariables(VVAccess.ReadOnly)]
     public List<DocumentType> AdditionalDocumentTypes = new();
 
-    [DataField, ViewVariables(VVAccess.ReadOnly)]
+    [ViewVariables(VVAccess.ReadOnly)]
     public NetEntity SelectedPlayer;
 
     [DataField, ViewVariables(VVAccess.ReadOnly)]
