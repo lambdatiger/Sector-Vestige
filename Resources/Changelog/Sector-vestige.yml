@@ -1813,3 +1813,9 @@ Entries:
       message: Shuttles should dock normally again
   id: 248
   time: '2026-05-24T11:38:48.0000000+00:00'
+- author: ReboundQ3
+  changes:
+    - type: Add
+      message: Added a faction verb menu for the GM's.
+  id: 249
+  time: '2026-05-25T14:24:58.0000000+00:00'
