@@ -1819,3 +1819,11 @@ Entries:
       message: Added a faction verb menu for the GM's.
   id: 249
   time: '2026-05-25T14:24:58.0000000+00:00'
+- author: ReboundQ3
+  changes:
+    - type: Add
+      message: >-
+        You can now dump ores in to the ore processor with your ore-bag using
+        left click.
+  id: 250
+  time: '2026-05-25T14:25:44.0000000+00:00'
