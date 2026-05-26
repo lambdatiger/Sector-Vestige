@@ -56,19 +56,20 @@ using Content.Shared.Zombies;
 using Robust.Shared.Player;
 using Robust.Shared.Timing;
 using System.Globalization;
+using System.Linq;
 
 namespace Content.Server.GameTicking.Rules;
 
-public sealed class ZombieRuleSystem : GameRuleSystem<ZombieRuleComponent>
+public sealed partial class ZombieRuleSystem : GameRuleSystem<ZombieRuleComponent>
 {
-//    [Dependency] private readonly AntagSelectionSystem _antag = default!; // Vestige 15/04/2026 Remove antags and related things from round-end text.
+    //[Dependency] private readonly AntagSelectionSystem _antag = default!; // Vestige 15/04/2026 Remove antags and related things from round-end text.
     [Dependency] private readonly ChatSystem _chat = default!;
     [Dependency] private readonly IGameTiming _timing = default!;
-//    [Dependency] private readonly ISharedPlayerManager _player = default!; // Vestige 15/04/2026
+    //[Dependency] private readonly ISharedPlayerManager _player = default!; // Vestige 15/04/2026
     [Dependency] private readonly MobStateSystem _mobState = default!;
     [Dependency] private readonly PopupSystem _popup = default!;
     [Dependency] private readonly RoundEndSystem _roundEnd = default!;
-//    [Dependency] private readonly SharedMindSystem _mindSystem = default!; // Vestige 15/04/2026
+    //[Dependency] private readonly SharedMindSystem _mindSystem = default!; // Vestige 15/04/2026
     [Dependency] private readonly SharedRoleSystem _roles = default!;
     [Dependency] private readonly StationSystem _station = default!;
     [Dependency] private readonly ZombieSystem _zombie = default!;
@@ -235,13 +236,12 @@ public sealed class ZombieRuleSystem : GameRuleSystem<ZombieRuleComponent>
         }
 
         var players = AllEntityQuery<HumanoidProfileComponent, ActorComponent, MobStateComponent, TransformComponent>();
-        var zombers = GetEntityQuery<ZombieComponent>();
         while (players.MoveNext(out var uid, out _, out _, out var mob, out var xform))
         {
             if (!_mobState.IsAlive(uid, mob))
                 continue;
 
-            if (zombers.HasComponent(uid))
+            if (_zombieQuery.HasComponent(uid))
                 continue;
 
             if (!includeOffStation && !stationGrids.Contains(xform.GridUid ?? EntityUid.Invalid))

@@ -4,7 +4,7 @@ namespace Content.Shared.Radiation.Systems;
 
 public abstract partial class SharedRadiationSystem : EntitySystem
 {
-    [Dependency] protected readonly EntityQuery<RadiationSourceComponent> SourceQuery = default!;
+    [Dependency] protected EntityQuery<RadiationSourceComponent> SourceQuery = default!;
 
     /// <summary>
     /// Sets the intensity of a <see cref="RadiationSourceComponent"/> to the passed intensity.
@@ -17,16 +17,5 @@ public abstract partial class SharedRadiationSystem : EntitySystem
             return;
 
         entity.Comp.Intensity = intensity;
-    }
-
-    /// <summary>
-    /// Sets the slope of a <see cref="RadiationSourceComponent"/>.
-    /// </summary>
-    public void SetSlope(Entity<RadiationSourceComponent?> entity, float slope)
-    {
-        if (!SourceQuery.Resolve(entity, ref entity.Comp, false))
-            return;
-
-        entity.Comp.Slope = slope;
     }
 }

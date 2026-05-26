@@ -12,9 +12,26 @@ namespace Content.Server.PDA.Ringer;
 /// <summary>
 /// Handles the server-side logic for <see cref="SharedRingerSystem"/>.
 /// </summary>
-public sealed class RingerSystem : SharedRingerSystem
+public sealed partial class RingerSystem : SharedRingerSystem
 {
-    [Dependency] private readonly IRobustRandom _random = default!;
+    [Dependency] private IRobustRandom _random = default!;
+
+    public static Note[] AllowedNotes =
+    {
+        Note.C,
+        Note.D,
+        Note.E,
+        Note.F,
+        Note.G,
+        Note.A,
+        Note.B
+    };
+
+    /// <summary>
+    /// Stores the serialized version of any ringtone that can be excluded from new ringtone generations.
+    /// </summary>
+    [ViewVariables]
+    public readonly HashSet<int> ReservedSerializedRingtones = new();
 
     public static Note[] AllowedNotes =
     {
