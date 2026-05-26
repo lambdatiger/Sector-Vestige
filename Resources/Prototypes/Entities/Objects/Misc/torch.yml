@@ -6,8 +6,9 @@
   components:
     - type: ExpendableLight
       refuelMaterialID: WoodPlank
-      glowDuration: 100
-      refuelMaximumDuration: 205
+      refuelMaterialTime: 60 #SV: Wood plank refuels for more
+      glowDuration: 120 #SV: torch default burn duration to 2 minutes
+      refuelMaximumDuration: 480 #SV: torch maximum burn duration to 8 minutes
       fadeOutDuration: 4
       iconStateSpent: torch_spent
       turnOnBehaviourID: turn_on
@@ -53,7 +54,7 @@
           interpolate: Nearest
           minDuration: 0.02
           maxDuration: 0.06
-          startValue: 6.0
+          startValue: 4.0 # SV: make the light slightly smaller
           endValue: 9.0
           property: Energy
           isLooped: true
@@ -61,20 +62,20 @@
           id: turn_on
           maxDuration: 8.0
           startValue: 1.0
-          endValue: 6.0
+          endValue: 3.5 # SV: make the light slightly smaller
         - !type:RandomizeBehaviour # weaker flicker as it fades out
           id: fade_out
           interpolate: Nearest
           minDuration: 0.02
           maxDuration: 0.06
-          startValue: 4.0
+          startValue: 3.5 # SV: make the light slightly smaller
           endValue: 8.0
           property: Energy
           isLooped: true
         - !type:FadeBehaviour # fade out radius as it burns out
           id: fade_out
           maxDuration: 4.0
-          startValue: 6.0
+          startValue: 2.0 # SV: make the light slightly smaller
           endValue: 1.0
     - type: Tag
       tags:
