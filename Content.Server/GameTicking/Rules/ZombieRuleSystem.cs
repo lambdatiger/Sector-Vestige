@@ -63,16 +63,16 @@ namespace Content.Server.GameTicking.Rules;
 public sealed partial class ZombieRuleSystem : GameRuleSystem<ZombieRuleComponent>
 {
     //[Dependency] private readonly AntagSelectionSystem _antag = default!; // Vestige 15/04/2026 Remove antags and related things from round-end text.
-    [Dependency] private readonly ChatSystem _chat = default!;
-    [Dependency] private readonly IGameTiming _timing = default!;
+    [Dependency] private ChatSystem _chat = default!;
+    [Dependency] private IGameTiming _timing = default!;
     //[Dependency] private readonly ISharedPlayerManager _player = default!; // Vestige 15/04/2026
-    [Dependency] private readonly MobStateSystem _mobState = default!;
-    [Dependency] private readonly PopupSystem _popup = default!;
-    [Dependency] private readonly RoundEndSystem _roundEnd = default!;
+    [Dependency] private MobStateSystem _mobState = default!;
+    [Dependency] private PopupSystem _popup = default!;
+    [Dependency] private RoundEndSystem _roundEnd = default!;
     //[Dependency] private readonly SharedMindSystem _mindSystem = default!; // Vestige 15/04/2026
-    [Dependency] private readonly SharedRoleSystem _roles = default!;
-    [Dependency] private readonly StationSystem _station = default!;
-    [Dependency] private readonly ZombieSystem _zombie = default!;
+    [Dependency] private SharedRoleSystem _roles = default!;
+    [Dependency] private StationSystem _station = default!;
+    [Dependency] private ZombieSystem _zombie = default!;
     [Dependency] private EntityQuery<ZombieComponent> _zombieQuery = default!;
 
     public override void Initialize()

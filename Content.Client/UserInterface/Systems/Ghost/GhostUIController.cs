@@ -24,8 +24,8 @@ public sealed partial class GhostUIController : UIController, IOnSystemChanged<G
     private GhostGui? Gui => UIManager.GetActiveUIWidgetOrNull<GhostGui>();
 
     // AXOLOTL: Systems required for ghostrespawn
-    [Dependency] private readonly IConfigurationManager _cfg = default!;
-    [Dependency] private readonly IConsoleHost _consoleHost = default!;
+    [Dependency] private IConfigurationManager _cfg = default!;
+    [Dependency] private IConsoleHost _consoleHost = default!;
 
     public override void Initialize()
     {
