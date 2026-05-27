@@ -29,9 +29,8 @@ public abstract partial class SharedImplanterSystem : EntitySystem
     [Dependency] private SharedUserInterfaceSystem _uiSystem = default!;
     [Dependency] private IPrototypeManager _proto = default!;
 
-    [Dependency] private EntityQuery<SubdermalImplantComponent> _implantCompQuery = default!;
 
-    [Dependency] private readonly EntityQuery<SubdermalImplantComponent> _implantCompQuery = default!;
+    [Dependency] private EntityQuery<SubdermalImplantComponent> _implantCompQuery = default!;
 
     public override void Initialize()
     {

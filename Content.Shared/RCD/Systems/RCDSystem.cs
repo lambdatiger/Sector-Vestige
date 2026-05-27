@@ -78,6 +78,9 @@ public sealed partial class RCDSystem : EntitySystem
     [Dependency] private SharedMapSystem _mapSystem = default!;
     [Dependency] private SharedTransformSystem _transform = default!;
     [Dependency] private TagSystem _tags = default!;
+    [Dependency] private SharedAtmosPipeLayersSystem _layer = default!; //Sector Vestige: RPD Logic
+    [Dependency] private IEntityManager _entityManager = default!; //Sector Vestige: RPD Logic
+    [Dependency] private IEntityNetworkManager _entityNetworkManager = default!; //Sector Vestige: RPD Logic
 
     private readonly int _instantConstructionDelay = 0;
     private readonly EntProtoId _instantConstructionFx = "EffectRCDConstruct0";

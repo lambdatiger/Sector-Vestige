@@ -18,9 +18,8 @@ public abstract partial class SharedDeviceLinkSystem : EntitySystem
     [Dependency] private SharedTransformSystem _transform = default!;
     [Dependency] private IGameTiming _gameTiming = default!;
 
-    [Dependency] private EntityQuery<DeviceLinkSinkComponent> _deviceLinkSinkQuery = default!;
 
-    [Dependency] private readonly EntityQuery<DeviceLinkSinkComponent> _deviceLinkSinkQuery = default!;
+    [Dependency] private EntityQuery<DeviceLinkSinkComponent> _deviceLinkSinkQuery = default!;
 
     public const string InvokedPort = "link_port";
 

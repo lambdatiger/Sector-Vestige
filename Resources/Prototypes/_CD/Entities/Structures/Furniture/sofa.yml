@@ -58,8 +58,9 @@
     bodyType: Static
     canCollide: False
   - type: Pullable
-  - type: Damageable
+  - type: Injurable
     damageContainer: Inorganic
+  - type: Damageable
     damageModifierSet: Metallic
   - type: Destructible #Might want to move this to the parent instead, testing required.
     thresholds:
@@ -130,8 +131,9 @@
     bodyType: Static
     canCollide: False
   - type: Pullable
-  - type: Damageable
+  - type: Injurable
     damageContainer: Inorganic
+  - type: Damageable
     damageModifierSet: Metallic
   - type: Destructible #May be adviseable to move to a parent.
     thresholds:

@@ -96,6 +96,7 @@ public sealed partial class ArrivalsSystem : EntitySystem
     [Dependency] private EntityQuery<PendingClockInComponent> _pendingQuery = default!;
     [Dependency] private EntityQuery<ArrivalsBlacklistComponent> _blacklistQuery = default!;
     [Dependency] private EntityQuery<MobStateComponent> _mobQuery = default!;
+    [Dependency] private BatterySystem _batterySystem = default!;  // Moffstation - Arrivals fixes
 
     /// <summary>
     /// If enabled then spawns players on an alternate map so they can take a shuttle to the station.

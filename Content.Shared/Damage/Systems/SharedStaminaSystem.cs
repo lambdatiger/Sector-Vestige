@@ -45,9 +45,8 @@ public abstract partial class SharedStaminaSystem : EntitySystem
     [Dependency] private StatusEffectsSystem _status = default!;
     [Dependency] protected SharedStunSystem StunSystem = default!;
 
-    [Dependency] private EntityQuery<StaminaComponent> _stamQuery = default!;
 
-    [Dependency] private readonly EntityQuery<StaminaComponent> _stamQuery = default!;
+    [Dependency] private EntityQuery<StaminaComponent> _stamQuery = default!;
 
     /// <summary>
     /// How much of a buffer is there between the stun duration and when stuns can be re-applied.

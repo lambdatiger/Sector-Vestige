@@ -46,6 +46,7 @@ public sealed partial class StationSpawningSystem : SharedStationSpawningSystem
     [Dependency] private PdaSystem _pdaSystem = default!;
     [Dependency] private IPrototypeManager _prototypeManager = default!;
     [Dependency] private MindSystem _mindSystem = default!;
+    [Dependency] private SharedScaleVisualsSystem _scaleVisuals = default!;
 
     /// <summary>
     /// Attempts to spawn a player character onto the given station.

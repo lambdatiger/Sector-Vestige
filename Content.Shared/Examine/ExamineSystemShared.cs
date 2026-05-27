@@ -21,9 +21,8 @@ namespace Content.Shared.Examine
         [Dependency] private SharedInteractionSystem _interactionSystem = default!;
         [Dependency] protected MobStateSystem MobStateSystem = default!;
 
-        [Dependency] private EntityQuery<GhostComponent> _ghostQuery = default!;
 
-        [Dependency] private readonly EntityQuery<GhostComponent> _ghostQuery = default!;
+        [Dependency] private EntityQuery<GhostComponent> _ghostQuery = default!;
 
         public const float MaxRaycastRange = 100;
 

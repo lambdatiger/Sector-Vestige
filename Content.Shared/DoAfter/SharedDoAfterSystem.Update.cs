@@ -18,9 +18,8 @@ public abstract partial class SharedDoAfterSystem : EntitySystem
     [Dependency] private SharedInteractionSystem _interaction = default!;
     [Dependency] private SharedHandsSystem _hands = default!;
 
-    [Dependency] private EntityQuery<HandsComponent> _handsQuery = default!;
 
-    [Dependency] private readonly EntityQuery<HandsComponent> _handsQuery = default!;
+    [Dependency] private EntityQuery<HandsComponent> _handsQuery = default!;
 
     private DoAfter[] _doAfters = Array.Empty<DoAfter>();
 

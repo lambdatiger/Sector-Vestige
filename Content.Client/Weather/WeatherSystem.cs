@@ -24,9 +24,6 @@ public sealed partial class WeatherSystem : SharedWeatherSystem
     [Dependency] private EntityQuery<MapGridComponent> _gridQuery = default!;
     [Dependency] private EntityQuery<RoofComponent> _roofQuery = default!;
 
-    [Dependency] private readonly EntityQuery<AudioComponent> _audioQuery = default!;
-    [Dependency] private readonly EntityQuery<MapGridComponent> _gridQuery = default!;
-    [Dependency] private readonly EntityQuery<RoofComponent> _roofQuery = default!;
 
     public override void Initialize()
     {
