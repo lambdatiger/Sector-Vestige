@@ -474,6 +474,7 @@ namespace Content.Server.Preferences.Managers
             };
             _netManager.ServerSendMessage(msg, session.Channel);
         }
+        // SV: Re-fetch a player's preferences from the DB - END
 
         public void OnClientDisconnected(ICommonSession session)
         {

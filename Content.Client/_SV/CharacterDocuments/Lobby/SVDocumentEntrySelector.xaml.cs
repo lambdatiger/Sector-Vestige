@@ -121,11 +121,32 @@ public sealed partial class SVDocumentEntrySelector : Control
 
     public void UpdateContents(List<CharacterDocument> entries)
     {
+        // Remember which doc was selected so we can re-show it after the rebuild.
+        // Without this, saving an edit blanks the preview pane (and the user can't
+        // see their new copy until they re-click the entry).
+        int? selectedDocId = null;
+        if (EntrySelector.GetSelected().Any())
+        {
+            var prevIdx = EntrySelector.IndexOf(EntrySelector.GetSelected().First());
+            if (prevIdx >= 0 && prevIdx < _entries.Count)
+                selectedDocId = _entries[prevIdx].DocID;
+        }
+
         _entries = entries;
         EntrySelector.Clear();
         foreach (var entry in _entries)
             EntrySelector.AddItem(entry.DocTitle);
-        ClearPreview();
+
+        var reselect = selectedDocId is { } id ? _entries.FindIndex(d => d.DocID == id) : -1;
+        if (reselect >= 0)
+        {
+            EntrySelector[reselect].Selected = true;
+            ShowPreview(reselect);
+        }
+        else
+        {
+            ClearPreview();
+        }
     }
 
     private void ShowPreview(int idx)

@@ -52,6 +52,9 @@
                             </PanelContainer>
                             <!-- Right Control panel -->
                             <BoxContainer HorizontalExpand="True" VerticalExpand="True" Orientation="Vertical" Margin="5" >
+                                <PanelContainer Name="PaperStatusPanel" HorizontalExpand="True" Margin="0 0 0 4">
+                                    <Label Name="PaperStatusLabel" Text="{Loc 'sv-document-console-paper-empty'}" HorizontalAlignment="Center"/>
+                                </PanelContainer>
                                 <BoxContainer Orientation="Horizontal" HorizontalExpand="True">
                                     <Button Name="ScanButton" Text="{Loc 'sv-document-console-scan-button'}" HorizontalExpand="True"/>
                                     <Button Name="PrintButton" Text="{Loc 'sv-document-console-print-button'}" HorizontalExpand="True"/>

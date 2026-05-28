@@ -94,8 +94,18 @@ public sealed class CharacterDocumentConsoleSystem : EntitySystem
                     .Where(d => ConsoleHandles(comp, d.Value.DocType))
                     .ToDictionary(d => d.Key, d => d.Value);
 
+                // Re-resolve the console's selected document against the freshly mutated
+                // store: an edit swaps it for the updated copy, a delete drops it. Passing
+                // a blanket null here used to wipe the reader pane on every edit.
+                if (comp.SelectedDocument != null)
+                {
+                    comp.SelectedDocument = docComp.Documents.TryGetValue(comp.SelectedDocument.DocID, out var refreshedDoc)
+                        ? refreshedDoc
+                        : null;
+                }
+
                 bool paperinserted = comp.PaperSlot.ContainerSlot?.ContainedEntity != null;
-                var state = new CharacterDocumentConsoleState(netPlayerEntities, comp.SelectedPlayer, filteredDocs, null, paperinserted, comp.DocumentType, additionalDocumentTypes: comp.AdditionalDocumentTypes, selectedPlayerGeneral: docComp.CharacterDocumentGeneral);
+                var state = new CharacterDocumentConsoleState(netPlayerEntities, comp.SelectedPlayer, filteredDocs, comp.SelectedDocument, paperinserted, comp.DocumentType, additionalDocumentTypes: comp.AdditionalDocumentTypes, selectedPlayerGeneral: docComp.CharacterDocumentGeneral);
                 _userInterfaceSystem.SetUiState(uid, CharacterDocumentConsoleUiKey.Key, state);
             }
             else

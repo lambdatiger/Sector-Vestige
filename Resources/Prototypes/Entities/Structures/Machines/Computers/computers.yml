@@ -370,12 +370,9 @@
     paperSlot:
       insertSound: /Audio/Machines/scanning.ogg
       ejectSound: /Audio/Machines/tray_eject.ogg
-      # whitelist:
-      #   components:
-      #     - FaxableObject #used to be PaperComponent - brainfood1183
-      # blacklist:
-      #   components:
-      #     - CargoSlip
+      whitelist:
+        components:
+          - Paper
   - type: ItemSlots #SV - CharacterDocuments
   - type: ContainerContainer #SV - CharacterDocuments
     containers:
@@ -424,12 +421,9 @@
     paperSlot:
       insertSound: /Audio/Machines/scanning.ogg
       ejectSound: /Audio/Machines/tray_eject.ogg
-      # whitelist:
-      #   components:
-      #     - FaxableObject #used to be PaperComponent - brainfood1183
-      # blacklist:
-      #   components:
-      #     - CargoSlip
+      whitelist:
+        components:
+          - Paper
   - type: ItemSlots #SV - CharacterDocuments
   - type: ContainerContainer #SV - CharacterDocuments
     containers:
@@ -457,12 +451,9 @@
     paperSlot:
       insertSound: /Audio/Machines/scanning.ogg
       ejectSound: /Audio/Machines/tray_eject.ogg
-      # whitelist:
-      #   components:
-      #     - FaxableObject #used to be PaperComponent - brainfood1183
-      # blacklist:
-      #   components:
-      #     - CargoSlip
+      whitelist:
+        components:
+          - Paper
   - type: ItemSlots #SV - CharacterDocuments
   - type: ContainerContainer #SV - CharacterDocuments
     containers:
@@ -526,6 +517,9 @@
     paperSlot:
       insertSound: /Audio/Machines/scanning.ogg
       ejectSound: /Audio/Machines/tray_eject.ogg
+      whitelist:
+        components:
+          - Paper
   # CentComm operates from a different map than the main station without this the
   # console would only see crew on its own (empty) station entity
   - type: CrossMapDocumentAccess
@@ -575,6 +569,9 @@
     paperSlot:
       insertSound: /Audio/Machines/scanning.ogg
       ejectSound: /Audio/Machines/tray_eject.ogg
+      whitelist:
+        components:
+          - Paper
     # CentComm operates from a different map than the main station without this the
     # console would only see crew on its own (empty) station entity
   - type: CrossMapDocumentAccess
