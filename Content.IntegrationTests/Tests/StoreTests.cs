@@ -80,7 +80,7 @@ public sealed class StoreTests : GameTest
             var invSystem = entManager.System<InventorySystem>();
             var mindSystem = entManager.System<SharedMindSystem>();
 
-            human = entManager.SpawnEntity("HumanUniformDummy", coordinates);
+            human = entManager.SpawnEntity("MobHuman", coordinates);
             uniform = entManager.SpawnEntity("UniformDummy", coordinates);
             pda = entManager.SpawnEntity("InventoryPdaDummy", coordinates);
 

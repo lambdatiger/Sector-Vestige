@@ -26,11 +26,11 @@ namespace Content.Server._SV.Administration;
 ///     and clear all factions at once. Lets admins swap player characters and NPCs between factions
 ///     without hand-editing the component in View Variables.
 /// </summary>
-public sealed class FactionAdminVerbSystem : EntitySystem
+public sealed partial class FactionAdminVerbSystem : EntitySystem
 {
-    [Dependency] private readonly IAdminManager _adminManager = default!;
-    [Dependency] private readonly IPrototypeManager _proto = default!;
-    [Dependency] private readonly NpcFactionSystem _faction = default!;
+    [Dependency] private IAdminManager _adminManager = default!;
+    [Dependency] private IPrototypeManager _proto = default!;
+    [Dependency] private NpcFactionSystem _faction = default!;
 
     private static readonly VerbCategory FactionCategory =
         new("verb-categories-faction", "/Textures/Interface/VerbIcons/group.svg.192dpi.png");

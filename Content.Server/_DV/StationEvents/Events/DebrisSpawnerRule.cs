@@ -28,10 +28,10 @@ using System.Linq;
 
 namespace Content.Server.StationEvents.Events;
 
-public sealed class DebrisSpawnerRule : StationEventSystem<DebrisSpawnerRuleComponent>
+public sealed partial class DebrisSpawnerRule : StationEventSystem<DebrisSpawnerRuleComponent>
 {
-    [Dependency] private readonly IPrototypeManager _proto = default!;
-    [Dependency] private readonly MapLoaderSystem _mapLoader = default!;
+    [Dependency] private IPrototypeManager _proto = default!;
+    [Dependency] private MapLoaderSystem _mapLoader = default!;
 
     public override void Initialize()
     {
