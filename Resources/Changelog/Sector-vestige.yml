@@ -1833,3 +1833,9 @@ Entries:
       message: Torches now last longer, but emit less light.
   id: 251
   time: '2026-05-26T08:48:11.0000000+00:00'
+- author: OnyxTheBrave
+  changes:
+    - type: Add
+      message: Added a broken APC entity.
+  id: 252
+  time: '2026-05-29T15:29:42.0000000+00:00'
