@@ -30,7 +30,10 @@
     - SimpleHostile
   - type: FootstepModifier
     footstepSoundCollection:
-      collection: FootstepThud
+      collection: BarestepHard
+  - type: Tag
+    tags:
+    - FootstepSound
   - type: Sprite
     drawdepth: Mobs
     sprite: Mobs/Demons/abomination.rsi
