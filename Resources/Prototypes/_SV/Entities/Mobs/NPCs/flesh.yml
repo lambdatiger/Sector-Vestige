@@ -2,7 +2,7 @@
   parent: SimpleSpaceMobBase
   id: MobFrozenAbomination
   name: frozen abomination
-  description: A frozen, rejected clone, in constant pain and seeking revenge.
+  description: A frozen husk of flesh. It almost looks like a person.
   components:
   - type: InputMover
   - type: MobMover
@@ -28,6 +28,9 @@
   - type: NpcFactionMember
     factions:
     - SimpleHostile
+  - type: FootstepModifier
+    footstepSoundCollection:
+      collection: FootstepThud
   - type: Sprite
     drawdepth: Mobs
     sprite: Mobs/Demons/abomination.rsi
