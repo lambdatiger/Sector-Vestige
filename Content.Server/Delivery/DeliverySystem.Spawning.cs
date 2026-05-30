@@ -4,6 +4,9 @@ using Content.Shared.EntityTable;
 using Content.Shared.StationRecords;
 using Robust.Shared.Random;
 using Robust.Shared.Timing;
+using Robust.Shared.Containers;
+using Content.Shared.FingerprintReader;
+using NetCord; // SV - Mail additions
 
 namespace Content.Server.Delivery;
 
@@ -33,7 +36,8 @@ public sealed partial class DeliverySystem
         if (!Resolve(ent.Owner, ref ent.Comp))
             return;
 
-        var coords = Transform(ent).Coordinates;
+        // var coords = Transform(ent).Coordinates; // SV - Mail additions
+        var hasContainer = _container.TryGetContainer(ent, ent.Comp.ContainerId, out var baseContainer); // SV - Mail additions
 
         for (int i = 0; i < ent.Comp.ContainedDeliveryAmount; i++)
         {
@@ -41,9 +45,17 @@ public sealed partial class DeliverySystem
 
             foreach (var id in spawns)
             {
-                Spawn(id, coords);
+                // SV - Mail additions - Start
+                var uid = SpawnInContainerOrDrop(id, ent, ent.Comp.ContainerId);
+                if (TryComp<DeliveryComponent>(uid, out var delivery))
+                    SetupRecipient((uid, delivery));
+                // SV - Mail additions - End
             }
         }
+        // SV - Mail additions - Start
+        if (hasContainer && baseContainer != null)
+            _container.EmptyContainer(baseContainer, force: false);
+        // SV - Mail additions - End
 
         ent.Comp.ContainedDeliveryAmount = 0;
         Dirty(ent);

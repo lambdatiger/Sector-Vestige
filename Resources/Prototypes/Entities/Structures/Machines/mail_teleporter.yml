@@ -53,3 +53,7 @@
   - type: DeliverySpawner
     table: !type:NestedSelector
       tableId: RandomDeliveryBasic
+  #SV - Mail additions
+  - type: ContainerContainer
+    containers:
+      maildeliveries: !type:Container

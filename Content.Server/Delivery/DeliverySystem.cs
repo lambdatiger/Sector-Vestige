@@ -48,6 +48,37 @@ public sealed partial class DeliverySystem : SharedDeliverySystem
 
     private void OnMapInit(Entity<DeliveryComponent> ent, ref MapInitEvent args)
     {
+        SetupRecipient(ent);
+
+        // SV - Mail additions - Start - Commented out the MapInit
+        // _container.EnsureContainer<Container>(ent, ent.Comp.Container);
+
+        // if (_station.GetStationInMap(Transform(ent).MapID) is not { } stationId)
+        //     return;
+
+        // if (!_records.TryGetRandomRecord<GeneralStationRecord>(stationId, out var entry))
+        //     return;
+
+        // ent.Comp.RecipientName = entry.Name;
+        // ent.Comp.RecipientJobTitle = entry.JobTitle;
+        // ent.Comp.RecipientStation = stationId;
+
+        // _appearance.SetData(ent, DeliveryVisuals.JobIcon, entry.JobIcon);
+
+        // _label.Label(ent, ent.Comp.RecipientName);
+
+        // if (TryComp<FingerprintReaderComponent>(ent, out var reader) && entry.Fingerprint != null)
+        // {
+        //     _fingerprintReader.AddAllowedFingerprint((ent.Owner, reader), entry.Fingerprint);
+        // }
+
+        // Dirty(ent);
+        // SV - Mail additions - End - Commented out the MapInit
+    }
+
+    // SV - Mail additions - Start - Moved mapinit to a new method to set the recipient
+    public void SetupRecipient(Entity<DeliveryComponent> ent)
+    {
         _container.EnsureContainer<Container>(ent, ent.Comp.Container);
 
         if (_station.GetStationInMap(Transform(ent).MapID) is not { } stationId)
@@ -71,6 +102,7 @@ public sealed partial class DeliverySystem : SharedDeliverySystem
 
         Dirty(ent);
     }
+    // SV - Mail additions - End - Moved mapinit to a new method to set the recipient
 
     protected override void GrantSpesoReward(Entity<DeliveryComponent?> ent)
     {
