@@ -16,5 +16,4 @@
   description: vestige-extended-description
   rules:
   - VestigeBasicStationEventScheduler
-  - SpaceTrafficControlEventScheduler
   - BasicRoundstartVariation
