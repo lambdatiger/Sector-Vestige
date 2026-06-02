@@ -1839,3 +1839,9 @@ Entries:
       message: Added a broken APC entity.
   id: 252
   time: '2026-05-29T15:29:42.0000000+00:00'
+- author: Boaz1111
+  changes:
+    - type: Fix
+      message: Prevents loneOps from spawning.
+  id: 253
+  time: '2026-06-02T18:40:00.0000000+00:00'
