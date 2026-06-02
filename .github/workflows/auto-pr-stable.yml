@@ -192,7 +192,7 @@ jobs:
                 owner,
                 repo,
                 issue_number: pr.number,
-                labels: ['Branch: Stable'],
+                labels: ['Branch: Stable', 'Maintenance'],
               });
             } catch (err) {
               core.warning(`Could not add 'Branch: Stable' label: ${err.message}`);

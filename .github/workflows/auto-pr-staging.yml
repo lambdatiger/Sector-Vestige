@@ -190,7 +190,7 @@ jobs:
                 owner,
                 repo,
                 issue_number: pr.number,
-                labels: ['Branch: Staging'],
+                labels: ['Branch: Staging', 'Maintenance'],
               });
             } catch (err) {
               core.warning(`Could not add 'Branch: Staging' label: ${err.message}`);
