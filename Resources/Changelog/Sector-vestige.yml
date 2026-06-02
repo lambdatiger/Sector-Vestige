@@ -1845,3 +1845,9 @@ Entries:
       message: Prevents loneOps from spawning.
   id: 253
   time: '2026-06-02T18:40:00.0000000+00:00'
+- author: OnyxTheBrave
+  changes:
+    - type: Add
+      message: Added a new variant of the abomination
+  id: 254
+  time: '2026-06-02T18:43:31.0000000+00:00'
