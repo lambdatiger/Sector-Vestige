@@ -64,6 +64,11 @@ jobs:
             const EXCLUDE_SUBJECT = [
               /^Update changelog for PR\b/i,
               /^chore: automatically update REUSE headers\b/i,
+              // The automated promotion PRs are noise in a promotion overview. This catches
+              // them when squash-merged (subject carries the PR title); the title-based filter
+              // in the render step below also covers merge-commit / associated-PR resolution.
+              /^Auto: sync master into staging\b/i,
+              /^Auto: sync staging into stable\b/i,
             ];
 
             for (const c of commits) {
@@ -103,23 +108,32 @@ jobs:
               '',
             ];
 
-            if (prNumbers.length > 0) {
-              lines.push(`### Pull requests queued for \`stable\` (${prNumbers.length})`);
-              lines.push('');
-              const listed = prNumbers.slice(0, MAX_LISTED);
-              for (const n of listed) {
-                try {
-                  const { data: pr } = await github.rest.pulls.get({ owner, repo, pull_number: n });
-                  const author = pr.user ? `@${pr.user.login}` : 'unknown';
-                  lines.push(`- [ ] #${n} — ${pr.title} (${author})`);
-                } catch (err) {
-                  // Number might reference an issue or a PR we can't read; list it bare.
-                  lines.push(`- [ ] #${n}`);
-                }
+            // Resolve PR numbers to objects, dropping the automated promotion PRs themselves.
+            // Their own "Auto: sync ..." PR lands in this delta once merged, but listing it in
+            // the next promotion overview is just noise. EXCLUDE_SUBJECT already drops the
+            // squash-merged ones; the title check here also covers merge-commit resolution.
+            const queued = [];
+            for (const n of prNumbers) {
+              try {
+                const { data: pr } = await github.rest.pulls.get({ owner, repo, pull_number: n });
+                if (/^Auto: sync\b/i.test(pr.title)) continue;
+                const author = pr.user ? `@${pr.user.login}` : 'unknown';
+                queued.push(`- [ ] #${n} — ${pr.title} (${author})`);
+              } catch (err) {
+                // Number might reference an issue or a PR we can't read; list it bare.
+                queued.push(`- [ ] #${n}`);
               }
-              if (prNumbers.length > MAX_LISTED) {
+            }
+
+            if (queued.length > 0) {
+              lines.push(`### Pull requests queued for \`stable\` (${queued.length})`);
+              lines.push('');
+              for (const entry of queued.slice(0, MAX_LISTED)) {
+                lines.push(entry);
+              }
+              if (queued.length > MAX_LISTED) {
                 lines.push('');
-                lines.push(`…and ${prNumbers.length - MAX_LISTED} more.`);
+                lines.push(`…and ${queued.length - MAX_LISTED} more.`);
               }
             } else {
               lines.push('### Pull requests queued for `stable`');
