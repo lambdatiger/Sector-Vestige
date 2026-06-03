@@ -15,7 +15,6 @@ using Robust.Shared.Random;
 using Robust.Shared.Timing;
 using Robust.Shared.Containers;
 using Content.Shared.FingerprintReader;
-using NetCord; // SV - Mail additions
 
 namespace Content.Server.Delivery;
 
