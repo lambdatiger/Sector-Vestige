@@ -1,3 +1,10 @@
+# SPDX-FileCopyrightText: 2026 Wizards Den contributors
+# SPDX-FileCopyrightText: 2026 Sector Vestige contributors (modifications)
+# SPDX-FileCopyrightText: 2025 ReboundQ3 <ReboundQ1@proton.me>
+# SPDX-FileCopyrightText: 2025 ReboundQ3 <ReboundQ3@gmail.com>
+#
+# SPDX-License-Identifier: MIT
+
 Name: Sector-vestige
 Order: -1
 Entries:
@@ -1722,7 +1729,7 @@ Entries:
     - type: Add
       message: >-
         spidermin and qualified doctor subtypes are now available for mining and
-        medical cyborgs, respectively 
+        medical cyborgs, respectively
   id: 235
   time: '2026-05-01T14:41:40.0000000+00:00'
 - author: Rose-Diere
@@ -1839,3 +1846,15 @@ Entries:
       message: Added a broken APC entity.
   id: 252
   time: '2026-05-29T15:29:42.0000000+00:00'
+- author: Boaz1111
+  changes:
+    - type: Fix
+      message: Prevents loneOps from spawning.
+  id: 253
+  time: '2026-06-02T18:40:00.0000000+00:00'
+- author: OnyxTheBrave
+  changes:
+    - type: Add
+      message: Added a new variant of the abomination
+  id: 254
+  time: '2026-06-02T18:43:31.0000000+00:00'
