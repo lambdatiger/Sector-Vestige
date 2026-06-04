@@ -6,9 +6,9 @@ using Robust.Shared.Console;
 namespace Content.Server._SV.CharacterDocuments.Admin;
 
 [AdminCommand(AdminFlags.Admin)]
-public sealed class AdminCharacterDocumentsCommand : LocalizedCommands
+public sealed partial class AdminCharacterDocumentsCommand : LocalizedCommands
 {
-    [Dependency] private readonly EuiManager _euis = default!;
+    [Dependency] private EuiManager _euis = default!;
 
     public override string Command => "svadmindocs";
 

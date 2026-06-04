@@ -23,9 +23,9 @@ namespace Content.Server._SV.CharacterDocuments;
 
 public sealed partial class CharacterDocumentSystem : EntitySystem
 {
-    [Dependency] private readonly IServerDbManager _db = default!;
-    [Dependency] private readonly IPlayerManager _playerManager = default!;
-    [Dependency] private readonly IServerPreferencesManager _prefs = default!;
+    [Dependency] private IServerDbManager _db = default!;
+    [Dependency] private IPlayerManager _playerManager = default!;
+    [Dependency] private IServerPreferencesManager _prefs = default!;
 
     public override void Initialize()
     {

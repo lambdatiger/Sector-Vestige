@@ -30,20 +30,20 @@ using Robust.Shared.Prototypes;
 
 namespace Content.Server._SV.CharacterDocuments.Consoles;
 
-public sealed class CharacterDocumentConsoleSystem : EntitySystem
+public sealed partial class CharacterDocumentConsoleSystem : EntitySystem
 {
 
-    [Dependency] private readonly UserInterfaceSystem _userInterfaceSystem = default!;
-    [Dependency] private readonly SharedStationSystem _sharedStationSystem = default!;
-    [Dependency] private readonly CharacterDocumentSystem _characterDocumentSystem = default!;
-    [Dependency] private readonly ItemSlotsSystem _itemSlotsSystem = default!;
-    [Dependency] private readonly AudioSystem _audio = default!;
-    [Dependency] private readonly MetaDataSystem _metaData = default!;
-    [Dependency] private readonly PaperSystem _paperSystem = default!;
-    [Dependency] private readonly CriminalRecordsSystem _criminalRecords = default!;
-    [Dependency] private readonly RadioSystem _radio = default!;
-    [Dependency] private readonly StationRecordsSystem _stationRecords = default!;
-    [Dependency] private readonly StationSystem _stationSystem = default!;
+    [Dependency] private UserInterfaceSystem _userInterfaceSystem = default!;
+    [Dependency] private SharedStationSystem _sharedStationSystem = default!;
+    [Dependency] private CharacterDocumentSystem _characterDocumentSystem = default!;
+    [Dependency] private ItemSlotsSystem _itemSlotsSystem = default!;
+    [Dependency] private AudioSystem _audio = default!;
+    [Dependency] private MetaDataSystem _metaData = default!;
+    [Dependency] private PaperSystem _paperSystem = default!;
+    [Dependency] private CriminalRecordsSystem _criminalRecords = default!;
+    [Dependency] private RadioSystem _radio = default!;
+    [Dependency] private StationRecordsSystem _stationRecords = default!;
+    [Dependency] private StationSystem _stationSystem = default!;
 
     private static readonly ProtoId<RadioChannelPrototype> SecurityChannel = "Security";
 

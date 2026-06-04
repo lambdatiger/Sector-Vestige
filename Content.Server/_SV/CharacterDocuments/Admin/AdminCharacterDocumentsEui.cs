@@ -12,12 +12,12 @@ using Robust.Server.Player;
 
 namespace Content.Server._SV.CharacterDocuments.Admin;
 
-public sealed class AdminCharacterDocumentsEui : BaseEui
+public sealed partial class AdminCharacterDocumentsEui : BaseEui
 {
-    [Dependency] private readonly IServerDbManager _db = default!;
-    [Dependency] private readonly IEntityManager _entMan = default!;
-    [Dependency] private readonly IPlayerManager _playerManager = default!;
-    [Dependency] private readonly IServerPreferencesManager _prefs = default!;
+    [Dependency] private IServerDbManager _db = default!;
+    [Dependency] private IEntityManager _entMan = default!;
+    [Dependency] private IPlayerManager _playerManager = default!;
+    [Dependency] private IServerPreferencesManager _prefs = default!;
 
     private List<AdminSVProfileEntry> _profiles = new();
 

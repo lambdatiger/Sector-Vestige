@@ -24,7 +24,7 @@ namespace Content.Client._SV.CharacterDocuments.Admin;
 [GenerateTypedNameReferences]
 public sealed partial class AdminCharacterDocumentsTab : Control
 {
-    [Dependency] private readonly IPrototypeManager _proto = default!;
+    [Dependency] private IPrototypeManager _proto = default!;
 
     public Action<int, CharacterDocument>? OnDocumentEdit;
     public Action<int, int>? OnDocumentDelete;

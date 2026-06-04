@@ -6,7 +6,7 @@ namespace Content.Server._SV.CharacterDocuments;
 
 public sealed partial class CharacterDocumentStationSystem : EntitySystem
 {
-    [Dependency] private readonly SharedStationSystem _sharedStationSystem = default!;
+    [Dependency] private SharedStationSystem _sharedStationSystem = default!;
 
 
     public override void Initialize()
