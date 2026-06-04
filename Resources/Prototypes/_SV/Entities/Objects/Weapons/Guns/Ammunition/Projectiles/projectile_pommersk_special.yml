@@ -49,10 +49,10 @@
     damage:
       types:
         Blunt: 4
-  - type: SolutionContainerManager
-    solutions:
-      ammo:
-        maxVol: 8
+  - type: Solution
+    id: ammo
+    solution:
+      maxVol: 8
   - type: SolutionInjectOnProjectileHit
     transferAmount: 8
     solution: ammo

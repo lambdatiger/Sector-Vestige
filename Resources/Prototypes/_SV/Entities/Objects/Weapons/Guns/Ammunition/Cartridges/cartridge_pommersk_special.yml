@@ -70,12 +70,12 @@
     proto: BulletSedativePMS
     deleteOnSpawn: true
   - type: ChemicalAmmo
-  - type: SolutionContainerManager
-    solutions:
-      ammo:
-        reagents:
-        - ReagentId: Nocturine
-          Quantity: 8 # 1 shot = not-so-long sleep
+  - type: Solution
+    id: ammo
+    solution:
+      reagents:
+      - ReagentId: Nocturine
+        Quantity: 8 # 1 shot = not-so-long sleep
   - type: SolutionTransfer
     maxTransferAmount: 8
   - type: SpentAmmoVisuals

@@ -806,7 +806,7 @@ public sealed partial class SupermatterSystem
             if (HasComp<SupermatterHallucinationImmuneComponent>(mob) || // Immune to supermatter hallucinations
                 HasComp<SiliconLawBoundComponent>(mob) ||                // Silicons don't get supermatter hallucinations
                 HasComp<PermanentBlindnessComponent>(mob) ||             // Blind people don't get supermatter hallucinations
-                HasComp<TemporaryBlindnessComponent>(mob))               // Neither do blinded people
+                (TryComp<BlindableComponent>(mob, out var blindable) && blindable.IsBlind)) // Neither do blinded people
                 continue;
 
             // Everyone else gets hallucinations

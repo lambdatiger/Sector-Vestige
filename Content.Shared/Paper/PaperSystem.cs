@@ -17,9 +17,9 @@ using Robust.Shared.Random;
 
 namespace Content.Shared.Paper;
 
-public sealed class PaperSystem : EntitySystem
+public sealed partial class PaperSystem : EntitySystem
 {
-    private static readonly Color SignatureColor = Color.FromHex("#333333");    // Moffstation - Signature color
+    private static Color _SignatureColor = Color.FromHex("#333333");    // Moffstation - Signature color
     [Dependency] private ISharedAdminLogManager _adminLogger = default!;
     [Dependency] private IPrototypeManager _protoMan = default!;
     [Dependency] private IRobustRandom _random = default!;
@@ -307,7 +307,7 @@ public sealed class PaperSystem : EntitySystem
         var info = new StampDisplayInfo
         {
             StampedName = signature,
-            StampedColor = SignatureColor,
+            StampedColor = _SignatureColor,
             Type = StampType.Signature,
         };
 
