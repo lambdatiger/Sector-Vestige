@@ -277,7 +277,7 @@ public sealed class CharacterDocumentConsoleSystem : EntitySystem
 
     private string GetActorIdentity(EntityUid actor)
     {
-        var ev = new TryGetIdentityShortInfoEvent(null, actor);
+        var ev = new TryGetIdentityShortInfoEvent(actor, null, false);
         RaiseLocalEvent(ev);
         var title = ev.Title ?? "Unknown";
         var jobIdx = title.IndexOf(" (", StringComparison.Ordinal);
