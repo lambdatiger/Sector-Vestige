@@ -15,6 +15,7 @@
   - type: Appearance
   - type: Sprite
     sprite: _Umbra/Objects/Misc/fire.rsi
+   #shader: unshaded # SV - Remove outdated attributes
   - type: Kudzu
     spriteVariants: 1
     spreadChance: 0.3
@@ -53,6 +54,7 @@
     - reagents: [ Water ]
       methods: [ Touch ]
       effects:
+     #scaleByQuantity: true # SV - Remove outdated attributes
       - !type:HealthChange
         damage:
           types:
