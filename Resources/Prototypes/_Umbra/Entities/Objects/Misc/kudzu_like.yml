@@ -15,7 +15,6 @@
   - type: Appearance
   - type: Sprite
     sprite: _Umbra/Objects/Misc/fire.rsi
-    shader: unshaded
   - type: Kudzu
     spriteVariants: 1
     spreadChance: 0.3
@@ -55,7 +54,6 @@
       methods: [ Touch ]
       effects:
       - !type:HealthChange
-        scaleByQuantity: true
         damage:
           types:
             Cold: 2
