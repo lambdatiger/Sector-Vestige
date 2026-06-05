@@ -23,6 +23,9 @@ public sealed class AdminCharacterDocumentsEui : BaseEui
         _window.OnRefresh = () => SendMessage(new AdminSVRefreshMsg());
         _window.OnEdit = (pid, doc) => SendMessage(new AdminSVDocumentEditMsg { ProfileId = pid, Document = doc });
         _window.OnDelete = (pid, did) => SendMessage(new AdminSVDocumentDeleteMsg { ProfileId = pid, DocId = did });
+        _window.OnRestore = (pid, did) => SendMessage(new AdminSVDocumentRestoreMsg { ProfileId = pid, DocId = did });
+        _window.OnPurge = (pid, did) => SendMessage(new AdminSVDocumentPurgeMsg { ProfileId = pid, DocId = did });
+        _window.OnEmptyBin = pid => SendMessage(new AdminSVDocumentEmptyBinMsg { ProfileId = pid });
         _window.OnCreate = (pid, type, title, content, stamps) => SendMessage(new AdminSVDocumentCreateMsg
         {
             ProfileId = pid,

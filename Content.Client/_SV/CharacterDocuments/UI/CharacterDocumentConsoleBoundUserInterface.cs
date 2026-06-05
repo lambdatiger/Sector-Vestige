@@ -29,6 +29,9 @@ public sealed class CharacterDocumentConsoleBoundUserInterface : BoundUserInterf
         });
         _window.OnButtonPrintPressed += (player, doc) => SendMessage(new CharacterDocumentPrint { Player = player, CharacterDocument = doc });
         _window.OnButtonDeletePressed += (player, doc) => SendMessage(new CharacterDocumentDelete { Player = player, CharacterDocument = doc });
+        _window.OnButtonRestorePressed += (player, docId) => SendMessage(new CharacterDocumentRestore { Player = player, DocID = docId });
+        _window.OnButtonPurgePressed += (player, docId) => SendMessage(new CharacterDocumentPurge { Player = player, DocID = docId });
+        _window.OnButtonEmptyBinPressed += player => SendMessage(new CharacterDocumentEmptyBin { Player = player });
         _window.OnButtonEditPressed += (player, doc) => SendMessage(new CharacterDocumentEdit { Player = player, CharacterDocument = doc });
         _window.OnDocumentDeselected += () => SendMessage(new CharacterDocumentDeselect());
         _window.OnStatusButtonPressed += player =>

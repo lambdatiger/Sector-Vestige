@@ -28,6 +28,9 @@ public sealed partial class AdminCharacterDocumentsTab : Control
 
     public Action<int, CharacterDocument>? OnDocumentEdit;
     public Action<int, int>? OnDocumentDelete;
+    public Action<int, int>? OnDocumentRestore;
+    public Action<int, int>? OnDocumentPurge;
+    public Action<int>? OnDocumentEmptyBin;
     public Action<int, DocumentType, string, string, List<CharacterDocumentStamp>>? OnDocumentCreate;
 
     private DocumentType _docType;
@@ -40,6 +43,8 @@ public sealed partial class AdminCharacterDocumentsTab : Control
     private bool _editing;
     private bool _creating;
     private bool _isPopulating;
+    private bool _confirmingPurge;
+    private bool _confirmingEmptyBin;
 
     // Stamps currently being assembled while editing or creating.
     private readonly List<CharacterDocumentStamp> _stampDraft = new();
@@ -101,6 +106,8 @@ public sealed partial class AdminCharacterDocumentsTab : Control
 
         EditButton.OnPressed += _ => OnEditPressed();
         DeleteButton.OnPressed += _ => OnDeletePressed();
+        PurgeButton.OnPressed += _ => OnPurgePressed();
+        EmptyBinButton.OnPressed += _ => OnEmptyBinPressed();
         CreateButton.OnPressed += _ => OnCreatePressed();
         StampPicker.OnItemSelected += args => StampPicker.SelectId(args.Id);
         AddStampButton.OnPressed += _ => OnAddStampPressed();
@@ -177,6 +184,8 @@ public sealed partial class AdminCharacterDocumentsTab : Control
         EditButton.Disabled = false;
         DeleteButton.Disabled = true;
         CreateButton.Disabled = true;
+        ResetPurgeButton();
+        PurgeButton.Disabled = true;
     }
 
     private void OnAddStampPressed()
@@ -341,6 +350,7 @@ public sealed partial class AdminCharacterDocumentsTab : Control
     private void RefreshDocumentListing()
     {
         DocumentListing.Clear();
+        UpdateEmptyBinButton();
         if (_selectedProfileId is not { } pid)
             return;
 
@@ -350,7 +360,11 @@ public sealed partial class AdminCharacterDocumentsTab : Control
 
         foreach (var doc in entry.Documents.Where(d => d.DocType == (int)_docType).OrderBy(d => d.DocTitle))
         {
-            var item = DocumentListing.AddItem(doc.DocTitle);
+            // Binned (soft-deleted) docs stay visible to admins, flagged so they're easy to spot.
+            var label = doc.DeletedAt != null
+                ? Loc.GetString("sv-admin-character-documents-binned-title", ("title", doc.DocTitle))
+                : doc.DocTitle;
+            var item = DocumentListing.AddItem(label);
             item.Metadata = doc.DocID;
         }
     }
@@ -395,10 +409,18 @@ public sealed partial class AdminCharacterDocumentsTab : Control
         foreach (var stamp in doc.DocStamps)
             StampDisplay.AddStamp(new StampWidget { StampInfo = stamp.DocStamp });
 
-        EditButton.Disabled = false;
+        // Binned docs are read-only until restored; the Delete button doubles as Restore.
+        var binned = doc.DeletedAt != null;
+        EditButton.Disabled = binned;
         DeleteButton.Disabled = false;
+        DeleteButton.Text = Loc.GetString(binned
+            ? "sv-document-console-restore-button"
+            : "sv-document-console-delete-button");
         EditButton.Text = Loc.GetString("sv-document-console-edit-button");
         EditButton.RemoveStyleClass(StyleClass.Negative);
+        // Permanent delete only applies to a doc already in the bin.
+        ResetPurgeButton();
+        PurgeButton.Disabled = !binned;
         _editing = false;
     }
 
@@ -421,7 +443,13 @@ public sealed partial class AdminCharacterDocumentsTab : Control
         EditButton.Disabled = true;
         DeleteButton.Disabled = true;
         EditButton.Text = Loc.GetString("sv-document-console-edit-button");
+        DeleteButton.Text = Loc.GetString("sv-document-console-delete-button");
         EditButton.RemoveStyleClass(StyleClass.Negative);
+        ResetPurgeButton();
+        PurgeButton.Disabled = true;
+        // Empty Bin is profile-scoped, not doc-scoped: keep it in sync with the selected
+        // character's bin even when the document viewer is cleared.
+        UpdateEmptyBinButton();
         _editing = false;
     }
 
@@ -469,6 +497,8 @@ public sealed partial class AdminCharacterDocumentsTab : Control
             EditButton.AddStyleClass(StyleClass.Negative);
             DeleteButton.Disabled = true;
             CreateButton.Disabled = true;
+            ResetPurgeButton();
+            PurgeButton.Disabled = true;
 
             StampEditorRow.Visible = true;
             RefreshStampDraftDisplay();
@@ -538,8 +568,85 @@ public sealed partial class AdminCharacterDocumentsTab : Control
         if (_selectedDoc == null || _selectedProfileId is not { } pid)
             return;
 
-        OnDocumentDelete?.Invoke(pid, _selectedDoc.DocID);
+        // The button doubles as Restore for binned docs (see ShowDocument).
+        if (_selectedDoc.DeletedAt != null)
+            OnDocumentRestore?.Invoke(pid, _selectedDoc.DocID);
+        else
+            OnDocumentDelete?.Invoke(pid, _selectedDoc.DocID);
+
         _selectedDoc = null;
         ClearViewer();
+    }
+
+    /// <summary>
+    ///     Permanently deletes the selected binned doc. Irreversible, so it's two-step
+    ///     confirmed: first press arms the button, second press fires.
+    /// </summary>
+    private void OnPurgePressed()
+    {
+        if (_selectedDoc is not { DeletedAt: not null } || _selectedProfileId is not { } pid)
+            return;
+
+        if (!_confirmingPurge)
+        {
+            _confirmingPurge = true;
+            PurgeButton.Text = Loc.GetString("sv-document-console-purge-button-confirm");
+            PurgeButton.AddStyleClass(StyleClass.Negative);
+            return;
+        }
+
+        var docId = _selectedDoc.DocID;
+        OnDocumentPurge?.Invoke(pid, docId);
+        _selectedDoc = null;
+        ClearViewer();
+    }
+
+    /// <summary>
+    ///     Permanently clears every binned doc for the selected character. Two-step confirmed.
+    /// </summary>
+    private void OnEmptyBinPressed()
+    {
+        if (_selectedProfileId is not { } pid)
+            return;
+
+        if (!_confirmingEmptyBin)
+        {
+            _confirmingEmptyBin = true;
+            EmptyBinButton.Text = Loc.GetString("sv-document-console-empty-bin-button-confirm");
+            EmptyBinButton.AddStyleClass(StyleClass.Negative);
+            return;
+        }
+
+        ResetEmptyBinButton();
+        EmptyBinButton.Disabled = true;
+        OnDocumentEmptyBin?.Invoke(pid);
+    }
+
+    private void ResetPurgeButton()
+    {
+        _confirmingPurge = false;
+        PurgeButton.Text = Loc.GetString("sv-document-console-purge-button");
+        PurgeButton.RemoveStyleClass(StyleClass.Negative);
+    }
+
+    private void ResetEmptyBinButton()
+    {
+        _confirmingEmptyBin = false;
+        EmptyBinButton.Text = Loc.GetString("sv-document-console-empty-bin-button");
+        EmptyBinButton.RemoveStyleClass(StyleClass.Negative);
+    }
+
+    /// <summary>
+    ///     Empty Bin is profile-scoped (clears the whole bin, all types), so it's enabled
+    ///     whenever the selected character has at least one binned doc — independent of which
+    ///     doc, if any, is selected in the viewer.
+    /// </summary>
+    private void UpdateEmptyBinButton()
+    {
+        ResetEmptyBinButton();
+        var entry = _selectedProfileId is { } pid
+            ? _allProfiles.FirstOrDefault(p => p.ProfileId == pid)
+            : null;
+        EmptyBinButton.Disabled = entry == null || entry.Documents.All(d => d.DeletedAt == null);
     }
 }

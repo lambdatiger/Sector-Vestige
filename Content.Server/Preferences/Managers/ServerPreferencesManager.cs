@@ -151,6 +151,9 @@ namespace Content.Server.Preferences.Managers
             if (profile.SVProfile?.CharacterDocuments is { Count: > 0 } svRows)
             {
                 svDocs = svRows
+                    // Binned (soft-deleted) docs are invisible to the owning player — they only
+                    // surface to Central Command consoles and admins until the retention sweep.
+                    .Where(d => d.DeletedAt == null)
                     .Select(d => new Content.Shared._SV.CharacterDocuments.CharacterDocument
                     {
                         DocID = d.DocID,

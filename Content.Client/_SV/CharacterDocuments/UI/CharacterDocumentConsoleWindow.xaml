@@ -64,13 +64,17 @@
                                     <Button Name="DeleteButton" Text="{Loc 'sv-document-console-delete-button'}" HorizontalExpand="True"/>
                                 </BoxContainer>
                                 <Button Name="StatusButton" Text="{Loc 'sv-document-console-status-button'}" HorizontalExpand="True" Visible="False"/>
+                                <BoxContainer Orientation="Horizontal" HorizontalExpand="True">
+                                    <Button Name="BinButton" Text="{Loc 'sv-document-console-bin-button'}" HorizontalExpand="True" ToggleMode="True" Visible="False"/>
+                                    <Button Name="RestoreButton" Text="{Loc 'sv-document-console-restore-button'}" HorizontalExpand="True" Visible="False"/>
+                                </BoxContainer>
+                                <BoxContainer Orientation="Horizontal" HorizontalExpand="True">
+                                    <Button Name="PurgeButton" Text="{Loc 'sv-document-console-purge-button'}" HorizontalExpand="True" Visible="False"/>
+                                    <Button Name="EmptyBinButton" Text="{Loc 'sv-document-console-empty-bin-button'}" HorizontalExpand="True" Visible="False"/>
+                                </BoxContainer>
                             </BoxContainer>
                         </BoxContainer>
-                        <!-- General flavour fields panel. Same visual structure as the
-                             Author panel above (labels column + bordered values column),
-                             but full-width and using RichTextLabel so long allergies/postmortem
-                             text wraps instead of getting clipped. Hidden when no general
-                             fields are relevant for the active tab. -->
+                        <!-- General flavour fields panel. -->
                         <PanelContainer Name="GeneralInfoPanel" HorizontalExpand="True" Margin="0 5 0 0" Visible="False">
                             <BoxContainer Orientation="Vertical">
                                 <BoxContainer>

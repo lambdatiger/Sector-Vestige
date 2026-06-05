@@ -61,6 +61,9 @@ public sealed partial class CharacterDocumentConsoleSystem : EntitySystem
         SubscribeLocalEvent<CharacterDocumentConsoleComponent, SelectCharacterDocument>(OnSelectedDocument);
         SubscribeLocalEvent<CharacterDocumentConsoleComponent, CharacterDocumentScan>(OnDocumentScanned);
         SubscribeLocalEvent<CharacterDocumentConsoleComponent, CharacterDocumentDelete>(OnDocumentDelete);
+        SubscribeLocalEvent<CharacterDocumentConsoleComponent, CharacterDocumentRestore>(OnDocumentRestore);
+        SubscribeLocalEvent<CharacterDocumentConsoleComponent, CharacterDocumentPurge>(OnDocumentPurge);
+        SubscribeLocalEvent<CharacterDocumentConsoleComponent, CharacterDocumentEmptyBin>(OnEmptyBin);
         SubscribeLocalEvent<CharacterDocumentConsoleComponent, CharacterDocumentDeselect>(OnDocumentDeselected);
         SubscribeLocalEvent<CharacterDocumentConsoleComponent, EntInsertedIntoContainerMessage>(OnSlotChanged);
         SubscribeLocalEvent<CharacterDocumentConsoleComponent, EntRemovedFromContainerMessage>(OnSlotChanged);
@@ -90,9 +93,7 @@ public sealed partial class CharacterDocumentConsoleSystem : EntitySystem
             var player = GetEntity(comp.SelectedPlayer);
             if (TryComp<CharacterDocumentComponent>(player, out var docComp))
             {
-                var filteredDocs = docComp.Documents
-                    .Where(d => ConsoleHandles(comp, d.Value.DocType))
-                    .ToDictionary(d => d.Key, d => d.Value);
+                var filteredDocs = BuildVisibleDocs(uid, comp, docComp);
 
                 // Re-resolve the console's selected document against the freshly mutated
                 // store: an edit swaps it for the updated copy, a delete drops it. Passing
@@ -106,13 +107,13 @@ public sealed partial class CharacterDocumentConsoleSystem : EntitySystem
 
                 bool paperinserted = comp.PaperSlot.ContainerSlot?.ContainedEntity != null;
                 var state = new CharacterDocumentConsoleState(netPlayerEntities, comp.SelectedPlayer, filteredDocs, comp.SelectedDocument, paperinserted, comp.DocumentType, additionalDocumentTypes: comp.AdditionalDocumentTypes, selectedPlayerGeneral: docComp.CharacterDocumentGeneral);
-                _userInterfaceSystem.SetUiState(uid, CharacterDocumentConsoleUiKey.Key, state);
+                PushState(uid, state);
             }
             else
             {
                 bool paperinserted = comp.PaperSlot.ContainerSlot?.ContainedEntity != null;
                 var characterDocumentConsoleState = new CharacterDocumentConsoleState(netPlayerEntities, null, null, null, paperinserted, comp.DocumentType, additionalDocumentTypes: comp.AdditionalDocumentTypes);
-                _userInterfaceSystem.SetUiState(uid, CharacterDocumentConsoleUiKey.Key, characterDocumentConsoleState);
+                PushState(uid, characterDocumentConsoleState);
             }
         }
 
@@ -138,7 +139,7 @@ public sealed partial class CharacterDocumentConsoleSystem : EntitySystem
 
         bool paperinserted = comp.PaperSlot.ContainerSlot?.ContainedEntity != null || false;
         var characterDocumentConsoleState = new CharacterDocumentConsoleState(netPlayerEntities, null, null, null, paperinserted, comp.DocumentType, additionalDocumentTypes: comp.AdditionalDocumentTypes);
-        _userInterfaceSystem.SetUiState(uid, CharacterDocumentConsoleUiKey.Key, characterDocumentConsoleState);
+        PushState(uid, characterDocumentConsoleState);
     }
 
     public void OnBuiClosed(EntityUid uid, CharacterDocumentConsoleComponent comp, BoundUIClosedEvent args)
@@ -159,7 +160,7 @@ public sealed partial class CharacterDocumentConsoleSystem : EntitySystem
 
         bool paperinserted = comp.PaperSlot.ContainerSlot?.ContainedEntity != null || false;
         var characterDocumentConsoleState = new CharacterDocumentConsoleState(netPlayerEntities, null, null, null, paperinserted, comp.DocumentType, additionalDocumentTypes: comp.AdditionalDocumentTypes);
-        _userInterfaceSystem.SetUiState(uid, CharacterDocumentConsoleUiKey.Key, characterDocumentConsoleState);
+        PushState(uid, characterDocumentConsoleState);
     }
 
     public void OnSelectedPlayer(EntityUid uid, CharacterDocumentConsoleComponent comp, SelectCharacterDocumentPlayer args)
@@ -179,9 +180,7 @@ public sealed partial class CharacterDocumentConsoleSystem : EntitySystem
 
         var netPlayerEntities = BuildPlayerListing(uid, stationComponent);
 
-        var filteredDocs = documentComponent.Documents
-            .Where(d => ConsoleHandles(comp, d.Value.DocType))
-            .ToDictionary(d => d.Key, d => d.Value);
+        var filteredDocs = BuildVisibleDocs(uid, comp, documentComponent);
 
         comp.SelectedPlayer = args.Player;
         bool paperinserted = comp.PaperSlot.ContainerSlot?.ContainedEntity != null;
@@ -191,7 +190,7 @@ public sealed partial class CharacterDocumentConsoleSystem : EntitySystem
             : (SecurityStatus.None, null);
 
         var characterDocumentConsoleState = new CharacterDocumentConsoleState(netPlayerEntities, args.Player, filteredDocs, null, paperinserted, comp.DocumentType, secStatus, secReason, additionalDocumentTypes: comp.AdditionalDocumentTypes, selectedPlayerGeneral: documentComponent.CharacterDocumentGeneral);
-        _userInterfaceSystem.SetUiState(uid, CharacterDocumentConsoleUiKey.Key, characterDocumentConsoleState);
+        PushState(uid, characterDocumentConsoleState);
     }
 
     public void OnSelectedDocument(EntityUid uid, CharacterDocumentConsoleComponent comp, SelectCharacterDocument args)
@@ -210,13 +209,15 @@ public sealed partial class CharacterDocumentConsoleSystem : EntitySystem
             return;
 
         documentComponent.Documents.TryGetValue(args.DocID, out var selecteddoc);
+        // A binned doc may only be opened on a bin-access (Central Command) console;
+        // ignore the selection otherwise so a forged client can't peek at the bin.
+        if (selecteddoc is { DeletedAt: not null } && !CanAccessBin(uid))
+            selecteddoc = null;
         comp.SelectedDocument = selecteddoc;
 
         var netPlayerEntities = BuildPlayerListing(uid, stationComponent);
 
-        var filteredDocs = documentComponent.Documents
-            .Where(d => ConsoleHandles(comp, d.Value.DocType))
-            .ToDictionary(d => d.Key, d => d.Value);
+        var filteredDocs = BuildVisibleDocs(uid, comp, documentComponent);
 
         bool paperinserted = comp.PaperSlot.ContainerSlot?.ContainedEntity != null;
 
@@ -225,7 +226,7 @@ public sealed partial class CharacterDocumentConsoleSystem : EntitySystem
             : (SecurityStatus.None, null);
 
         var characterDocumentConsoleState = new CharacterDocumentConsoleState(netPlayerEntities, args.Player, filteredDocs, selecteddoc, paperinserted, comp.DocumentType, secStatus, secReason, additionalDocumentTypes: comp.AdditionalDocumentTypes, selectedPlayerGeneral: documentComponent.CharacterDocumentGeneral);
-        _userInterfaceSystem.SetUiState(uid, CharacterDocumentConsoleUiKey.Key, characterDocumentConsoleState);
+        PushState(uid, characterDocumentConsoleState);
     }
 
     public async void OnDocumentScanned(EntityUid uid, CharacterDocumentConsoleComponent comp, CharacterDocumentScan args)
@@ -295,6 +296,68 @@ public sealed partial class CharacterDocumentConsoleSystem : EntitySystem
 
         _audio.PlayPvs(comp.SuccessSound, uid);
         await _characterDocumentSystem.DeleteDocument(player, args.CharacterDocument);
+    }
+
+    public async void OnDocumentRestore(EntityUid uid, CharacterDocumentConsoleComponent comp, CharacterDocumentRestore args)
+    {
+        // Only Central Command terminals may pull documents back out of the bin. The client
+        // hides the control on other consoles, but re-check here against forged messages.
+        if (!CanAccessBin(uid))
+        {
+            _audio.PlayPvs(comp.ErrorSound, uid);
+            return;
+        }
+
+        var player = GetEntity(args.Player);
+        if (!HasComp<CharacterDocumentComponent>(player))
+        {
+            _audio.PlayPvs(comp.ErrorSound, uid);
+            return;
+        }
+
+        _audio.PlayPvs(comp.SuccessSound, uid);
+        await _characterDocumentSystem.RestoreDocument(player, args.DocID);
+    }
+
+    public async void OnDocumentPurge(EntityUid uid, CharacterDocumentConsoleComponent comp, CharacterDocumentPurge args)
+    {
+        // Permanent deletion is gated to Central Command terminals, same as restore. The
+        // client only surfaces the control in the bin view, but re-check here against forged
+        // messages. CharacterDocumentSystem.PurgeDocument additionally refuses live docs.
+        if (!CanAccessBin(uid))
+        {
+            _audio.PlayPvs(comp.ErrorSound, uid);
+            return;
+        }
+
+        var player = GetEntity(args.Player);
+        if (!HasComp<CharacterDocumentComponent>(player))
+        {
+            _audio.PlayPvs(comp.ErrorSound, uid);
+            return;
+        }
+
+        _audio.PlayPvs(comp.SuccessSound, uid);
+        await _characterDocumentSystem.PurgeDocument(player, args.DocID);
+    }
+
+    public async void OnEmptyBin(EntityUid uid, CharacterDocumentConsoleComponent comp, CharacterDocumentEmptyBin args)
+    {
+        if (!CanAccessBin(uid))
+        {
+            _audio.PlayPvs(comp.ErrorSound, uid);
+            return;
+        }
+
+        var player = GetEntity(args.Player);
+        if (!HasComp<CharacterDocumentComponent>(player))
+        {
+            _audio.PlayPvs(comp.ErrorSound, uid);
+            return;
+        }
+
+        _audio.PlayPvs(comp.SuccessSound, uid);
+        await _characterDocumentSystem.EmptyBin(player);
     }
 
     public void OnDocumentPrint(EntityUid uid, CharacterDocumentConsoleComponent comp, CharacterDocumentPrint args)
@@ -386,13 +449,11 @@ public sealed partial class CharacterDocumentConsoleSystem : EntitySystem
             ? reloadedDoc
             : newCharacterDoc;
 
-        var filteredDocs = documentComponent.Documents
-            .Where(d => ConsoleHandles(comp, d.Value.DocType))
-            .ToDictionary(d => d.Key, d => d.Value);
+        var filteredDocs = BuildVisibleDocs(uid, comp, documentComponent);
 
         bool paperinserted = comp.PaperSlot.ContainerSlot?.ContainedEntity != null;
         var characterDocumentConsoleState = new CharacterDocumentConsoleState(netPlayerEntities, args.Player, filteredDocs, newCharacterDoc, paperinserted, comp.DocumentType, additionalDocumentTypes: comp.AdditionalDocumentTypes, selectedPlayerGeneral: documentComponent.CharacterDocumentGeneral);
-        _userInterfaceSystem.SetUiState(uid, CharacterDocumentConsoleUiKey.Key, characterDocumentConsoleState);
+        PushState(uid, characterDocumentConsoleState);
     }
 
     public void OnDocumentDeselected(EntityUid uid, CharacterDocumentConsoleComponent comp, CharacterDocumentDeselect args)
@@ -428,17 +489,15 @@ public sealed partial class CharacterDocumentConsoleSystem : EntitySystem
 
         if (TryComp<CharacterDocumentComponent>(player, out var docComp))
         {
-            var filteredDocs = docComp.Documents
-                .Where(d => ConsoleHandles(comp, d.Value.DocType))
-                .ToDictionary(d => d.Key, d => d.Value);
+            var filteredDocs = BuildVisibleDocs(uid, comp, docComp);
 
             var state = new CharacterDocumentConsoleState(netPlayerEntities, comp.SelectedPlayer, filteredDocs, comp.SelectedDocument, isPaperInserted, comp.DocumentType, additionalDocumentTypes: comp.AdditionalDocumentTypes, selectedPlayerGeneral: docComp.CharacterDocumentGeneral);
-            _userInterfaceSystem.SetUiState(uid, CharacterDocumentConsoleUiKey.Key, state);
+            PushState(uid, state);
         }
         else
         {
             var state = new CharacterDocumentConsoleState(netPlayerEntities, null, null, comp.SelectedDocument, isPaperInserted, comp.DocumentType, additionalDocumentTypes: comp.AdditionalDocumentTypes);
-            _userInterfaceSystem.SetUiState(uid, CharacterDocumentConsoleUiKey.Key, state);
+            PushState(uid, state);
         }
     }
 
@@ -484,14 +543,12 @@ public sealed partial class CharacterDocumentConsoleSystem : EntitySystem
         {
             var netPlayerEntities = BuildPlayerListing(uid, stationComp);
 
-            var filteredDocs = docComp.Documents
-                .Where(d => ConsoleHandles(comp, d.Value.DocType))
-                .ToDictionary(d => d.Key, d => d.Value);
+            var filteredDocs = BuildVisibleDocs(uid, comp, docComp);
 
             var (newStatus, newReason) = GetCriminalStatus(uid, docComp);
             bool paperInserted = comp.PaperSlot.ContainerSlot?.ContainedEntity != null;
             var refreshState = new CharacterDocumentConsoleState(netPlayerEntities, args.Player, filteredDocs, comp.SelectedDocument, paperInserted, comp.DocumentType, newStatus, newReason, additionalDocumentTypes: comp.AdditionalDocumentTypes, selectedPlayerGeneral: docComp.CharacterDocumentGeneral);
-            _userInterfaceSystem.SetUiState(uid, CharacterDocumentConsoleUiKey.Key, refreshState);
+            PushState(uid, refreshState);
         }
     }
 
@@ -521,6 +578,37 @@ public sealed partial class CharacterDocumentConsoleSystem : EntitySystem
     ///     DocumentType or any of the AdditionalDocumentTypes (used by multi-type consoles
     ///     like Central Command).
     /// </summary>
+    /// <summary>
+    ///     True if this console may view and restore binned (soft-deleted) documents.
+    ///     Gated to Central Command terminals, which already carry
+    ///     <see cref="CrossMapDocumentAccessComponent"/>.
+    /// </summary>
+    private bool CanAccessBin(EntityUid consoleUid) => HasComp<CrossMapDocumentAccessComponent>(consoleUid);
+
+    /// <summary>
+    ///     Pushes UI state to a console, stamping whether it may access the bin so the
+    ///     client knows to offer the recycling-bin view + restore controls.
+    /// </summary>
+    private void PushState(EntityUid uid, CharacterDocumentConsoleState state)
+    {
+        state.CanAccessBin = CanAccessBin(uid);
+        _userInterfaceSystem.SetUiState(uid, CharacterDocumentConsoleUiKey.Key, state);
+    }
+
+    /// <summary>
+    ///     Builds the document set this console exposes to the client: filtered to the types
+    ///     the console handles and, unless it can access the bin, with binned (soft-deleted)
+    ///     docs hidden. Bin-access consoles receive binned docs too; the client window only
+    ///     surfaces them when its bin view is toggled on.
+    /// </summary>
+    private Dictionary<int, CharacterDocument> BuildVisibleDocs(EntityUid consoleUid, CharacterDocumentConsoleComponent comp, CharacterDocumentComponent docComp)
+    {
+        var canBin = CanAccessBin(consoleUid);
+        return docComp.Documents
+            .Where(d => ConsoleHandles(comp, d.Value.DocType) && (canBin || d.Value.DeletedAt == null))
+            .ToDictionary(d => d.Key, d => d.Value);
+    }
+
     private static bool ConsoleHandles(CharacterDocumentConsoleComponent comp, int docType)
     {
         if (docType == (int)comp.DocumentType)

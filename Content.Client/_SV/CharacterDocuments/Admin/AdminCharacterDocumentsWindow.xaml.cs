@@ -30,6 +30,9 @@ public sealed partial class AdminCharacterDocumentsWindow : DefaultWindow
     public Action? OnRefresh;
     public Action<int, CharacterDocument>? OnEdit;
     public Action<int, int>? OnDelete;
+    public Action<int, int>? OnRestore;
+    public Action<int, int>? OnPurge;
+    public Action<int>? OnEmptyBin;
     public Action<int, DocumentType, string, string, List<CharacterDocumentStamp>>? OnCreate;
 
     public AdminCharacterDocumentsWindow()
@@ -43,6 +46,9 @@ public sealed partial class AdminCharacterDocumentsWindow : DefaultWindow
             tab.Initialize(type);
             tab.OnDocumentEdit = (pid, doc) => OnEdit?.Invoke(pid, doc);
             tab.OnDocumentDelete = (pid, did) => OnDelete?.Invoke(pid, did);
+            tab.OnDocumentRestore = (pid, did) => OnRestore?.Invoke(pid, did);
+            tab.OnDocumentPurge = (pid, did) => OnPurge?.Invoke(pid, did);
+            tab.OnDocumentEmptyBin = pid => OnEmptyBin?.Invoke(pid);
             tab.OnDocumentCreate = (pid, t, title, content, stamps) => OnCreate?.Invoke(pid, t, title, content, stamps);
             TypeTabs.AddChild(tab);
             TypeTabs.SetTabTitle(i, type.ToString());

@@ -52,6 +52,14 @@ public static class SVModel
         public string DocContent { get; set; } = string.Empty;
         public string DocStamps { get; set; } = string.Empty;
 
+        /// <summary>
+        /// When non-null, this document has been soft-deleted ("binned"). It stays in the
+        /// table so Central Command / admins can review or restore it, and is permanently
+        /// purged by <see cref="ServerDbBase.PurgeExpiredSVCharacterDocumentsAsync"/> once
+        /// it is older than the configured retention window. Stored as UTC.
+        /// </summary>
+        public DateTime? DeletedAt { get; set; }
+
         [JsonIgnore]
         public SVProfile SVProfile { get; set; } = null!;
         public int ProfileId { get; set; }

@@ -40,6 +40,16 @@ public sealed partial class CharacterDocument
 
     [DataField]
     public List<CharacterDocumentStamp> DocStamps = new();
+
+    /// <summary>
+    /// When non-null, this document has been "binned" (soft-deleted): it is hidden from
+    /// the normal document lists but retained so Central Command / admins can still see
+    /// and restore it. A background sweep permanently purges binned docs once they are
+    /// older than the configured retention window (see <c>SVCCVars.CharacterDocumentBinRetentionDays</c>).
+    /// Stored as UTC.
+    /// </summary>
+    [DataField]
+    public DateTime? DeletedAt;
 }
 
 [DataDefinition]

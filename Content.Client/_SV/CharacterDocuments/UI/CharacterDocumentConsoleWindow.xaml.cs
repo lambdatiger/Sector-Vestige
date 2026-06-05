@@ -190,6 +190,83 @@ public sealed partial class CharacterDocumentConsoleWindow : DefaultWindow
         {
             OnStatusButtonPressed?.Invoke(_selectedPlayer);
         };
+
+        BinButton.OnPressed += _ =>
+        {
+            _showBin = !_showBin;
+            // Switching views invalidates the current selection (a live doc isn't in the bin
+            // list and vice-versa). Clear the reader and let the user pick from the new list.
+            OnDocumentDeselected?.Invoke();
+            _selectedDocument = null;
+            _lastSelectedDoc = null;
+            Document.Clear();
+            DocumentEdit.TextRope = Rope.Leaf.Empty;
+            TitleInput.Clear();
+            StampDisplay.RemoveStamps();
+            StampDisplay.RemoveAllChildren();
+            PopulateDocumentListing();
+            ApplyBinModeControls();
+        };
+
+        RestoreButton.OnPressed += _ =>
+        {
+            if (_selectedDocument == null)
+                return;
+            OnButtonRestorePressed?.Invoke(_selectedPlayer, _selectedDocument.DocID);
+        };
+
+        // Permanent deletion is irreversible, so both bin-purge controls use the same
+        // two-step confirm pattern as the soft-delete button: first press arms the button
+        // (turns it red, swaps to "Confirm?"), second press actually fires.
+        PurgeButton.OnPressed += _ =>
+        {
+            if (_selectedDocument is not { DeletedAt: not null })
+                return;
+
+            if (!_confirmingPurge)
+            {
+                _confirmingPurge = true;
+                PurgeButton.Text = Loc.GetString("sv-document-console-purge-button-confirm");
+                PurgeButton.AddStyleClass(StyleClass.Negative);
+            }
+            else
+            {
+                var docId = _selectedDocument.DocID;
+                ResetPurgeButton();
+                PurgeButton.Disabled = true;
+                OnButtonPurgePressed?.Invoke(_selectedPlayer, docId);
+            }
+        };
+
+        EmptyBinButton.OnPressed += _ =>
+        {
+            if (!_confirmingEmptyBin)
+            {
+                _confirmingEmptyBin = true;
+                EmptyBinButton.Text = Loc.GetString("sv-document-console-empty-bin-button-confirm");
+                EmptyBinButton.AddStyleClass(StyleClass.Negative);
+            }
+            else
+            {
+                ResetEmptyBinButton();
+                EmptyBinButton.Disabled = true;
+                OnButtonEmptyBinPressed?.Invoke(_selectedPlayer);
+            }
+        };
+    }
+
+    private void ResetPurgeButton()
+    {
+        _confirmingPurge = false;
+        PurgeButton.Text = Loc.GetString("sv-document-console-purge-button");
+        PurgeButton.RemoveStyleClass(StyleClass.Negative);
+    }
+
+    private void ResetEmptyBinButton()
+    {
+        _confirmingEmptyBin = false;
+        EmptyBinButton.Text = Loc.GetString("sv-document-console-empty-bin-button");
+        EmptyBinButton.RemoveStyleClass(StyleClass.Negative);
     }
 
     public void UpdateState(CharacterDocumentConsoleState state)
@@ -277,6 +354,10 @@ public sealed partial class CharacterDocumentConsoleWindow : DefaultWindow
         _lastSelectedDoc = state.SelectedDocument;
         _cachedGeneral = state.SelectedPlayerGeneral;
         _consolePrimaryType = state.DocumentType;
+        _canAccessBin = state.CanAccessBin;
+        // A console that can't access the bin can never be in bin view.
+        if (!_canAccessBin)
+            _showBin = false;
         RefreshGeneralFields();
 
         if (state.SelectedPlayerDocuments == null)
@@ -319,6 +400,45 @@ public sealed partial class CharacterDocumentConsoleWindow : DefaultWindow
                     StampDisplay.AddStamp(new StampWidget { StampInfo = stamp.DocStamp });
                 }
         }
+
+        ApplyBinModeControls();
+    }
+
+    /// <summary>
+    ///     Shows / hides the recycling-bin controls and swaps the authoring buttons for the
+    ///     Restore button while in bin view. Only Central Command consoles ever see any of this.
+    /// </summary>
+    private void ApplyBinModeControls()
+    {
+        BinButton.Visible = _canAccessBin;
+        BinButton.Pressed = _showBin;
+        BinButton.Text = Loc.GetString(_showBin
+            ? "sv-document-console-bin-button-active"
+            : "sv-document-console-bin-button");
+
+        // In the bin view the normal authoring controls don't apply — a binned doc is
+        // read-only until it's restored. Hide them and surface Restore instead.
+        ScanButton.Visible = !_showBin;
+        PrintButton.Visible = !_showBin;
+        EditButton.Visible = !_showBin;
+        DeleteButton.Visible = !_showBin;
+
+        RestoreButton.Visible = _showBin;
+        RestoreButton.Disabled = !_showBin || _selectedDocument is not { DeletedAt: not null };
+
+        // Permanent-deletion controls live alongside Restore in the bin view only.
+        PurgeButton.Visible = _showBin;
+        EmptyBinButton.Visible = _showBin;
+
+        // Any fresh state (or a bin-view toggle) cancels an in-flight confirm, so a stale
+        // "Confirm?" can't fire against a doc/bin that's since changed under the user.
+        ResetPurgeButton();
+        ResetEmptyBinButton();
+
+        PurgeButton.Disabled = !_showBin || _selectedDocument is not { DeletedAt: not null };
+        EmptyBinButton.Disabled = !_showBin
+            || _cachedDocuments == null
+            || !_cachedDocuments.Values.Any(d => d.DeletedAt != null);
     }
 
     private void RebuildDocumentTabs(CharacterDocumentConsoleState state)
@@ -433,6 +553,12 @@ public sealed partial class CharacterDocumentConsoleWindow : DefaultWindow
         if (_activeTypeFilter is { } filter)
             rows = rows.Where(kv => kv.Value.DocType == (int) filter);
 
+        // The live list hides binned docs; the bin view shows only them. Bin-access consoles
+        // receive both from the server, single-type consoles only ever receive live docs.
+        rows = _showBin
+            ? rows.Where(kv => kv.Value.DeletedAt != null)
+            : rows.Where(kv => kv.Value.DeletedAt == null);
+
         foreach (var (_, doc) in rows.OrderBy(x => x.Value.DocTitle))
             DocumentListing.AddItem(doc.DocTitle, null, true, doc.DocID);
 
@@ -459,7 +585,14 @@ public sealed partial class CharacterDocumentConsoleWindow : DefaultWindow
     private Dictionary<NetEntity, string> _cachedPlayerList = new();
     private CharacterDocument? _selectedDocument;
     private bool _confirmingDelete;
+    private bool _confirmingPurge;
+    private bool _confirmingEmptyBin;
     private bool _editing;
+
+    /// <summary>Whether this console may access the recycling bin (Central Command terminals).</summary>
+    private bool _canAccessBin;
+    /// <summary>Whether the bin view is currently active (showing binned docs + restore).</summary>
+    private bool _showBin;
 
     /// <summary>Currently-selected type filter for multi-type consoles. Null = no filter (single-type).</summary>
     private DocumentType? _activeTypeFilter;
@@ -476,6 +609,9 @@ public sealed partial class CharacterDocumentConsoleWindow : DefaultWindow
     public Action<NetEntity, string, DocumentType?>? OnButtonScanPressed;
     public Action<NetEntity, CharacterDocument>? OnButtonPrintPressed;
     public Action<NetEntity, CharacterDocument>? OnButtonDeletePressed;
+    public Action<NetEntity, int>? OnButtonRestorePressed;
+    public Action<NetEntity, int>? OnButtonPurgePressed;
+    public Action<NetEntity>? OnButtonEmptyBinPressed;
     public Action<NetEntity, CharacterDocument>? OnButtonEditPressed;
     public Action<NetEntity>? OnStatusButtonPressed;
     public Action? OnDocumentDeselected;

@@ -26,6 +26,14 @@ public sealed class CharacterDocumentConsoleState : BoundUserInterfaceState
     /// </summary>
     public CharacterDocumentGeneral? SelectedPlayerGeneral;
 
+    /// <summary>
+    /// Whether this console may view and restore binned (soft-deleted) documents.
+    /// True only for Central Command terminals. Stamped by the server on every state push;
+    /// when true, <see cref="SelectedPlayerDocuments"/> also contains binned docs (those with
+    /// a non-null <c>DeletedAt</c>) so the client can offer a recycling-bin view.
+    /// </summary>
+    public bool CanAccessBin;
+
     public CharacterDocumentConsoleState(Dictionary<NetEntity, string> playerlist, NetEntity? selectedplayer,
         Dictionary<int, CharacterDocument>? selectedplayerdocuments, CharacterDocument? selecteddocument, bool paperinserted,
         DocumentType documentType = DocumentType.Employment,

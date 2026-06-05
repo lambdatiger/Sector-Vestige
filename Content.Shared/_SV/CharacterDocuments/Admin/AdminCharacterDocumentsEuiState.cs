@@ -41,6 +41,38 @@ public sealed class AdminSVDocumentDeleteMsg : EuiMessageBase
     public int DocId;
 }
 
+/// <summary>
+/// Restores a binned (soft-deleted) document, clearing its deletion timestamp so it
+/// returns to normal view.
+/// </summary>
+[Serializable, NetSerializable]
+public sealed class AdminSVDocumentRestoreMsg : EuiMessageBase
+{
+    public int ProfileId;
+    public int DocId;
+}
+
+/// <summary>
+/// Permanently deletes a single binned (soft-deleted) document, bypassing the retention
+/// window. Irreversible. The server refuses to purge a live (non-binned) document.
+/// </summary>
+[Serializable, NetSerializable]
+public sealed class AdminSVDocumentPurgeMsg : EuiMessageBase
+{
+    public int ProfileId;
+    public int DocId;
+}
+
+/// <summary>
+/// Permanently deletes every binned (soft-deleted) document for the profile — the
+/// "empty the recycling bin" action. Live documents are left untouched. Irreversible.
+/// </summary>
+[Serializable, NetSerializable]
+public sealed class AdminSVDocumentEmptyBinMsg : EuiMessageBase
+{
+    public int ProfileId;
+}
+
 [Serializable, NetSerializable]
 public sealed class AdminSVDocumentCreateMsg : EuiMessageBase
 {

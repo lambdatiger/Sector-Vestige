@@ -52,6 +52,15 @@ public sealed partial class AdminCharacterDocumentsEui : BaseEui
             case AdminSVDocumentDeleteMsg del:
                 _ = ApplyDeleteAsync(del.ProfileId, del.DocId);
                 break;
+            case AdminSVDocumentRestoreMsg restore:
+                _ = ApplyRestoreAsync(restore.ProfileId, restore.DocId);
+                break;
+            case AdminSVDocumentPurgeMsg purge:
+                _ = ApplyPurgeAsync(purge.ProfileId, purge.DocId);
+                break;
+            case AdminSVDocumentEmptyBinMsg empty:
+                _ = ApplyEmptyBinAsync(empty.ProfileId);
+                break;
             case AdminSVDocumentCreateMsg create:
                 _ = ApplyCreateAsync(create);
                 break;
@@ -82,6 +91,7 @@ public sealed partial class AdminCharacterDocumentsEui : BaseEui
                         DocDateLastEdited = d.DocDateLastEdited,
                         DocContent = d.DocContent,
                         DocStamps = CharacterDocumentDeserializer.DeserializeStamps(d.DocStamps),
+                        DeletedAt = d.DeletedAt,
                     })
                     .OrderBy(d => d.DocTitle)
                     .ToList(),
@@ -121,7 +131,60 @@ public sealed partial class AdminCharacterDocumentsEui : BaseEui
         if (entry == null)
             return;
 
-        entry.Documents.RemoveAll(d => d.DocID == docId);
+        // Soft delete: send the doc to the retention bin rather than removing it outright,
+        // matching the in-game console behaviour. A background sweep purges it permanently
+        // once it outlives the retention window.
+        var doc = entry.Documents.FirstOrDefault(d => d.DocID == docId);
+        if (doc == null || doc.DeletedAt != null)
+            return;
+
+        doc.DeletedAt = DateTime.UtcNow;
+
+        await PersistAsync(profileId, entry);
+    }
+
+    private async Task ApplyRestoreAsync(int profileId, int docId)
+    {
+        var entry = _profiles.FirstOrDefault(p => p.ProfileId == profileId);
+        if (entry == null)
+            return;
+
+        var doc = entry.Documents.FirstOrDefault(d => d.DocID == docId);
+        if (doc is not { DeletedAt: not null })
+            return;
+
+        doc.DeletedAt = null;
+
+        await PersistAsync(profileId, entry);
+    }
+
+    private async Task ApplyPurgeAsync(int profileId, int docId)
+    {
+        var entry = _profiles.FirstOrDefault(p => p.ProfileId == profileId);
+        if (entry == null)
+            return;
+
+        // Only binned docs can be permanently deleted, matching the in-game console and the
+        // admin UI (which only offers Purge on a binned doc). Refuse to purge a live document.
+        var doc = entry.Documents.FirstOrDefault(d => d.DocID == docId);
+        if (doc is not { DeletedAt: not null })
+            return;
+
+        // The DB save is a replace-all, so dropping it from the list here purges it for good.
+        entry.Documents.Remove(doc);
+
+        await PersistAsync(profileId, entry);
+    }
+
+    private async Task ApplyEmptyBinAsync(int profileId)
+    {
+        var entry = _profiles.FirstOrDefault(p => p.ProfileId == profileId);
+        if (entry == null)
+            return;
+
+        var removed = entry.Documents.RemoveAll(d => d.DeletedAt != null);
+        if (removed == 0)
+            return;
 
         await PersistAsync(profileId, entry);
     }
@@ -173,6 +236,7 @@ public sealed partial class AdminCharacterDocumentsEui : BaseEui
             DocDateLastEdited = d.DocDateLastEdited,
             DocStamps = CharacterDocumentSerializer.SerializeStamp(d.DocStamps),
             DocType = d.DocType,
+            DeletedAt = d.DeletedAt,
             ProfileId = entry.ProfileId,
         }).ToList();
 

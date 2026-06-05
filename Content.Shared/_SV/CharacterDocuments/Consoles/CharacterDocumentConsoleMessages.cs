@@ -41,6 +41,40 @@ public sealed class CharacterDocumentDeselect : BoundUserInterfaceMessage
 {
 }
 
+/// <summary>
+/// Restores a binned (soft-deleted) document back to normal view. Only honoured on
+/// Central Command (bin-access) consoles; the server re-checks access on receipt.
+/// </summary>
+[Serializable, NetSerializable]
+public sealed class CharacterDocumentRestore : BoundUserInterfaceMessage
+{
+    public NetEntity Player;
+    public int DocID;
+}
+
+/// <summary>
+/// Permanently deletes a single binned (soft-deleted) document — bypassing the retention
+/// window. Irreversible. Only honoured on Central Command (bin-access) consoles; the server
+/// re-checks access and that the target is actually binned on receipt.
+/// </summary>
+[Serializable, NetSerializable]
+public sealed class CharacterDocumentPurge : BoundUserInterfaceMessage
+{
+    public NetEntity Player;
+    public int DocID;
+}
+
+/// <summary>
+/// Permanently deletes every binned (soft-deleted) document for the target player — the
+/// "empty the recycling bin" action. Irreversible. Only honoured on Central Command
+/// (bin-access) consoles; the server re-checks access on receipt.
+/// </summary>
+[Serializable, NetSerializable]
+public sealed class CharacterDocumentEmptyBin : BoundUserInterfaceMessage
+{
+    public NetEntity Player;
+}
+
 [Serializable, NetSerializable]
 public sealed class CharacterDocumentPrint : BoundUserInterfaceMessage
 {

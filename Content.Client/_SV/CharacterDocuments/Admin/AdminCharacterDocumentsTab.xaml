@@ -19,12 +19,14 @@
                 <ItemList Name="DocumentListing"/>
             </ScrollContainer>
             <Button Name="CreateButton" Text="Create New" Margin="0 4 0 0" Disabled="True"/>
+            <Button Name="EmptyBinButton" Text="{Loc 'sv-document-console-empty-bin-button'}" Margin="0 4 0 0" Disabled="True"/>
         </BoxContainer>
         <BoxContainer Orientation="Vertical" Margin="5" HorizontalExpand="True">
             <BoxContainer Orientation="Horizontal" Margin="0 0 0 4">
                 <LineEdit Name="TitleInput" PlaceHolder="Title" HorizontalExpand="True" Editable="False"/>
                 <Button Name="EditButton" Text="Edit" Margin="4 0 0 0" Disabled="True"/>
                 <Button Name="DeleteButton" Text="Delete" Margin="4 0 0 0" Disabled="True"/>
+                <Button Name="PurgeButton" Text="{Loc 'sv-document-console-purge-button'}" Margin="4 0 0 0" Disabled="True"/>
             </BoxContainer>
             <BoxContainer Name="StampEditorRow" Orientation="Horizontal" Margin="0 0 0 4" Visible="False">
                 <Label Text="Stamps:" Margin="0 0 4 0" VerticalAlignment="Center"/>

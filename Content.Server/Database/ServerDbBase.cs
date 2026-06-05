@@ -284,10 +284,26 @@ namespace Content.Server.Database
                     DocStamps = document.DocStamps,
                     DocType = document.DocType,
                     DocDateLastEdited = document.DocDateLastEdited,
+                    DeletedAt = document.DeletedAt,
                 });
             }
 
             await db.DbContext.SaveChangesAsync();
+        }
+
+        /// <summary>
+        /// Permanently deletes binned (soft-deleted) character documents whose deletion
+        /// timestamp is older than <paramref name="retention"/>. Run periodically (e.g. on
+        /// round start) so the 30-day recycling bin actually empties over real wall-clock time.
+        /// </summary>
+        public async Task<int> PurgeExpiredSVCharacterDocumentsAsync(TimeSpan retention, CancellationToken cancel = default)
+        {
+            await using var db = await GetDb(cancel);
+
+            var cutoff = DateTime.UtcNow - retention;
+            return await db.DbContext.Set<SVModel.CharacterDocument>()
+                .Where(d => d.DeletedAt != null && d.DeletedAt < cutoff)
+                .ExecuteDeleteAsync(cancel);
         }
 
         public async Task<(JsonDocument? SerializedDocument, List<SVModel.CharacterDocument> Documents)?> GetSVCharacterDocumentsAsync(
@@ -314,6 +330,7 @@ namespace Content.Server.Database
                     DocStamps = document.DocStamps,
                     DocType = document.DocType,
                     DocDateLastEdited = document.DocDateLastEdited,
+                    DeletedAt = document.DeletedAt,
                     ProfileId = document.ProfileId,
                 })
                 .ToList();
@@ -436,52 +453,68 @@ namespace Content.Server.Database
                 if (humanoid.SVCharacterDocuments != null)
                 {
                     // Syndicate + CentralCommand docs are HRP-critical and must NEVER be
-                    // mutated by lobby saves — only the in-game console flow and the
-                    // admin EUI can touch them. The lobby UI hides the buttons, but a
-                    // modded client could still POST forged ones, so the server has to
-                    // enforce it too. Snapshot the existing restricted-type rows, then
-                    // re-add them after Clear() before applying the client's payload.
+                    // mutated by lobby saves — only the in-game console flow and the admin
+                    // EUI can touch them. The lobby UI hides the buttons, but a modded client
+                    // could still POST forged ones, so the server enforces it too.
                     var restrictedTypes = new HashSet<int>
                     {
                         (int)Content.Shared._SV.CharacterDocuments.DocumentType.Syndicate,
                         (int)Content.Shared._SV.CharacterDocuments.DocumentType.CentralCommand,
                     };
 
-                    var preservedRestricted = profile.SVProfile.CharacterDocuments
-                        .Where(d => restrictedTypes.Contains(d.DocType))
-                        .Select(d => new SVModel.CharacterDocument
-                        {
-                            DocType = d.DocType,
-                            DocTitle = d.DocTitle,
-                            DocAuthor = d.DocAuthor,
-                            DocLastEditedBy = d.DocLastEditedBy,
-                            DocDateLastEdited = d.DocDateLastEdited,
-                            DocContent = d.DocContent,
-                            DocStamps = d.DocStamps,
-                        })
-                        .ToList();
-
-                    var existingStampsById = profile.SVProfile.CharacterDocuments
+                    // IMPORTANT: upsert by DocID rather than wiping + reinserting the whole set.
+                    // The old Clear()+re-add reassigned a fresh autoincrement DocID to every row
+                    // on each save, while the lobby client keeps the DocIDs from its original
+                    // load. After one save the client's IDs no longer matched the DB, so every
+                    // kept doc looked "deleted" — getting binned AND re-added — which piled up
+                    // duplicate binned copies on every subsequent save. Updating rows in place
+                    // keeps DocIDs stable so the client's view stays correct across saves, and it
+                    // also lets in-world stamps survive a lobby edit (the lobby never sends them).
+                    var docs = profile.SVProfile.CharacterDocuments;
+                    var payloadById = humanoid.SVCharacterDocuments
                         .Where(d => d.DocID != 0)
-                        .ToDictionary(d => d.DocID, d => d.DocStamps);
+                        .GroupBy(d => d.DocID)
+                        .ToDictionary(g => g.Key, g => g.First());
 
-                    profile.SVProfile.CharacterDocuments.Clear();
+                    foreach (var row in docs)
+                    {
+                        // Restricted + already-binned rows are off-limits to the lobby; leave them
+                        // exactly as they are (this also keeps their DocIDs stable).
+                        if (restrictedTypes.Contains(row.DocType) || row.DeletedAt != null)
+                            continue;
 
-                    // Re-add preserved restricted docs first; the client can never touch these.
-                    foreach (var preserved in preservedRestricted)
-                        profile.SVProfile.CharacterDocuments.Add(preserved);
+                        if (payloadById.TryGetValue(row.DocID, out var payloadDoc)
+                            && !restrictedTypes.Contains(payloadDoc.DocType))
+                        {
+                            // Player kept (and possibly edited) this doc: update in place, preserving
+                            // DocID and the existing stamps (the lobby never sends stamps).
+                            row.DocType = payloadDoc.DocType;
+                            row.DocTitle = payloadDoc.DocTitle;
+                            row.DocAuthor = payloadDoc.DocAuthor;
+                            row.DocLastEditedBy = payloadDoc.DocLastEditedBy;
+                            row.DocDateLastEdited = payloadDoc.DocDateLastEdited;
+                            row.DocContent = payloadDoc.DocContent;
+                        }
+                        else
+                        {
+                            // Player removed it in the lobby: route through the retention bin instead
+                            // of hard-deleting, so a salty player can't quietly erase their own
+                            // firing paperwork between rounds.
+                            row.DeletedAt = DateTime.UtcNow;
+                        }
+                    }
 
-                    // Now apply the client's payload, but silently drop any restricted-type
-                    // entries — those can only originate from the in-game / admin paths.
+                    // Insert brand-new docs (no matching existing row). Restricted-type entries can
+                    // only originate from the in-game / admin flows, so drop any the client forges.
+                    var existingIds = docs.Where(d => d.DocID != 0).Select(d => d.DocID).ToHashSet();
                     foreach (var doc in humanoid.SVCharacterDocuments)
                     {
                         if (restrictedTypes.Contains(doc.DocType))
                             continue;
+                        if (doc.DocID != 0 && existingIds.Contains(doc.DocID))
+                            continue; // already updated in place above
 
-                        var stamps = doc.DocID != 0 && existingStampsById.TryGetValue(doc.DocID, out var prev)
-                            ? prev
-                            : Content.Server._SV.CharacterDocuments.CharacterDocumentSerializer.SerializeStamp(doc.DocStamps);
-                        profile.SVProfile.CharacterDocuments.Add(new SVModel.CharacterDocument
+                        docs.Add(new SVModel.CharacterDocument
                         {
                             DocType = doc.DocType,
                             DocTitle = doc.DocTitle,
@@ -489,7 +522,7 @@ namespace Content.Server.Database
                             DocLastEditedBy = doc.DocLastEditedBy,
                             DocDateLastEdited = doc.DocDateLastEdited,
                             DocContent = doc.DocContent,
-                            DocStamps = stamps,
+                            DocStamps = Content.Server._SV.CharacterDocuments.CharacterDocumentSerializer.SerializeStamp(doc.DocStamps),
                         });
                     }
                 }

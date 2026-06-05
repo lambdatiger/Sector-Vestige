@@ -16,8 +16,11 @@ using Content.Server._SV.CharacterDocuments.Consoles;
 using Content.Shared._SV.CharacterDocuments.Consoles;
 using Content.Server.CriminalRecords.Systems;
 using Content.Server.GameTicking;
+using Content.Server.GameTicking.Events;
 using Content.Server.Preferences.Managers;
 using Content.Server.Station.Systems;
+using Content.Shared._SV.CCVar;
+using Robust.Shared.Configuration;
 
 namespace Content.Server._SV.CharacterDocuments;
 
@@ -26,6 +29,7 @@ public sealed partial class CharacterDocumentSystem : EntitySystem
     [Dependency] private IServerDbManager _db = default!;
     [Dependency] private IPlayerManager _playerManager = default!;
     [Dependency] private IServerPreferencesManager _prefs = default!;
+    [Dependency] private IConfigurationManager _cfg = default!;
 
     public override void Initialize()
     {
@@ -33,6 +37,21 @@ public sealed partial class CharacterDocumentSystem : EntitySystem
 
         SubscribeLocalEvent<PlayerSpawnCompleteEvent>(OnPlayerSpawn, after: [typeof(StationRecordsSystem)]);
         SubscribeLocalEvent<PlayerJoinedLobbyEvent>(OnPlayerJoinedLobby);
+        // Empty the soft-delete bin of anything older than the retention window once per round.
+        SubscribeLocalEvent<RoundStartingEvent>(OnRoundStarting);
+    }
+
+    private void OnRoundStarting(RoundStartingEvent ev)
+    {
+        var days = _cfg.GetCVar(SVCCVars.CharacterDocumentBinRetentionDays);
+        _ = PurgeExpiredBinAsync(TimeSpan.FromDays(Math.Max(0, days)));
+    }
+
+    private async Task PurgeExpiredBinAsync(TimeSpan retention)
+    {
+        var purged = await _db.PurgeExpiredSVCharacterDocumentsAsync(retention);
+        if (purged > 0)
+            Log.Info($"Purged {purged} expired character document(s) from the bin (retention {retention.TotalDays:0}d).");
     }
 
     /// <summary>
@@ -128,7 +147,8 @@ public sealed partial class CharacterDocumentSystem : EntitySystem
                 DocLastEditedBy = doc.DocLastEditedBy,
                 DocDateLastEdited = doc.DocDateLastEdited,
                 DocContent = doc.DocContent,
-                DocStamps = CharacterDocumentDeserializer.DeserializeStamps(doc.DocStamps)
+                DocStamps = CharacterDocumentDeserializer.DeserializeStamps(doc.DocStamps),
+                DeletedAt = doc.DeletedAt
             };
             docComp.Documents[doc.DocID] = characterDoc;
         }
@@ -175,6 +195,7 @@ public sealed partial class CharacterDocumentSystem : EntitySystem
             DocDateLastEdited = doc.DocDateLastEdited,
             DocStamps = CharacterDocumentSerializer.SerializeStamp(doc.DocStamps),
             DocType = doc.DocType,
+            DeletedAt = doc.DeletedAt,
             ProfileId = docComp.ProfileId
         }).ToList();
 
@@ -202,7 +223,15 @@ public sealed partial class CharacterDocumentSystem : EntitySystem
         _playerManager.TryGetSessionByEntity(uid, out var session);
         var playerName = ResolvePlayerName(docComp, session);
 
-        docComp.Documents.Remove(characterDocument.DocID);
+        // Soft delete: the doc is hidden from normal listings but kept in the store with a
+        // deletion timestamp so Central Command / admins can still review or restore it.
+        // A background sweep purges it permanently once it outlives the retention window.
+        // We keep it in the in-memory dict (carrying DeletedAt) so the replace-all save below
+        // writes it back binned rather than dropping it.
+        if (docComp.Documents.TryGetValue(characterDocument.DocID, out var stored))
+            stored.DeletedAt = DateTime.UtcNow;
+        else
+            return;
 
         var dbDocs = docComp.Documents.Values.Select(doc => new SVModel.CharacterDocument
         {
@@ -213,11 +242,123 @@ public sealed partial class CharacterDocumentSystem : EntitySystem
             DocDateLastEdited = doc.DocDateLastEdited,
             DocStamps = CharacterDocumentSerializer.SerializeStamp(doc.DocStamps),
             DocType = doc.DocType,
+            DeletedAt = doc.DeletedAt,
             ProfileId = docComp.ProfileId
         }).ToList();
 
         await _db.SaveSVCharacterDocumentsAsync(docComp.ProfileId, playerName, docComp.ProfileName, dbDocs);
         await NotifyDocumentChangedAsync(session);
+    }
+
+    /// <summary>
+    ///     Restores a binned (soft-deleted) document back into normal view by clearing its
+    ///     deletion timestamp. Only reachable from privileged flows (Central Command console,
+    ///     admin EUI) — see the access check in the console handler.
+    /// </summary>
+    public async Task RestoreDocument(EntityUid uid, int docId)
+    {
+        if (!TryComp<CharacterDocumentComponent>(uid, out var docComp))
+            return;
+
+        if (!docComp.Documents.TryGetValue(docId, out var stored) || stored.DeletedAt == null)
+            return;
+
+        _playerManager.TryGetSessionByEntity(uid, out var session);
+        var playerName = ResolvePlayerName(docComp, session);
+
+        stored.DeletedAt = null;
+
+        var dbDocs = docComp.Documents.Values.Select(doc => new SVModel.CharacterDocument
+        {
+            DocTitle = doc.DocTitle,
+            DocAuthor = doc.DocAuthor,
+            DocLastEditedBy = doc.DocLastEditedBy,
+            DocContent = doc.DocContent,
+            DocDateLastEdited = doc.DocDateLastEdited,
+            DocStamps = CharacterDocumentSerializer.SerializeStamp(doc.DocStamps),
+            DocType = doc.DocType,
+            DeletedAt = doc.DeletedAt,
+            ProfileId = docComp.ProfileId
+        }).ToList();
+
+        await _db.SaveSVCharacterDocumentsAsync(docComp.ProfileId, playerName, docComp.ProfileName, dbDocs);
+        await NotifyDocumentChangedAsync(session);
+    }
+
+    /// <summary>
+    ///     Permanently deletes a single binned (soft-deleted) document, bypassing the
+    ///     retention window. Only binned docs may be purged — a live document must be
+    ///     sent to the bin first. Irreversible. Only reachable from privileged flows
+    ///     (Central Command console, admin EUI) — see the access check in the handlers.
+    /// </summary>
+    public async Task PurgeDocument(EntityUid uid, int docId)
+    {
+        if (!TryComp<CharacterDocumentComponent>(uid, out var docComp))
+            return;
+
+        // Guard: only binned docs can be permanently deleted, matching the UI which only
+        // offers the control from the bin view. Refuse to purge a live document.
+        if (!docComp.Documents.TryGetValue(docId, out var stored) || stored.DeletedAt == null)
+            return;
+
+        _playerManager.TryGetSessionByEntity(uid, out var session);
+        var playerName = ResolvePlayerName(docComp, session);
+
+        docComp.Documents.Remove(docId);
+
+        await PersistAllDocumentsAsync(docComp, playerName);
+        await NotifyDocumentChangedAsync(session);
+    }
+
+    /// <summary>
+    ///     Permanently deletes every binned (soft-deleted) document for the player — the
+    ///     "empty the recycling bin" action. Live documents are left untouched. Irreversible.
+    ///     Only reachable from privileged flows — see the access check in the handlers.
+    /// </summary>
+    public async Task EmptyBin(EntityUid uid)
+    {
+        if (!TryComp<CharacterDocumentComponent>(uid, out var docComp))
+            return;
+
+        var binnedIds = docComp.Documents
+            .Where(kv => kv.Value.DeletedAt != null)
+            .Select(kv => kv.Key)
+            .ToList();
+
+        if (binnedIds.Count == 0)
+            return;
+
+        _playerManager.TryGetSessionByEntity(uid, out var session);
+        var playerName = ResolvePlayerName(docComp, session);
+
+        foreach (var id in binnedIds)
+            docComp.Documents.Remove(id);
+
+        await PersistAllDocumentsAsync(docComp, playerName);
+        await NotifyDocumentChangedAsync(session);
+    }
+
+    /// <summary>
+    ///     Writes the player's full in-memory document set back to the DB. The DB save is a
+    ///     replace-all, so removing entries from <see cref="CharacterDocumentComponent.Documents"/>
+    ///     before calling this permanently drops them.
+    /// </summary>
+    private async Task PersistAllDocumentsAsync(CharacterDocumentComponent docComp, string playerName)
+    {
+        var dbDocs = docComp.Documents.Values.Select(doc => new SVModel.CharacterDocument
+        {
+            DocTitle = doc.DocTitle,
+            DocAuthor = doc.DocAuthor,
+            DocLastEditedBy = doc.DocLastEditedBy,
+            DocContent = doc.DocContent,
+            DocDateLastEdited = doc.DocDateLastEdited,
+            DocStamps = CharacterDocumentSerializer.SerializeStamp(doc.DocStamps),
+            DocType = doc.DocType,
+            DeletedAt = doc.DeletedAt,
+            ProfileId = docComp.ProfileId
+        }).ToList();
+
+        await _db.SaveSVCharacterDocumentsAsync(docComp.ProfileId, playerName, docComp.ProfileName, dbDocs);
     }
 
     public async Task UpdateDocument(EntityUid uid, CharacterDocument characterDocument)
@@ -239,6 +380,7 @@ public sealed partial class CharacterDocumentSystem : EntitySystem
             DocDateLastEdited = doc.DocDateLastEdited,
             DocStamps = CharacterDocumentSerializer.SerializeStamp(doc.DocStamps),
             DocType = doc.DocType,
+            DeletedAt = doc.DeletedAt,
             ProfileId = docComp.ProfileId
         }).ToList();
 

@@ -11,7 +11,15 @@ sv-document-console-edit-button-save = Save
 sv-document-console-delete-button = Delete
 sv-document-console-delete-button-confirm = Confirm?
 sv-document-console-status-button = Set Status
+sv-document-console-bin-button = Recycling Bin
+sv-document-console-bin-button-active = Exit Bin
+sv-document-console-restore-button = Restore
+sv-document-console-purge-button = Delete Forever
+sv-document-console-purge-button-confirm = Confirm?
+sv-document-console-empty-bin-button = Empty Bin
+sv-document-console-empty-bin-button-confirm = Confirm?
 sv-admin-character-documents-button = Character Documents
+sv-admin-character-documents-binned-title = [BIN] {$title}
 
 # Window titles per console type
 sv-document-console-window-title-employment = Employment Documentation Computer
