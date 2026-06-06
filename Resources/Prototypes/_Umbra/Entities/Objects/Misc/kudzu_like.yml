@@ -8,7 +8,7 @@
   - type: Appearance
   - type: Sprite
     sprite: _Umbra/Objects/Misc/fire.rsi
-    shader: unshaded
+    #shader: unshaded # SV - Remove outdated attributes
   - type: Kudzu
     spriteVariants: 1
     spreadChance: 0.3
@@ -48,7 +48,7 @@
       methods: [ Touch ]
       effects:
       - !type:HealthChange
-        scaleByQuantity: true
+        #scaleByQuantity: true # SV - Remove outdated attributes
         damage:
           types:
             Cold: 2
