@@ -1869,3 +1869,9 @@ Entries:
       message: Ported magical fire from Sector Umbra.
   id: 257
   time: '2026-06-06T12:40:30.0000000+00:00'
+- author: OnyxTheBrave
+  changes:
+    - type: Add
+      message: Added a new event map.
+  id: 258
+  time: '2026-06-07T13:13:46.0000000+00:00'
