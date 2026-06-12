@@ -42,10 +42,10 @@
     - FootstepSound
   - type: Sprite
     drawdepth: Mobs
-    sprite: Mobs/Demons/abomination.rsi
+    sprite: _SV/Mobs/Demons/frozenabomination.rsi
     layers:
     - map: ["enum.DamageStateVisualLayers.Base"]
-      state: abomination
+      state: frozenabomination
   - type: DamageStateVisuals
     states:
       Alive:
