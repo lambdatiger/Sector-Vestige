@@ -29,7 +29,7 @@
                                 <RichTextLabel Name="Document" StyleClasses="PaperWrittenText" VerticalExpand="True" HorizontalExpand="True" VerticalAlignment="Top" Margin="5 5 5 10"/>
                                 <paper:StampCollection Name="StampDisplay" VerticalAlignment="Bottom" VerticalExpand="True"/>
                             </ScrollContainer>
-                            <TextEdit Name="DocumentEdit" StyleClasses="PaperWrittenText" MinHeight="690" VerticalExpand="True" VerticalAlignment="Top" Editable="False" Visible="False"/>
+                            <TextEdit Name="DocumentEdit" StyleClasses="PaperWrittenText" MinHeight="490" VerticalExpand="True" VerticalAlignment="Top" Editable="False" Visible="False"/>
                         </PanelContainer>
                         <!-- Bottom control panel -->
                         <LineEdit Name="TitleInput" PlaceHolder="{Loc 'sv-document-console-title-input'}" VerticalAlignment="Top" HorizontalExpand="True" Editable="False"/>

@@ -3,10 +3,12 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using Content.Server.Administration.Logs;
 using Content.Server.Database;
 using Content.Server.Database.Migrations.Sqlite;
 using Content.Shared.Body;
 using Content.Shared.CCVar;
+using Content.Shared.Database;
 using Content.Shared.Construction.Prototypes;
 using Content.Shared.Humanoid;
 using Content.Shared.Humanoid.Markings;
@@ -42,6 +44,7 @@ namespace Content.Server.Preferences.Managers
         [Dependency] private IPrototypeManager _prototypeManager = default!;
         [Dependency] private MarkingManager _marking = default!;
         [Dependency] private ISerializationManager _serialization = default!;
+        [Dependency] private IAdminLogManager _adminLogger = default!;
 
         // Cache player prefs on the server so we don't need as much async hell related to them.
         private readonly Dictionary<NetUserId, PlayerPrefData> _cachedPlayerPrefs =
@@ -290,6 +293,12 @@ namespace Content.Server.Preferences.Managers
 
             profile.EnsureValid(session, _dependencies);
 
+            // SV: high-alert admin log for any character document removed via the preferences
+            // / character editor. Compares the slot's previously-saved docs against the incoming
+            // ones and logs any that disappeared.
+            if (curPrefs.Characters.TryGetValue(slot, out var previousProfile))
+                LogRemovedSVDocuments(session, previousProfile, profile);
+
             var profiles = new Dictionary<int, HumanoidCharacterProfile>(curPrefs.Characters)
             {
                 [slot] = profile
@@ -299,6 +308,28 @@ namespace Content.Server.Preferences.Managers
 
             if (ShouldStorePrefs(session.Channel.AuthType))
                 await _db.SaveCharacterSlotAsync(userId, profile, slot);
+        }
+
+        /// <summary>
+        ///     SV: Emits a high-alert admin log for each character document a player removed via the
+        ///     in-lobby preferences / character editor. A document counts as removed when its DocID
+        ///     was present in the previously-saved profile but is absent from the incoming one.
+        /// </summary>
+        private void LogRemovedSVDocuments(ICommonSession session, HumanoidCharacterProfile oldProfile, HumanoidCharacterProfile newProfile)
+        {
+            var oldDocs = oldProfile.SVCharacterDocuments;
+            if (oldDocs is not { Count: > 0 })
+                return;
+
+            var newDocs = newProfile.SVCharacterDocuments;
+            foreach (var doc in oldDocs)
+            {
+                if (newDocs != null && newDocs.Any(d => d.DocID == doc.DocID))
+                    continue;
+
+                _adminLogger.Add(LogType.CharacterDocument, LogImpact.High,
+                    $"{session:player} deleted character document '{doc.DocTitle}' (#{doc.DocID}) of character '{newProfile.Name}' via the preferences editor");
+            }
         }
 
         public async Task SetConstructionFavorites(NetUserId userId, List<ProtoId<ConstructionPrototype>> favorites)
