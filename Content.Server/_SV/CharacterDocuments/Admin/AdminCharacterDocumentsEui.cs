@@ -1,12 +1,14 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Content.Server.Administration.Logs;
 using Content.Server.Database;
 using Content.Server.EUI;
 using Content.Server.Preferences.Managers;
 using Content.Shared._SV.CharacterDocuments;
 using Content.Shared._SV.CharacterDocuments.Admin;
 using Content.Shared._SV.CharacterDocuments.Components;
+using Content.Shared.Database;
 using Content.Shared.Eui;
 using Robust.Server.Player;
 
@@ -18,6 +20,7 @@ public sealed partial class AdminCharacterDocumentsEui : BaseEui
     [Dependency] private IEntityManager _entMan = default!;
     [Dependency] private IPlayerManager _playerManager = default!;
     [Dependency] private IServerPreferencesManager _prefs = default!;
+    [Dependency] private IAdminLogManager _adminLogger = default!;
 
     private List<AdminSVProfileEntry> _profiles = new();
 
@@ -140,6 +143,9 @@ public sealed partial class AdminCharacterDocumentsEui : BaseEui
 
         doc.DeletedAt = DateTime.UtcNow;
 
+        _adminLogger.Add(LogType.CharacterDocument, LogImpact.Medium,
+            $"Admin {Player:player} sent character document '{doc.DocTitle}' (#{doc.DocID}) of {entry.CharacterName} ({entry.PlayerName}) to the recycling bin via the admin documents browser");
+
         await PersistAsync(profileId, entry);
     }
 
@@ -170,6 +176,9 @@ public sealed partial class AdminCharacterDocumentsEui : BaseEui
         if (doc is not { DeletedAt: not null })
             return;
 
+        _adminLogger.Add(LogType.CharacterDocument, LogImpact.High,
+            $"Admin {Player:player} permanently deleted binned character document '{doc.DocTitle}' (#{doc.DocID}) of {entry.CharacterName} ({entry.PlayerName}) via the admin documents browser");
+
         // The DB save is a replace-all, so dropping it from the list here purges it for good.
         entry.Documents.Remove(doc);
 
@@ -185,6 +194,9 @@ public sealed partial class AdminCharacterDocumentsEui : BaseEui
         var removed = entry.Documents.RemoveAll(d => d.DeletedAt != null);
         if (removed == 0)
             return;
+
+        _adminLogger.Add(LogType.CharacterDocument, LogImpact.High,
+            $"Admin {Player:player} emptied the recycling bin ({removed} document(s)) of {entry.CharacterName} ({entry.PlayerName}) via the admin documents browser");
 
         await PersistAsync(profileId, entry);
     }

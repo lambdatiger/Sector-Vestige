@@ -2,6 +2,13 @@ sv-document-for-filter-line-placeholder = Filter
 sv-document-console-search-documents = Search
 sv-document-console-no-document-selected = No document selected
 sv-document-console-title-input = Title
+
+# Section headers / card titles
+sv-document-console-header-crew = Crew
+sv-document-console-header-document = Document
+sv-document-console-header-documents = Documents
+sv-document-console-header-details = Document Details
+sv-document-console-header-actions = Actions
 sv-document-console-scan-button = Scan
 sv-document-console-print-button = Print
 sv-document-console-paper-inserted = Paper inserted

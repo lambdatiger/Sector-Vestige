@@ -1,3 +1,5 @@
+using Content.Server.Administration.Logs;
+using Content.Shared.Database;
 using Content.Shared._SV.CharacterDocuments.Components;
 using Content.Shared._SV.CharacterDocuments.Consoles;
 using Content.Server._SV.CharacterDocuments.Consoles;
@@ -44,6 +46,7 @@ public sealed partial class CharacterDocumentConsoleSystem : EntitySystem
     [Dependency] private RadioSystem _radio = default!;
     [Dependency] private StationRecordsSystem _stationRecords = default!;
     [Dependency] private StationSystem _stationSystem = default!;
+    [Dependency] private IAdminLogManager _adminLogger = default!;
 
     private static readonly ProtoId<RadioChannelPrototype> SecurityChannel = "Security";
 
@@ -294,6 +297,9 @@ public sealed partial class CharacterDocumentConsoleSystem : EntitySystem
             return;
         }
 
+        _adminLogger.Add(LogType.CharacterDocument, LogImpact.High,
+            $"{args.Actor:actor} sent character document '{args.CharacterDocument.DocTitle}' (#{args.CharacterDocument.DocID}) belonging to {player:subject} to the recycling bin via {uid:console}");
+
         _audio.PlayPvs(comp.SuccessSound, uid);
         await _characterDocumentSystem.DeleteDocument(player, args.CharacterDocument);
     }
@@ -331,11 +337,15 @@ public sealed partial class CharacterDocumentConsoleSystem : EntitySystem
         }
 
         var player = GetEntity(args.Player);
-        if (!HasComp<CharacterDocumentComponent>(player))
+        if (!TryComp<CharacterDocumentComponent>(player, out var purgeDocComp))
         {
             _audio.PlayPvs(comp.ErrorSound, uid);
             return;
         }
+
+        var purgeTitle = purgeDocComp.Documents.TryGetValue(args.DocID, out var purgeDoc) ? purgeDoc.DocTitle : "<unknown>";
+        _adminLogger.Add(LogType.CharacterDocument, LogImpact.High,
+            $"{args.Actor:actor} permanently deleted binned character document '{purgeTitle}' (#{args.DocID}) belonging to {player:subject} via {uid:console}");
 
         _audio.PlayPvs(comp.SuccessSound, uid);
         await _characterDocumentSystem.PurgeDocument(player, args.DocID);
@@ -350,11 +360,15 @@ public sealed partial class CharacterDocumentConsoleSystem : EntitySystem
         }
 
         var player = GetEntity(args.Player);
-        if (!HasComp<CharacterDocumentComponent>(player))
+        if (!TryComp<CharacterDocumentComponent>(player, out var emptyBinDocComp))
         {
             _audio.PlayPvs(comp.ErrorSound, uid);
             return;
         }
+
+        var binnedCount = emptyBinDocComp.Documents.Count(d => d.Value.DeletedAt != null);
+        _adminLogger.Add(LogType.CharacterDocument, LogImpact.High,
+            $"{args.Actor:actor} emptied the recycling bin ({binnedCount} document(s)) of {player:subject} via {uid:console}");
 
         _audio.PlayPvs(comp.SuccessSound, uid);
         await _characterDocumentSystem.EmptyBin(player);
