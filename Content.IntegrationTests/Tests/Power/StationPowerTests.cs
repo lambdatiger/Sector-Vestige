@@ -52,6 +52,8 @@ public sealed class StationPowerTests : GameTest
             // "Vanquish", // LateStation Map by Lachri
             "Cluster", // Sector Vestige, remade by Rebound
             "Packed_SM", // Sector Vestige, edits by Lambda.Tiger
+            "Amber", // Sector Vestige, edits by Lambda.Tiger
+            "AmberFucked", // Sector Vestige, event map, edits by Lambda.Tiger
     ];
 
     public override PoolSettings PoolSettings => new ()
