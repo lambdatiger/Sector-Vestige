@@ -3,8 +3,8 @@ meta:
   category: Map
   engineVersion: 277.0.0
   forkId: sector-vestige
-  forkVersion: 3dabd804ce9d308b6746b5d22e829d88ff0c0b05
-  time: 06/13/2026 07:16:51
+  forkVersion: e5d350593fb7e737f6a0e10ea9ba103aff4eb84a
+  time: 06/14/2026 02:29:05
   entityCount: 25404
 maps:
 - 1
@@ -13911,7 +13911,7 @@ entities:
           -7,-11:
             0: 65528
           -7,-10:
-            0: 55736
+            0: 55737
           -7,-13:
             0: 45294
           -6,-12:
@@ -15262,8 +15262,7 @@ entities:
           10,3:
             0: 57101
           9,4:
-            0: 4120
-            1: 61152
+            0: 65528
           11,0:
             0: 32624
           11,1:
@@ -15275,7 +15274,7 @@ entities:
             0: 271
           11,4:
             2: 98
-            1: 61440
+            0: 61440
           12,0:
             2: 51393
             0: 768
@@ -15293,25 +15292,20 @@ entities:
           9,5:
             0: 3810
           10,4:
-            1: 65520
+            0: 65520
           10,5:
-            0: 272
-            1: 204
+            0: 476
           10,6:
             2: 3624
           11,5:
-            1: 12031
-            0: 32768
+            0: 36607
           11,6:
-            1: 546
-            0: 2184
+            0: 2730
           12,4:
-            1: 4096
+            0: 61440
             2: 68
-            0: 57344
           12,5:
-            1: 17
-            0: 224
+            0: 241
             2: 24576
           12,-1:
             2: 4
@@ -18498,7 +18492,7 @@ entities:
       pos: -38.5,28.5
       parent: 2
     - type: Door
-      secondsUntilStateChange: -8985.579
+      secondsUntilStateChange: -9011.963
       state: Opening
     - type: DeviceLinkSource
       lastSignals:
@@ -20392,7 +20386,7 @@ entities:
       pos: -43.5,-13.5
       parent: 2
     - type: Door
-      secondsUntilStateChange: -11166.838
+      secondsUntilStateChange: -11193.222
       state: Opening
     - type: DeviceLinkSource
       lastSignals:
