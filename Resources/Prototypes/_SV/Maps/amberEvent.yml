@@ -5,13 +5,13 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 - type: gameMap
-  id: AmberFucked
-  mapName: 'AmberFucked'
-  mapPath: /Maps/_SV/amberFucked.yml
+  id: AmberEvent
+  mapName: 'AmberEvent'
+  mapPath: /Maps/_SV/amberEvent.yml
   minPlayers: 15
   maxPlayers: 60
   stations:
-    AmberFucked:
+    AmberEvent:
       stationProto: StandardNanotrasenStation
       components:
       - type: StationNameSetup
