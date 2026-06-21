@@ -60,7 +60,7 @@ public sealed partial class HealNearbySystem : EntitySystem
             foreach (var entity in _entities)
             {
                 if (!TryComp<DamageableComponent>(entity,out _))
-                    return;
+                    continue;
 
                 _damageableSystem.ChangeDamage(entity, damage);
             }
