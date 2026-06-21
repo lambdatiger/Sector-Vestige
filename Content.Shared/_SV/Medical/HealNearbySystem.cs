@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using Content.Shared.Damage.Components;
 using Content.Shared.Damage.Systems;
 using Robust.Shared.Timing;
@@ -13,8 +12,6 @@ public sealed partial class HealNearbySystem : EntitySystem
     [Dependency] private IGameTiming _timing = default!;
     [Dependency] private EntityLookupSystem _lookup = default!;
     [Dependency] private DamageableSystem _damageableSystem = default!;
-    [Dependency] private ILogManager _logManager = default!;
-    private ISawmill _sawmill = default!;
 
     private readonly HashSet<EntityUid> _entities = new();
 
