@@ -1,0 +1,9 @@
+- type: entity
+  id: HealingBonfire
+  parent: Bonfire
+  components:
+  - type: HealNearby
+    damage:
+      types:
+        Slash: -0.1
+        Cold: -0.1
