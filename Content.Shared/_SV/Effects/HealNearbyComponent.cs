@@ -8,7 +8,7 @@ using Content.Shared.Damage;
 using Robust.Shared.GameStates;
 using Robust.Shared.Serialization.TypeSerializers.Implementations.Custom;
 
-namespace Content.Shared._SV.Medical;
+namespace Content.Shared._SV.Effects;
 
 /// <summary>
 /// This is used for...
@@ -37,5 +37,6 @@ public sealed partial class HealNearbyComponent : Component
     /// <summary>
     /// The radius that the healing will apply
     /// </summary>
-    public float Radius = 5f;
+    [DataField]
+    public float Radius;
 }

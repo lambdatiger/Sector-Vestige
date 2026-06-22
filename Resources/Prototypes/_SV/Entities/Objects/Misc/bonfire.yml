@@ -9,6 +9,7 @@
   parent: Bonfire
   components:
   - type: HealNearby
+    radius: 5
     damage:
       types:
         Slash: -0.1

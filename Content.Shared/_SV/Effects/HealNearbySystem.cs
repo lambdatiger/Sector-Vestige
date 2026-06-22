@@ -8,7 +8,7 @@ using Content.Shared.Damage.Components;
 using Content.Shared.Damage.Systems;
 using Robust.Shared.Timing;
 
-namespace Content.Shared._SV.Medical;
+namespace Content.Shared._SV.Effects;
 
 /// <summary>
 /// This will heal nearby entities a set of damage
