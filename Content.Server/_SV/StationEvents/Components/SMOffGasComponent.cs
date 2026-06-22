@@ -5,10 +5,8 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 using Content.Server._SV.StationEvents.Events;
-using Content.Shared._EE.Supermatter.Components;
 using Content.Shared.Atmos;
-using Content.Shared.Destructible.Thresholds;
-using Robust.Shared.Map;
+using Content.Shared._SV.Utility;
 
 namespace Content.Server._SV.StationEvents.Components;
 
