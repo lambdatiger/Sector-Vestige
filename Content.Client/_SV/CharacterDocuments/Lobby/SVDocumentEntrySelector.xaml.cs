@@ -164,7 +164,7 @@ public sealed partial class SVDocumentEntrySelector : Control
         PreviewAuthorLabel.Text = string.IsNullOrWhiteSpace(doc.DocAuthor)
             ? Loc.GetString("sv-document-lobby-preview-author-default")
             : doc.DocAuthor;
-        PreviewContent.Text = doc.DocContent;
+        PreviewContent.SetDocumentContent(doc.DocContent);
 
         // Stamps are display-only here; lobby never edits them.
         PreviewStamps.RemoveStamps();

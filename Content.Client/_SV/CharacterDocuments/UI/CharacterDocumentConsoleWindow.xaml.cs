@@ -178,7 +178,7 @@ public sealed partial class CharacterDocumentConsoleWindow : DefaultWindow
                 // Reflect the edit locally right away so the reader pane shows the new
                 // copy without waiting for the server state round-trip (which can be
                 // delayed or, on a failed preferences refresh, never arrive).
-                Document.Text = newDocContent;
+                Document.SetDocumentContent(newDocContent);
                 _selectedDocument = newDocument;
 
                 EditButton.Disabled = true;
@@ -385,7 +385,7 @@ public sealed partial class CharacterDocumentConsoleWindow : DefaultWindow
         else
         {
             _selectedDocument = state.SelectedDocument;
-            Document.Text = state.SelectedDocument.DocContent;
+            Document.SetDocumentContent(state.SelectedDocument.DocContent);
             DocumentEdit.TextRope = new Rope.Leaf(state.SelectedDocument.DocContent);
             DocAuthorLabelValue.Text = Loc.GetString("sv-document-console-author-label-value", ("DocAuthor", state.SelectedDocument.DocAuthor));
             DocLastEditedByLabelValue.Text = Loc.GetString("sv-document-console-editedby-label-value", ("DocLastEditedBy", string.IsNullOrEmpty(state.SelectedDocument.DocLastEditedBy) ? state.SelectedDocument.DocAuthor : state.SelectedDocument.DocLastEditedBy));
@@ -526,16 +526,19 @@ public sealed partial class CharacterDocumentConsoleWindow : DefaultWindow
             || showIdFeatures || showAllergies || showDrugAllergies || showPostmortem;
 
         // Always populate values — actual data if a player is selected, dashes otherwise.
+        // Numeric/localized values are safe to assign raw; the free-text fields below are
+        // untrusted player input and go through SetDocumentContent so unbalanced markup in,
+        // say, an allergies field can't crash the console the same way document content could.
         DocGenHeightValue.Text = g != null && g.Height > 0 ? $"{g.Height} cm" : "-";
         DocGenWeightValue.Text = g != null && g.Weight > 0 ? $"{g.Weight} kg" : "-";
-        DocGenContactValue.Text = g != null && !string.IsNullOrEmpty(g.EmergencyContactName) ? g.EmergencyContactName : "-";
+        DocGenContactValue.SetDocumentContent(g != null && !string.IsNullOrEmpty(g.EmergencyContactName) ? g.EmergencyContactName : "-");
         DocGenWorkAuthValue.Text = g != null
             ? Loc.GetString(g.HasWorkAuthorization ? "sv-document-general-yes" : "sv-document-general-no")
             : "-";
-        DocGenIdFeaturesValue.Text = g != null && !string.IsNullOrEmpty(g.IdentifyingFeatures) ? g.IdentifyingFeatures : "-";
-        DocGenAllergiesValue.Text = g != null && !string.IsNullOrEmpty(g.Allergies) ? g.Allergies : "-";
-        DocGenDrugAllergiesValue.Text = g != null && !string.IsNullOrEmpty(g.DrugAllergies) ? g.DrugAllergies : "-";
-        DocGenPostmortemValue.Text = g != null && !string.IsNullOrEmpty(g.PostmortemInstructions) ? g.PostmortemInstructions : "-";
+        DocGenIdFeaturesValue.SetDocumentContent(g != null && !string.IsNullOrEmpty(g.IdentifyingFeatures) ? g.IdentifyingFeatures : "-");
+        DocGenAllergiesValue.SetDocumentContent(g != null && !string.IsNullOrEmpty(g.Allergies) ? g.Allergies : "-");
+        DocGenDrugAllergiesValue.SetDocumentContent(g != null && !string.IsNullOrEmpty(g.DrugAllergies) ? g.DrugAllergies : "-");
+        DocGenPostmortemValue.SetDocumentContent(g != null && !string.IsNullOrEmpty(g.PostmortemInstructions) ? g.PostmortemInstructions : "-");
     }
 
     private void PopulateDocumentListing()

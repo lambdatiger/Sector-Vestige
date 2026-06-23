@@ -398,7 +398,7 @@ public sealed partial class AdminCharacterDocumentsTab : Control
         TitleInput.ModulateSelfOverride = null;
         AuthorValue.Text = doc.DocAuthor;
         LastEditedByValue.Text = string.IsNullOrEmpty(doc.DocLastEditedBy) ? doc.DocAuthor : doc.DocLastEditedBy;
-        ContentView.Text = doc.DocContent;
+        ContentView.SetDocumentContent(doc.DocContent);
         ContentView.Visible = true;
         ContentEdit.TextRope = new Rope.Leaf(doc.DocContent);
         ContentEdit.Visible = false;

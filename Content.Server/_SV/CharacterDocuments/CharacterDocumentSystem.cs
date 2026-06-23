@@ -179,6 +179,11 @@ public sealed partial class CharacterDocumentSystem : EntitySystem
         if (!TryComp<CharacterDocumentComponent>(uid, out var docComp))
             return;
 
+        // Rebalance the user-authored markup before it is persisted so stored content (and the
+        // paper printed from it) can never carry the unmatched closing tags that crash the
+        // rich-text renderer.
+        characterDocument.DocContent = CharacterDocumentMarkup.Balance(characterDocument.DocContent);
+
         _playerManager.TryGetSessionByEntity(uid, out var session);
         var playerName = ResolvePlayerName(docComp, session);
 
@@ -365,6 +370,9 @@ public sealed partial class CharacterDocumentSystem : EntitySystem
     {
         if (!TryComp<CharacterDocumentComponent>(uid, out var docComp))
             return;
+
+        // Rebalance the user-authored markup before it is persisted (see AddDocument).
+        characterDocument.DocContent = CharacterDocumentMarkup.Balance(characterDocument.DocContent);
 
         _playerManager.TryGetSessionByEntity(uid, out var session);
         var playerName = ResolvePlayerName(docComp, session);

@@ -451,7 +451,12 @@ public sealed partial class CharacterDocumentConsoleSystem : EntitySystem
         else
         {
             _metaData.SetEntityName(printed, printDoc?.DocTitle ?? "Error in Printing, please report to NT R&D");
-            _paperSystem.SetContent(printed, printDoc?.DocContent ?? "Error in Printing, please report to NT R&D");
+            // Balance the markup so a document saved before this fix (or via a path that skipped
+            // balancing) can't print a piece of paper that crashes the paper UI when opened.
+            var printContent = printDoc?.DocContent is { } docContent
+                ? CharacterDocumentMarkup.Balance(docContent)
+                : "Error in Printing, please report to NT R&D";
+            _paperSystem.SetContent(printed, printContent);
             foreach (StampDisplayInfo stamp in stamps)
             {
                 _paperSystem.TryStamp((printed, paperComponent), stamp, stampState);
