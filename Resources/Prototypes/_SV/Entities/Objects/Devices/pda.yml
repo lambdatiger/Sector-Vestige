@@ -43,3 +43,84 @@
   - type: Icon
     sprite: _SV/Objects/Devices/pda.rsi
     state: sv-pda-magistrate
+
+# NT R&D - Recovery & Containment Team
+- type: entity
+  parent: CentcomPDA
+  id: RCTLeaderPDA
+  name: RCT leader PDA
+  description: A ruggedised PDA issued to the leader of a Recovery & Containment Team.
+  components:
+  - type: Pda
+    id: RCTLeaderIDCard
+    penSlot:
+      startingItem: LuxuryPen
+      priority: -1
+      whitelist:
+        tags:
+        - Write
+  - type: Sprite
+    sprite: _SV/Objects/Devices/pda-rnd.rsi
+    layers:
+    - map: [ "enum.PdaVisualLayers.Base" ]
+      state: "pda-rctleader"
+    - state: "light_overlay"
+      sprite: Objects/Devices/pda.rsi
+      map: [ "enum.PdaVisualLayers.Flashlight" ]
+      shader: "unshaded"
+      visible: false
+    - state: "id_overlay"
+      sprite: Objects/Devices/pda.rsi
+      map: [ "enum.PdaVisualLayers.IdLight" ]
+      shader: "unshaded"
+      visible: false
+  - type: Appearance
+    appearanceDataInit:
+     enum.PdaVisuals.PdaType:
+       !type:String
+       pda-rctleader
+  - type: PdaBorderColor
+    borderColor: "#462749"
+  - type: Icon
+    sprite: _SV/Objects/Devices/pda-rnd.rsi
+    state: pda-rctleader
+
+- type: entity
+  parent: CentcomPDA
+  id: RCTPDA
+  name: RCT PDA
+  description: A ruggedised PDA issued to operatives of a Recovery & Containment Team.
+  components:
+  - type: Pda
+    id: RCTMemberIDCard
+    penSlot:
+      startingItem: Pen
+      priority: -1
+      whitelist:
+        tags:
+        - Write
+  - type: Sprite
+    sprite: _SV/Objects/Devices/pda-rnd.rsi
+    layers:
+    - map: [ "enum.PdaVisualLayers.Base" ]
+      state: "pda-rct"
+    - state: "light_overlay"
+      sprite: Objects/Devices/pda.rsi
+      map: [ "enum.PdaVisualLayers.Flashlight" ]
+      shader: "unshaded"
+      visible: false
+    - state: "id_overlay"
+      sprite: Objects/Devices/pda.rsi
+      map: [ "enum.PdaVisualLayers.IdLight" ]
+      shader: "unshaded"
+      visible: false
+  - type: Appearance
+    appearanceDataInit:
+     enum.PdaVisuals.PdaType:
+       !type:String
+       pda-rct
+  - type: PdaBorderColor
+    borderColor: "#462749"
+  - type: Icon
+    sprite: _SV/Objects/Devices/pda-rnd.rsi
+    state: pda-rct

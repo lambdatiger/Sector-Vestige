@@ -1,0 +1,133 @@
+# SPDX-FileCopyrightText: 2026 Sector-Vestige contributors
+# SPDX-FileCopyrightText: 2026 Sector Vestige contributors (modifications)
+# SPDX-FileCopyrightText: 2026 ReboundQ3 <22770594+ReboundQ3@users.noreply.github.com>
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+# NanoTrasen R&D - Recovery & Containment Team (RCT)
+- type: job
+  id: RCTLeader
+  name: job-name-rctleader
+  description: job-description-rctleader
+  playTimeTracker: JobRCTLeader
+  setPreference: false
+  startingGear: RCTLeaderGearEVA
+  icon: "JobIconRCTLeader"
+  supervisors: job-supervisors-directorate
+  accessGroups:
+  - AllAccess
+  access:
+  - CentralCommand
+  special:
+  - !type:AddImplantSpecial
+    implants: [ MindShieldImplant, DeathRattleImplantCentcomm ]
+
+- type: job
+  id: RCTMember
+  name: job-name-rct
+  description: job-description-rct
+  playTimeTracker: JobRCTMember
+  setPreference: false
+  startingGear: RCTMemberGearEVA
+  icon: "JobIconRCT"
+  supervisors: job-supervisors-directorate
+  access:
+  - CentralCommand
+  special:
+  - !type:AddImplantSpecial
+    implants: [ MindShieldImplant, DeathRattleImplantCentcomm ]
+
+# --- Starting gear ---
+
+# Leader, overt (no hardsuit) - house tone openly worn
+- type: startingGear
+  id: RCTLeaderGear
+  equipment:
+    jumpsuit: ClothingUniformJumpsuitCentcomOfficer
+    back: ClothingBackpack
+    shoes: ClothingShoesBootsCombatFilled
+    eyes: ClothingEyesGlassesCommand
+    gloves: ClothingHandsGlovesCombat
+    ears: ClothingHeadsetRnD
+    id: RCTLeaderPDA
+    belt: ClothingBeltMilitaryWebbing
+    neck: ClothingNeckBronzeheart
+  storage:
+    back:
+    - WeaponEnergyMagnum # TODO: replace with experimental tesla suite (Arc Caster / Tesla Cannon) once built
+    - WeaponDisabler
+    - Stunbaton
+    - Handcuffs
+    - FlashlightSeclite
+
+# Leader, armed EVA (hardsuit) - the loadout the job actually spawns with
+- type: startingGear
+  id: RCTLeaderGearEVA
+  equipment:
+    jumpsuit: ClothingUniformJumpsuitCentcomOfficer
+    back: ClothingBackpack
+    shoes: ClothingShoesBootsCombatFilled
+    mask: ClothingMaskGasERT
+    eyes: ClothingEyesHudMedSec
+    gloves: ClothingHandsGlovesCombat
+    ears: ClothingHeadsetRnD
+    id: RCTLeaderPDA
+    outerClothing: ClothingOuterHardsuitRCT
+    belt: ClothingBeltMilitaryWebbing
+    neck: ClothingNeckBronzeheart
+    suitstorage: WeaponEnergyMagnum # TODO: replace with experimental tesla suite (Arc Caster / Tesla Cannon) once built
+  storage:
+    back:
+    - WeaponDisabler
+    - Stunbaton
+    - Handcuffs
+    - Handcuffs
+    - DoubleEmergencyOxygenTankFilled
+    - MedkitCombatFilled
+    - PowerCellHigh
+    - FlashlightSeclite
+
+# Operative, overt (no hardsuit)
+- type: startingGear
+  id: RCTMemberGear
+  equipment:
+    jumpsuit: ClothingUniformJumpsuitOperative
+    back: ClothingBackpack
+    shoes: ClothingShoesBootsCombatFilled
+    eyes: ClothingEyesHudMedSec
+    gloves: ClothingHandsGlovesCombat
+    ears: ClothingHeadsetRnD
+    id: RCTPDA
+    belt: ClothingBeltMilitaryWebbing
+  storage:
+    back:
+    - WeaponLaserGun # TODO: replace with experimental tesla suite (Arc Caster) once built
+    - WeaponDisabler
+    - Stunbaton
+    - Handcuffs
+    - FlashlightSeclite
+
+# Operative, armed EVA (hardsuit) - the loadout the job actually spawns with
+- type: startingGear
+  id: RCTMemberGearEVA
+  equipment:
+    jumpsuit: ClothingUniformJumpsuitOperative
+    back: ClothingBackpack
+    shoes: ClothingShoesBootsCombatFilled
+    mask: ClothingMaskGasERT
+    eyes: ClothingEyesHudMedSec
+    gloves: ClothingHandsGlovesCombat
+    ears: ClothingHeadsetRnD
+    id: RCTPDA
+    outerClothing: ClothingOuterHardsuitRCT
+    belt: ClothingBeltMilitaryWebbing
+    suitstorage: WeaponLaserGun # TODO: replace with experimental tesla suite (Arc Caster) once built
+  storage:
+    back:
+    - WeaponDisabler
+    - Stunbaton
+    - Handcuffs
+    - DoubleEmergencyOxygenTankFilled
+    - MedkitCombatFilled
+    - PowerCellHigh
+    - FlashlightSeclite

@@ -13,3 +13,10 @@
 # Magistrate
 - type: playTimeTracker
   id: JobSVMagistrate
+
+# NT R&D - Recovery & Containment Team
+- type: playTimeTracker
+  id: JobRCTLeader
+
+- type: playTimeTracker
+  id: JobRCTMember
