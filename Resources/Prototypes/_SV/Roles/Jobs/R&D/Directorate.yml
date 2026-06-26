@@ -20,6 +20,8 @@
   special:
   - !type:AddImplantSpecial
     implants: [ MindShieldImplant ]
+  - !type:AddFactionSpecial
+    factions: [ RnD ]
 
 - type: startingGear
   id: FieldResearcherGear
@@ -50,6 +52,8 @@
   special:
   - !type:AddImplantSpecial
     implants: [ MindShieldImplant, DeathRattleImplantCentcomm ]
+  - !type:AddFactionSpecial
+    factions: [ RnD ]
 
 - type: startingGear
   id: FirstDirectorGear
@@ -78,6 +82,8 @@
   special:
   - !type:AddImplantSpecial
     implants: [ MindShieldImplant, DeathRattleImplantCentcomm ]
+  - !type:AddFactionSpecial
+    factions: [ RnD ]
 
 - type: startingGear
   id: SecondDirectorGear
@@ -106,6 +112,8 @@
   special:
   - !type:AddImplantSpecial
     implants: [ MindShieldImplant, DeathRattleImplantCentcomm ]
+  - !type:AddFactionSpecial
+    factions: [ RnD ]
 
 - type: startingGear
   id: ThirdDirectorGear
@@ -117,3 +125,24 @@
     ears: ClothingHeadsetRnD
     outerClothing: ClothingOuterCoatLabRnDDirector
     id: ThirdDirectorPDA
+
+# --- Chameleon outfits ---
+- type: chameleonOutfit
+  id: FieldResearcherChameleonOutfit
+  job: FieldResearcher
+  hasMindShield: true
+
+- type: chameleonOutfit
+  id: FirstDirectorChameleonOutfit
+  job: FirstDirector
+  hasMindShield: true
+
+- type: chameleonOutfit
+  id: SecondDirectorChameleonOutfit
+  job: SecondDirector
+  hasMindShield: true
+
+- type: chameleonOutfit
+  id: ThirdDirectorChameleonOutfit
+  job: ThirdDirector
+  hasMindShield: true

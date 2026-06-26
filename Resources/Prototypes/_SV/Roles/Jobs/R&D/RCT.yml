@@ -21,6 +21,8 @@
   special:
   - !type:AddImplantSpecial
     implants: [ MindShieldImplant, DeathRattleImplantCentcomm ]
+  - !type:AddFactionSpecial
+    factions: [ RnD ]
 
 - type: job
   id: RCTMember
@@ -36,6 +38,8 @@
   special:
   - !type:AddImplantSpecial
     implants: [ MindShieldImplant, DeathRattleImplantCentcomm ]
+  - !type:AddFactionSpecial
+    factions: [ RnD ]
 
 # --- Starting gear ---
 
@@ -88,3 +92,14 @@
   equipment:
     id: RCTLeaderPDA
     neck: ClothingNeckMantleRnDRCTLeader
+
+# --- Chameleon outfits ---
+- type: chameleonOutfit
+  id: RCTLeaderChameleonOutfit
+  job: RCTLeader
+  hasMindShield: true
+
+- type: chameleonOutfit
+  id: RCTMemberChameleonOutfit
+  job: RCTMember
+  hasMindShield: true
