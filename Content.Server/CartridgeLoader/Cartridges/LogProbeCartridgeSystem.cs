@@ -35,7 +35,6 @@ public sealed partial class LogProbeCartridgeSystem : EntitySystem
     [Dependency] private SharedPopupSystem _popup = default!;
     [Dependency] private SharedTransformSystem _transform = default!;
     [Dependency] private PaperSystem _paper = default!;
-    [Dependency] private IRobustRandom _random = default!;
 
     public override void Initialize()
     {

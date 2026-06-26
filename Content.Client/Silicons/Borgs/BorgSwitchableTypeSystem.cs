@@ -29,7 +29,6 @@ public sealed partial class BorgSwitchableTypeSystem : SharedBorgSwitchableTypeS
     [Dependency] private BorgSystem _borgSystem = default!;
     [Dependency] private AppearanceSystem _appearance = default!;
     [Dependency] private SpriteSystem _sprite = default!;
-    [Dependency] private IGameTiming _timing = default!;
 
     public override void Initialize()
     {
