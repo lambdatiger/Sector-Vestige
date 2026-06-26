@@ -41,29 +41,29 @@ public sealed class PrototypeUploadTest : GameTest
         var sCompFact = pair.Server.ResolveDependency<IComponentFactory>();
         var cCompFact = pair.Client.ResolveDependency<IComponentFactory>();
 
-        Assert.That(!pair.Server.ProtoManager.TryIndex<EntityPrototype>(IdA, out _));
-        Assert.That(!pair.Server.ProtoManager.TryIndex<EntityPrototype>(IdB, out _));
-        Assert.That(!pair.Server.ProtoManager.TryIndex<EntityPrototype>(IdC, out _));
-        Assert.That(!pair.Server.ProtoManager.TryIndex<EntityPrototype>(IdD, out _));
+        Assert.That(!pair.Server.ProtoMan.TryIndex<EntityPrototype>(IdA, out _));
+        Assert.That(!pair.Server.ProtoMan.TryIndex<EntityPrototype>(IdB, out _));
+        Assert.That(!pair.Server.ProtoMan.TryIndex<EntityPrototype>(IdC, out _));
+        Assert.That(!pair.Server.ProtoMan.TryIndex<EntityPrototype>(IdD, out _));
 
-        Assert.That(!pair.Client.ProtoManager.TryIndex<EntityPrototype>(IdA, out _));
-        Assert.That(!pair.Client.ProtoManager.TryIndex<EntityPrototype>(IdB, out _));
-        Assert.That(!pair.Client.ProtoManager.TryIndex<EntityPrototype>(IdC, out _));
-        Assert.That(!pair.Client.ProtoManager.TryIndex<EntityPrototype>(IdD, out _));
+        Assert.That(!pair.Client.ProtoMan.TryIndex<EntityPrototype>(IdA, out _));
+        Assert.That(!pair.Client.ProtoMan.TryIndex<EntityPrototype>(IdB, out _));
+        Assert.That(!pair.Client.ProtoMan.TryIndex<EntityPrototype>(IdC, out _));
+        Assert.That(!pair.Client.ProtoMan.TryIndex<EntityPrototype>(IdD, out _));
 
         var protoLoad = pair.Client.ResolveDependency<IGamePrototypeLoadManager>();
         await pair.Client.WaitPost(() => protoLoad.SendGamePrototype(File));
         await pair.RunTicksSync(10);
 
-        Assert.That(pair.Server.ProtoManager.TryIndex<EntityPrototype>(IdA, out var sProtoA));
-        Assert.That(pair.Server.ProtoManager.TryIndex<EntityPrototype>(IdB, out var sProtoB));
-        Assert.That(!pair.Server.ProtoManager.TryIndex<EntityPrototype>(IdC, out _));
-        Assert.That(pair.Server.ProtoManager.TryIndex<EntityPrototype>(IdD, out var sProtoD));
+        Assert.That(pair.Server.ProtoMan.TryIndex<EntityPrototype>(IdA, out var sProtoA));
+        Assert.That(pair.Server.ProtoMan.TryIndex<EntityPrototype>(IdB, out var sProtoB));
+        Assert.That(!pair.Server.ProtoMan.TryIndex<EntityPrototype>(IdC, out _));
+        Assert.That(pair.Server.ProtoMan.TryIndex<EntityPrototype>(IdD, out var sProtoD));
 
-        Assert.That(pair.Client.ProtoManager.TryIndex<EntityPrototype>(IdA, out var cProtoA));
-        Assert.That(pair.Client.ProtoManager.TryIndex<EntityPrototype>(IdB, out var cProtoB));
-        Assert.That(!pair.Client.ProtoManager.TryIndex<EntityPrototype>(IdC, out _));
-        Assert.That(pair.Client.ProtoManager.TryIndex<EntityPrototype>(IdD, out var cProtoD));
+        Assert.That(pair.Client.ProtoMan.TryIndex<EntityPrototype>(IdA, out var cProtoA));
+        Assert.That(pair.Client.ProtoMan.TryIndex<EntityPrototype>(IdB, out var cProtoB));
+        Assert.That(!pair.Client.ProtoMan.TryIndex<EntityPrototype>(IdC, out _));
+        Assert.That(pair.Client.ProtoMan.TryIndex<EntityPrototype>(IdD, out var cProtoD));
 
         // Arbitrarily choosing TagComponent to check that inheritance works for uploaded prototypes.
 

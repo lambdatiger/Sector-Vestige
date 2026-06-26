@@ -19,7 +19,7 @@ public sealed class WindowRepair : InteractionTest
 
         // Damage the entity.
         var sys = SEntMan.System<DamageableSystem>();
-        var damageType = Server.ProtoManager.Index(BluntDamageType);
+        var damageType = Server.ProtoMan.Index(BluntDamageType);
         var damage = new DamageSpecifier(damageType, FixedPoint2.New(10));
         Assert.That(sys.GetTotalDamage(STarget.Value), Is.EqualTo(FixedPoint2.Zero));
         await Server.WaitPost(() => sys.TryChangeDamage(SEntMan.GetEntity(Target).Value, damage, ignoreResistances: true));

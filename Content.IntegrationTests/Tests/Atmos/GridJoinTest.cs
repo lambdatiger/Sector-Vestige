@@ -18,7 +18,7 @@ public sealed class GridJoinTest : GameTest
         var server = pair.Server;
 
         var entMan = server.EntMan;
-        var protoMan = server.ProtoManager;
+        var protoMan = server.ProtoMan;
         var atmosSystem = entMan.System<AtmosphereSystem>();
         var atmosDeviceSystem = entMan.System<AtmosDeviceSystem>();
         var transformSystem = entMan.System<SharedTransformSystem>();

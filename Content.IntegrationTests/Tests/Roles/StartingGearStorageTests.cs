@@ -23,7 +23,7 @@ public sealed class StartingGearPrototypeStorageTest : GameTest
         var mapSystem = server.System<SharedMapSystem>();
         var storageSystem = server.System<StorageSystem>();
 
-        var protos = server.ProtoManager
+        var protos = server.ProtoMan
             .EnumeratePrototypes<StartingGearPrototype>()
             .Where(p => !p.Abstract)
             .ToList()

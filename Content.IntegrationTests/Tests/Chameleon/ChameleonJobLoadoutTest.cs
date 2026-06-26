@@ -21,7 +21,7 @@ public sealed class ChameleonJobLoadoutTest : InteractionTest
     [Test]
     public Task CheckAllJobs()
     {
-        var alljobs = ProtoManager.EnumeratePrototypes<JobPrototype>();
+        var alljobs = ProtoMan.EnumeratePrototypes<JobPrototype>();
 
         // Job -> number of references
         Dictionary<ProtoId<JobPrototype>, int> validJobs = new();
@@ -35,7 +35,7 @@ public sealed class ChameleonJobLoadoutTest : InteractionTest
             validJobs.Add(job.ID, 0);
         }
 
-        var chameleons = ProtoManager.EnumeratePrototypes<ChameleonOutfitPrototype>();
+        var chameleons = ProtoMan.EnumeratePrototypes<ChameleonOutfitPrototype>();
 
         foreach (var chameleon in chameleons)
         {
@@ -62,7 +62,7 @@ public sealed class ChameleonJobLoadoutTest : InteractionTest
     /// </summary>
     private bool IsProbablyRoundStartJob(JobPrototype job)
     {
-        return job.StartingGear != null && ProtoManager.HasIndex<RoleLoadoutPrototype>(LoadoutSystem.GetJobPrototype(job.ID));
+        return job.StartingGear != null && ProtoMan.HasIndex<RoleLoadoutPrototype>(LoadoutSystem.GetJobPrototype(job.ID));
     }
 
 }

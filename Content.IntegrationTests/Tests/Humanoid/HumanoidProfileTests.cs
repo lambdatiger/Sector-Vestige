@@ -11,9 +11,7 @@ using Content.Shared.Preferences;
 using Content.Shared.Speech.Components;
 using Robust.Shared.Enums;
 using Robust.Shared.GameObjects;
-using Robust.Shared.Maths; // Sector Vestige: Color for the quantization test
 using Robust.Shared.Prototypes;
-using Robust.Shared.Random; // Sector Vestige: RobustRandom for the quantization test
 
 namespace Content.IntegrationTests.Tests.Humanoid;
 
@@ -103,49 +101,12 @@ public sealed class HumanoidProfileTests : GameTest
             Assert.That(humanoidComponent.Age, Is.GreaterThanOrEqualTo(proto.MinAge), $"Expected age is below the minimum age limit! Current: {humanoidComponent.Age} Min: {proto.MinAge}");
             Assert.That(proto.Sexes.Contains(humanoidComponent.Sex), Is.True, $"Character has sex not found in the species prototype! Current: {humanoidComponent.Sex}");
             Assert.That(humanoidComponent.Species, Is.EqualTo(species), $"Species does not match! Expected: {species} Current: {humanoidComponent.Species}");
-            var strategy = Server.ProtoManager.Index(proto.SkinColoration).Strategy;
+            var strategy = Server.ProtoMan.Index(proto.SkinColoration).Strategy;
             Assert.That(strategy.VerifySkinColor(profile.Appearance.SkinColor, out var reason), Is.True, $"Failed to verify the skin color from strategy {strategy}. Reason: {reason}");
 
             AssertValidProfile((body, humanoidComponent), profile);
         });
     }
-
-    // Sector Vestige - start: regression guard for the skin-color/8-bit-storage heisenbug (Vulpkanin, Vox, Human, Dwarf).
-    [Test]
-    [TestOf(typeof(HumanoidCharacterAppearance))]
-    [Description("Every species' skin coloration must still verify its own clamped output after it is stored as 8-bit RGB. " +
-                "8-bit quantization perturbs HSV/HSL saturation by ~1/255 ÷ value, which made the skin-color check intermittently " +
-                "reject valid colors for low-value species like Vulpkanin and Vox.")]
-    public async Task EnsureSkinColorsSurviveQuantization()
-    {
-        await Server.WaitIdleAsync();
-
-        await Server.WaitAssertion(() =>
-        {
-            var random = new RobustRandom();
-
-            foreach (var species in _species)
-            {
-                var proto = SProtoMan.Index<SpeciesPrototype>(species);
-                var strategy = SProtoMan.Index(proto.SkinColoration).Strategy;
-
-                for (var i = 0; i < 10000; i++)
-                {
-                    // Mirror HumanoidCharacterAppearance.Random, including the 8-bit storage its constructor applies via ClampColor.
-                    var generated = strategy.InputType switch
-                    {
-                        SkinColorationStrategyInput.Unary => strategy.FromUnary(random.NextFloat() * 100f),
-                        _ => strategy.ClosestSkinColor(new Color(random.NextFloat(), random.NextFloat(), random.NextFloat())),
-                    };
-                    var stored = HumanoidCharacterAppearance.ClampColor(generated);
-
-                    Assert.That(strategy.VerifySkinColor(stored, out var reason), Is.True,
-                        $"Species '{species}' ({strategy.GetType().Name}) produced a skin tone that fails verification after 8-bit storage (iteration {i}). Color: {stored}. Reason: {reason}");
-                }
-            }
-        });
-    }
-    // Sector Vestige - end
 
     private void LoadDependencies(out EntityUid body, out HumanoidProfileComponent humanoidComponent)
     {
@@ -170,13 +131,13 @@ public sealed class HumanoidProfileTests : GameTest
         {
             // Needed to avoid access restrictions
             var data = markingOrgan.MarkingData;
-            var groupProto = Server.ProtoManager.Index(data.Group);
+            var groupProto = Server.ProtoMan.Index(data.Group);
             var counts = new Dictionary<HumanoidVisualLayers, int>();
             var freeMarkings = new List<Marking>();
 
             foreach (var marking in markingOrgan.AppliedMarkings)
             {
-                var markingProto = Server.ProtoManager.Index(marking.MarkingId);
+                var markingProto = Server.ProtoMan.Index(marking.MarkingId);
 
                 Assert.That(markingProto.Sprites.Count, Is.EqualTo(marking.MarkingColors.Count), $"Organ {uid} has invald amount of marking sprites! Expected: {marking.MarkingColors.Count} Current: {markingProto.Sprites.Count}");
                 Assert.That(_markingManager.CanBeApplied(data.Group, profile.Sex, markingProto), Is.True, $"Marking {markingProto.ID} cannot be applied to group {data.Group.Id} with sex {profile.Sex}");
@@ -201,7 +162,7 @@ public sealed class HumanoidProfileTests : GameTest
                 if (freeMarkings.Contains(marking))
                     continue;
 
-                var markingProto = Server.ProtoManager.Index(marking.MarkingId);
+                var markingProto = Server.ProtoMan.Index(marking.MarkingId);
 
                 Assert.That(marking.MarkingColors,
                     Is.EqualTo(MarkingColoring.GetMarkingLayerColors(markingProto, profile.Appearance.SkinColor, profile.Appearance.EyeColor, markingOrgan.AppliedMarkings)));

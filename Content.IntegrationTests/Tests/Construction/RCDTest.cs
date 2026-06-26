@@ -43,16 +43,16 @@ public sealed class RCDTest : InteractionTest
         await SetTile(PlatingRCD, SEntMan.GetNetCoordinates(pEast), MapData.Grid);
         await SetTile(Lattice, SEntMan.GetNetCoordinates(pWest), MapData.Grid);
 
-        Assert.That(ProtoManager.TryIndex(RCDSettingWall, out var settingWall), $"RCDPrototype not found: {RCDSettingWall}.");
+        Assert.That(ProtoMan.TryIndex(RCDSettingWall, out var settingWall), $"RCDPrototype not found: {RCDSettingWall}.");
         Assert.That(settingWall.Prototype, Is.Not.Null, "RCDPrototype has a null spawning prototype.");
-        Assert.That(ProtoManager.TryIndex(RCDSettingAirlock, out var settingAirlock), $"RCDPrototype not found: {RCDSettingAirlock}.");
+        Assert.That(ProtoMan.TryIndex(RCDSettingAirlock, out var settingAirlock), $"RCDPrototype not found: {RCDSettingAirlock}.");
         Assert.That(settingAirlock.Prototype, Is.Not.Null, $"RCDPrototype has a null spawning prototype.");
-        Assert.That(ProtoManager.TryIndex(RCDSettingPlating, out var settingPlating), $"RCDPrototype not found: {RCDSettingPlating}.");
+        Assert.That(ProtoMan.TryIndex(RCDSettingPlating, out var settingPlating), $"RCDPrototype not found: {RCDSettingPlating}.");
         Assert.That(settingPlating.Prototype, Is.Not.Null, "RCDPrototype has a null spawning prototype.");
-        Assert.That(ProtoManager.TryIndex(RCDSettingFloorSteel, out var settingFloorSteel), $"RCDPrototype not found: {RCDSettingFloorSteel}.");
+        Assert.That(ProtoMan.TryIndex(RCDSettingFloorSteel, out var settingFloorSteel), $"RCDPrototype not found: {RCDSettingFloorSteel}.");
         Assert.That(settingFloorSteel.Prototype, Is.Not.Null, "RCDPrototype has a null spawning prototype.");
-        Assert.That(ProtoManager.TryIndex(RCDSettingDeconstructTile, out var settingDeconstructTile), $"RCDPrototype not found: {RCDSettingDeconstructTile}.");
-        Assert.That(ProtoManager.TryIndex(RCDSettingDeconstructLattice, out var settingDeconstructLattice), $"RCDPrototype not found: {RCDSettingDeconstructLattice}.");
+        Assert.That(ProtoMan.TryIndex(RCDSettingDeconstructTile, out var settingDeconstructTile), $"RCDPrototype not found: {RCDSettingDeconstructTile}.");
+        Assert.That(ProtoMan.TryIndex(RCDSettingDeconstructLattice, out var settingDeconstructLattice), $"RCDPrototype not found: {RCDSettingDeconstructLattice}.");
 
         var rcd = await PlaceInHands(RCDProtoId);
 

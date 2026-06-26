@@ -146,9 +146,9 @@ public sealed class JobTest : GameTest
         Assert.That(ticker.RunLevel, Is.EqualTo(GameRunLevel.PreRoundLobby));
         Assert.That(pair.Client.AttachedEntity, Is.Null);
 
-        var captain = pair.Server.ProtoManager.Index(Captain);
-        var engineer = pair.Server.ProtoManager.Index(Engineer);
-        var passenger = pair.Server.ProtoManager.Index(Passenger);
+        var captain = pair.Server.ProtoMan.Index(Captain);
+        var engineer = pair.Server.ProtoMan.Index(Engineer);
+        var passenger = pair.Server.ProtoMan.Index(Passenger);
         Assert.That(captain.Weight, Is.GreaterThan(engineer.Weight));
         Assert.That(engineer.Weight, Is.EqualTo(passenger.Weight));
 

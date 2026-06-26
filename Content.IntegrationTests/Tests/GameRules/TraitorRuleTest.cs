@@ -40,7 +40,7 @@ public sealed class TraitorRuleTest : GameTest
         var server = pair.Server;
         var client = pair.Client;
         var entMan = server.EntMan;
-        var protoMan = server.ProtoManager;
+        var protoMan = server.ProtoMan;
         var compFact = server.ResolveDependency<IComponentFactory>();
         var ticker = server.System<GameTicker>();
         var mindSys = server.System<MindSystem>();

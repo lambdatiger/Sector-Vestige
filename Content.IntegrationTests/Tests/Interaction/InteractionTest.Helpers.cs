@@ -39,7 +39,7 @@ public abstract partial class InteractionTest
     /// </summary>
     protected async Task StartConstruction(string prototype, bool shouldSucceed = true)
     {
-        var proto = ProtoManager.Index<ConstructionPrototype>(prototype);
+        var proto = ProtoMan.Index<ConstructionPrototype>(prototype);
         Assert.That(proto.Type, Is.EqualTo(ConstructionType.Structure));
 
         await Client.WaitPost(() =>
@@ -64,7 +64,7 @@ public abstract partial class InteractionTest
     /// </summary>
     protected async Task CraftItem(string prototype, bool shouldSucceed = true)
     {
-        Assert.That(ProtoManager.Index<ConstructionPrototype>(prototype).Type, Is.EqualTo(ConstructionType.Item));
+        Assert.That(ProtoMan.Index<ConstructionPrototype>(prototype).Type, Is.EqualTo(ConstructionType.Item));
 
         // Please someone purge async construction code
         Task<bool> task = default!;
@@ -1020,7 +1020,7 @@ public abstract partial class InteractionTest
         var entities = await DoEntityLookup(flags);
         var found = ToEntityCollection(entities);
         expected.Remove(found);
-        await expected.ConvertToStacks(ProtoManager, Factory, Server);
+        await expected.ConvertToStacks(ProtoMan, Factory, Server);
 
         if (expected.Entities.Count == 0)
             return;
@@ -1056,7 +1056,7 @@ public abstract partial class InteractionTest
         LookupFlags flags = LookupFlags.Uncontained | LookupFlags.Contained,
         bool shouldSucceed = true)
     {
-        await spec.ConvertToStack(ProtoManager, Factory, Server);
+        await spec.ConvertToStack(ProtoMan, Factory, Server);
 
         var entities = await DoEntityLookup(flags);
         foreach (var uid in entities)

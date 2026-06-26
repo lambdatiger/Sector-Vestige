@@ -32,7 +32,7 @@ public sealed class DeviceLinkingTest : GameTest
     {
         var pair = Pair;
         var server = pair.Server;
-        var protoMan = server.ProtoManager;
+        var protoMan = server.ProtoMan;
         var compFact = server.ResolveDependency<IComponentFactory>();
         var mapMan = server.ResolveDependency<IMapManager>();
         var mapSys = server.System<SharedMapSystem>();

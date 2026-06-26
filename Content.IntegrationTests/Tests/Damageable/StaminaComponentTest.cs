@@ -18,7 +18,7 @@ public sealed class StaminaComponentTest : GameTest
     {
         var pair = Pair;
         var server = pair.Server;
-        var protoMan = server.ProtoManager;
+        var protoMan = server.ProtoMan;
 
         await server.WaitAssertion(() =>
         {

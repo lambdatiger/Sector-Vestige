@@ -16,7 +16,7 @@ public sealed class ExplosionPrototypeTest : GameTest
     {
         var pair = Pair;
         var server = pair.Server;
-        var protoMan = server.ProtoManager;
+        var protoMan = server.ProtoMan;
 
         var proto = protoMan.Index<ExplosionPrototype>(protoKey);
 
