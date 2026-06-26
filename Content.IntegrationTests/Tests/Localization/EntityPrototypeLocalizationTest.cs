@@ -21,7 +21,7 @@ public sealed class EntityPrototypeLocalizationTest : GameTest
     {
         var pair = Pair;
         var server = pair.Server;
-        var protoMan = server.ProtoMan;
+        var protoMan = server.ProtoManager;
         var locMan = server.ResolveDependency<ILocalizationManager>();
 
         var protos = protoMan.EnumeratePrototypes<EntityPrototype>();

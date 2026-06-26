@@ -103,7 +103,7 @@ public sealed class HumanoidProfileTests : GameTest
             Assert.That(humanoidComponent.Age, Is.GreaterThanOrEqualTo(proto.MinAge), $"Expected age is below the minimum age limit! Current: {humanoidComponent.Age} Min: {proto.MinAge}");
             Assert.That(proto.Sexes.Contains(humanoidComponent.Sex), Is.True, $"Character has sex not found in the species prototype! Current: {humanoidComponent.Sex}");
             Assert.That(humanoidComponent.Species, Is.EqualTo(species), $"Species does not match! Expected: {species} Current: {humanoidComponent.Species}");
-            var strategy = Server.ProtoMan.Index(proto.SkinColoration).Strategy;
+            var strategy = Server.ProtoManager.Index(proto.SkinColoration).Strategy;
             Assert.That(strategy.VerifySkinColor(profile.Appearance.SkinColor, out var reason), Is.True, $"Failed to verify the skin color from strategy {strategy}. Reason: {reason}");
 
             AssertValidProfile((body, humanoidComponent), profile);
@@ -170,13 +170,13 @@ public sealed class HumanoidProfileTests : GameTest
         {
             // Needed to avoid access restrictions
             var data = markingOrgan.MarkingData;
-            var groupProto = Server.ProtoMan.Index(data.Group);
+            var groupProto = Server.ProtoManager.Index(data.Group);
             var counts = new Dictionary<HumanoidVisualLayers, int>();
             var freeMarkings = new List<Marking>();
 
             foreach (var marking in markingOrgan.AppliedMarkings)
             {
-                var markingProto = Server.ProtoMan.Index(marking.MarkingId);
+                var markingProto = Server.ProtoManager.Index(marking.MarkingId);
 
                 Assert.That(markingProto.Sprites.Count, Is.EqualTo(marking.MarkingColors.Count), $"Organ {uid} has invald amount of marking sprites! Expected: {marking.MarkingColors.Count} Current: {markingProto.Sprites.Count}");
                 Assert.That(_markingManager.CanBeApplied(data.Group, profile.Sex, markingProto), Is.True, $"Marking {markingProto.ID} cannot be applied to group {data.Group.Id} with sex {profile.Sex}");
@@ -201,7 +201,7 @@ public sealed class HumanoidProfileTests : GameTest
                 if (freeMarkings.Contains(marking))
                     continue;
 
-                var markingProto = Server.ProtoMan.Index(marking.MarkingId);
+                var markingProto = Server.ProtoManager.Index(marking.MarkingId);
 
                 Assert.That(marking.MarkingColors,
                     Is.EqualTo(MarkingColoring.GetMarkingLayerColors(markingProto, profile.Appearance.SkinColor, profile.Appearance.EyeColor, markingOrgan.AppliedMarkings)));

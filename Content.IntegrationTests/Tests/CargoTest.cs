@@ -101,7 +101,7 @@ public sealed class CargoTest : GameTest
         var pair = Pair;
         var server = pair.Server;
 
-        var protoManager = server.ProtoMan;
+        var protoManager = server.ProtoManager;
         var compFact = server.ResolveDependency<IComponentFactory>();
 
         await server.WaitAssertion(() =>

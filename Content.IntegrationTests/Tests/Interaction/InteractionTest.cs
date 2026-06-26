@@ -106,7 +106,7 @@ public abstract partial class InteractionTest
     protected IEntityManager SEntMan = default!;
     protected ITileDefinitionManager TileMan = default!;
     protected IMapManager MapMan = default!;
-    protected IPrototypeManager ProtoMan = default!;
+    protected IPrototypeManager ProtoManager = default!;
     protected IGameTiming STiming = default!;
     protected IComponentFactory Factory = default!;
     protected HandsSystem HandSys = default!;
@@ -181,7 +181,7 @@ public abstract partial class InteractionTest
         SEntMan = Server.ResolveDependency<IEntityManager>();
         TileMan = Server.ResolveDependency<ITileDefinitionManager>();
         MapMan = Server.ResolveDependency<IMapManager>();
-        ProtoMan = Server.ResolveDependency<IPrototypeManager>();
+        ProtoManager = Server.ResolveDependency<IPrototypeManager>();
         Factory = Server.ResolveDependency<IComponentFactory>();
         STiming = Server.ResolveDependency<IGameTiming>();
         SLogger = Server.ResolveDependency<ILogManager>().RootSawmill;

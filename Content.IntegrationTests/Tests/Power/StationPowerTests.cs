@@ -67,7 +67,7 @@ public sealed class StationPowerTests : GameTest
         var server = pair.Server;
 
         var entMan = server.EntMan;
-        var protoMan = server.ProtoMan;
+        var protoMan = server.ProtoManager;
         var ticker = entMan.System<GameTicker>();
         var batterySys = entMan.System<BatterySystem>();
 
@@ -125,7 +125,7 @@ public sealed class StationPowerTests : GameTest
         var server = pair.Server;
 
         var entMan = server.EntMan;
-        var protoMan = server.ProtoMan;
+        var protoMan = server.ProtoManager;
         var ticker = entMan.System<GameTicker>();
         var xform = entMan.System<TransformSystem>();
 

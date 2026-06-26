@@ -48,7 +48,7 @@ public sealed class GrilleWindowConstruction : InteractionTest
         // Further construction attempts fail - blocked by first entity interaction.
         await Client.WaitPost(() =>
         {
-            var proto = ProtoMan.Index<ConstructionPrototype>(second);
+            var proto = ProtoManager.Index<ConstructionPrototype>(second);
             Assert.That(CConSys.TrySpawnGhost(proto, CEntMan.GetCoordinates(TargetCoords), Direction.South, out _), Is.False);
         });
     }

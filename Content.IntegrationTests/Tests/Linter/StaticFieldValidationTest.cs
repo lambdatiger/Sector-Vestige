@@ -18,7 +18,7 @@ public sealed class StaticFieldValidationTest : GameTest
     public async Task TestStaticFieldValidation()
     {
         var pair = Pair;
-        var protoMan = pair.Server.ProtoMan;
+        var protoMan = pair.Server.ProtoManager;
 
         var protos = new Dictionary<Type, HashSet<string>>();
         foreach (var kind in protoMan.EnumeratePrototypeKinds())

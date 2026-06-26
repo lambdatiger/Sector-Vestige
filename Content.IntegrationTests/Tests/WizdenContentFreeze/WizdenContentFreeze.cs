@@ -22,7 +22,7 @@ public sealed class WizdenContentFreeze : GameTest
         var pair = Pair;
         var server = pair.Server;
 
-        var protoMan = server.ProtoMan;
+        var protoMan = server.ProtoManager;
 
         var recipesCount = protoMan.Count<FoodRecipePrototype>();
         var recipesLimit = 218;

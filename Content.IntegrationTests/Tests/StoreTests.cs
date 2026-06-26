@@ -59,7 +59,7 @@ public sealed class StoreTests : GameTest
         var entManager = server.ResolveDependency<IEntityManager>();
 
         var mapSystem = server.System<SharedMapSystem>();
-        var prototypeManager = server.ProtoMan;
+        var prototypeManager = server.ProtoManager;
 
         Assert.That(mapSystem.IsInitialized(testMap.MapId));
 

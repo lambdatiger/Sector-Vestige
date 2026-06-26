@@ -15,7 +15,7 @@ public sealed class ConstantsTest : GameTest
         var pair = Pair;
         var server = pair.Server;
         var entityManager = server.EntMan;
-        var protoManager = server.ProtoMan;
+        var protoManager = server.ProtoManager;
 
         await server.WaitPost(() =>
         {

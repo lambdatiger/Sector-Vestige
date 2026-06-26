@@ -91,7 +91,7 @@ public abstract partial class InteractionTest
     protected async Task<EntityUid> SpawnEntity(EntitySpecifier spec, EntityCoordinates coords)
     {
         EntityUid uid = default!;
-        if (ProtoMan.TryIndex<StackPrototype>(spec.Prototype, out var stackProto))
+        if (ProtoManager.TryIndex<StackPrototype>(spec.Prototype, out var stackProto))
         {
             await Server.WaitPost(() =>
             {
@@ -101,7 +101,7 @@ public abstract partial class InteractionTest
             return uid;
         }
 
-        if (!ProtoMan.TryIndex<EntityPrototype>(spec.Prototype, out var entProto))
+        if (!ProtoManager.TryIndex<EntityPrototype>(spec.Prototype, out var entProto))
         {
             Assert.Fail($"Unknown prototype: {spec.Prototype}");
             return default;

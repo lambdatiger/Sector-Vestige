@@ -29,7 +29,7 @@ public sealed class RetractableItemActionTest : InteractionTest
             Assert.That(heldItem, Is.Null, $"Player is holding an item ({SEntMan.ToPrettyString(heldItem)}) at start of test.");
 
             // Inspect the action prototype to find the item it spawns
-            var armBladeActionProto = ProtoMan.Index(ArmBladeActionProtoId);
+            var armBladeActionProto = ProtoManager.Index(ArmBladeActionProtoId);
 
             // Find the component
             Assert.That(armBladeActionProto.TryGetComponent<RetractableItemActionComponent>(out var actionComp, SEntMan.ComponentFactory));

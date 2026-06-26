@@ -15,7 +15,7 @@ public sealed class CloningSettingsPrototypeTest : GameTest
     {
         var pair = Pair;
         var server = pair.Server;
-        var protoMan = server.ProtoMan;
+        var protoMan = server.ProtoManager;
         var compFactory = server.EntMan.ComponentFactory;
 
         await server.WaitAssertion(() =>

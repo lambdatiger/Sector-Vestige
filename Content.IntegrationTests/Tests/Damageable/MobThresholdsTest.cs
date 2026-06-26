@@ -18,7 +18,7 @@ public sealed class MobThresholdsTest : GameTest
         var pair = Pair;
         var server = pair.Server;
 
-        var protoMan = server.ProtoMan;
+        var protoMan = server.ProtoManager;
 
         Assert.Multiple(() =>
         {

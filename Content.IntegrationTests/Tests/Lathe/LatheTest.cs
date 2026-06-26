@@ -23,7 +23,7 @@ public sealed class LatheTest : GameTest
         var mapData = await pair.CreateTestMap();
 
         var entMan = server.EntMan;
-        var protoMan = server.ProtoMan;
+        var protoMan = server.ProtoManager;
         var compFactory = server.ResolveDependency<IComponentFactory>();
         var materialStorageSystem = server.System<SharedMaterialStorageSystem>();
         var whitelistSystem = server.System<EntityWhitelistSystem>();
@@ -120,7 +120,7 @@ public sealed class LatheTest : GameTest
         var pair = Pair;
 
         var server = pair.Server;
-        var proto = server.ProtoMan;
+        var proto = server.ProtoManager;
 
         Assert.Multiple(() =>
         {

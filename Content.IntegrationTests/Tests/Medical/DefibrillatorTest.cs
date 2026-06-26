@@ -53,8 +53,8 @@ public sealed class DefibrillatorTest : InteractionTest
         // Get the damage needed to kill or crit the target.
         var critThreshold = mobThresholdsSystem.GetThresholdForState(STarget.Value, MobState.Critical);
         var deathThreshold = mobThresholdsSystem.GetThresholdForState(STarget.Value, MobState.Dead);
-        var critDamage = new DamageSpecifier(ProtoMan.Index(BluntDamageTypeId), (critThreshold + deathThreshold) / 2);
-        var deathDamage = new DamageSpecifier(ProtoMan.Index(BluntDamageTypeId), deathThreshold);
+        var critDamage = new DamageSpecifier(ProtoManager.Index(BluntDamageTypeId), (critThreshold + deathThreshold) / 2);
+        var deathDamage = new DamageSpecifier(ProtoManager.Index(BluntDamageTypeId), deathThreshold);
 
         // Kill the target by applying blunt damage.
         await Server.WaitPost(() => damageableSystem.SetDamage((STarget.Value, targetDamageable), deathDamage));
