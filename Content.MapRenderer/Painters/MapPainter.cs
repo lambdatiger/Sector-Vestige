@@ -114,7 +114,7 @@ namespace Content.MapRenderer.Painters
             string fullName;
             if (_map is RenderMapPrototype prototype)
             {
-                fullName = _pair.Server.ProtoManager.Index(prototype.Prototype).MapName;
+                fullName = _pair.Server.ProtoMan.Index(prototype.Prototype).MapName;
             }
             else
             {

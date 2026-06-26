@@ -43,7 +43,7 @@ public class SpawnEquipDeleteBenchmark
         var mapData = await _pair.CreateTestMap();
         _coords = mapData.GridCoords;
         _spawnSys = server.System<StationSpawningSystem>();
-        _gear = server.ProtoManager.Index(CaptainStartingGear);
+        _gear = server.ProtoMan.Index(CaptainStartingGear);
     }
 
     [GlobalCleanup]
