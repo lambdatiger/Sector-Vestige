@@ -7,7 +7,7 @@
 # NanoTrasen R&D - Recovery & Containment Team (RCT) ghost roles + spawners.
 # Spawn these like ERT: admin Spawn Entities menu, search "RCTRole".
 # Squad doctrine (see faction design doc): two named command-tier roles
-# (Field Lead, Proctor) and two operative-tier roles (Containment Tech, Operative).
+# (RCT Leader, Proctor) and two operative-tier roles (Containment Tech, Operative).
 # Containment Tech is the reason it's a recovery team and not a deathsquad.
 
 # Shared base for NanoTrasen R&D event humanoids (Researchers, Agents, RCT).
@@ -22,16 +22,17 @@
     - DeathRattleImplantCentcomm
 
 # =========================================================================
-# Field Lead - squad commander. Recover-vs-abort call, override authority,
-# contact with the Directorate. Command tier (RCT Leader job).
+# RCT Leader - the team's commanding officer. Owns the operation end to end,
+# holds final recover-or-abort authority, and answers only to the Directorate.
+# Command tier (RCT Leader job).
 # =========================================================================
 - type: randomHumanoidSettings
-  id: RCTFieldLead
+  id: RCTLeader
   parent: EventHumanoidCentcomm
   components:
     - type: GhostRole
-      name: ghost-role-information-rct-field-lead-name
-      description: ghost-role-information-rct-field-lead-description
+      name: ghost-role-information-rct-leader-name
+      description: ghost-role-information-rct-leader-description
       rules: ghost-role-information-nonantagonist-rules
       raffle:
         settings: short
@@ -42,34 +43,34 @@
     - type: RandomMetadata
       nameSegments:
       - NamesMilitaryLast
-      nameFormat: name-format-rct-field-lead
+      nameFormat: name-format-rct-leader
 
 - type: randomHumanoidSettings
-  id: RCTFieldLeadEVA
-  parent: RCTFieldLead
+  id: RCTLeaderEVA
+  parent: RCTLeader
   components:
     - type: Loadout
       prototypes: [ RCTLeaderGearEVA ]
       roleLoadout: [ RoleSurvivalMilitaryDouble ]
 
 - type: entity
-  id: RandomHumanoidSpawnerRCTFieldLead
-  name: RCT field lead
-  suffix: RCTRole, Field Lead
+  id: RandomHumanoidSpawnerRCTLeader
+  name: RCT leader
+  suffix: RCTRole, Leader
   components:
     - type: Sprite
-      sprite: _SV/Clothing/OuterClothing/Hardsuits/RCT.rsi
+      sprite: _SV/Clothing/OuterClothing/Hardsuits/rnd_rct_hardsuit.rsi
       state: icon
     - type: RandomHumanoidSpawner
-      settings: RCTFieldLead
+      settings: RCTLeader
 
 - type: entity
-  id: RandomHumanoidSpawnerRCTFieldLeadEVA
-  parent: RandomHumanoidSpawnerRCTFieldLead
-  suffix: RCTRole, Field Lead, EVA
+  id: RandomHumanoidSpawnerRCTLeaderEVA
+  parent: RandomHumanoidSpawnerRCTLeader
+  suffix: RCTRole, Leader, EVA
   components:
     - type: RandomHumanoidSpawner
-      settings: RCTFieldLeadEVA
+      settings: RCTLeaderEVA
 
 # =========================================================================
 # Containment Tech - stabilises hazards, deploys containment, IDs the asset.
@@ -108,7 +109,7 @@
   suffix: RCTRole, Containment Tech
   components:
     - type: Sprite
-      sprite: _SV/Clothing/OuterClothing/Hardsuits/RCT.rsi
+      sprite: _SV/Clothing/OuterClothing/Hardsuits/rnd_rct_hardsuit.rsi
       state: icon
     - type: RandomHumanoidSpawner
       settings: RCTContainmentTech
@@ -158,7 +159,7 @@
   suffix: RCTRole, Operative
   components:
     - type: Sprite
-      sprite: _SV/Clothing/OuterClothing/Hardsuits/RCT.rsi
+      sprite: _SV/Clothing/OuterClothing/Hardsuits/rnd_rct_hardsuit.rsi
       state: icon
     - type: RandomHumanoidSpawner
       settings: RCTOperative
@@ -208,7 +209,7 @@
   suffix: RCTRole, Proctor
   components:
     - type: Sprite
-      sprite: _SV/Clothing/OuterClothing/Hardsuits/RCT.rsi
+      sprite: _SV/Clothing/OuterClothing/Hardsuits/rnd_rct_hardsuit.rsi
       state: icon
     - type: RandomHumanoidSpawner
       settings: RCTProctor

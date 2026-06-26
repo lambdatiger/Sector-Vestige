@@ -8,7 +8,7 @@
   parent: JobIcon
   id: JobIconRCTLeader
   icon:
-    sprite: /Textures/_SV/Interface/Misc/R&D_icons.rsi
+    sprite: /Textures/_SV/Interface/Misc/rnd_icons.rsi
     state: RCTLeader
   jobName: job-name-rctleader
 
@@ -16,6 +16,6 @@
   parent: JobIcon
   id: JobIconRCT
   icon:
-    sprite: /Textures/_SV/Interface/Misc/R&D_icons.rsi
+    sprite: /Textures/_SV/Interface/Misc/rnd_icons.rsi
     state: RCT
   jobName: job-name-rct

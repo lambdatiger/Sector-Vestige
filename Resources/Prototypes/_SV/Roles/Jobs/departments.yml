@@ -23,4 +23,8 @@
   roles:
   - RCTLeader
   - RCTMember
+  - FieldResearcher
+  - FirstDirector
+  - SecondDirector
+  - ThirdDirector
   weight: 115

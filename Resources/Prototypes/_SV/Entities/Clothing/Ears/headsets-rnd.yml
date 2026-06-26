@@ -4,9 +4,8 @@
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
-# NanoTrasen R&D headset - tuned to the Directorate's private channel.
 - type: entity
-  parent: [ ClothingHeadset, BaseCentcommContraband ]
+  parent: [ ClothingHeadset, BaseRnDContraband ]
   id: ClothingHeadsetRnD
   name: R&D headset
   description: A headset used by the Directorate of Research & Development. Keyed to channels well above your clearance.
@@ -16,15 +15,14 @@
       key_slots:
       - EncryptionKeyRnD
       - EncryptionKeyCommon
-      - EncryptionKeyHailing #Sector Vestige
+      - EncryptionKeyHailing
   - type: Sprite
-    sprite: _SV/Clothing/Ears/Headsets/R&D.rsi
+    sprite: _SV/Clothing/Ears/Headsets/rnd_headset.rsi
   - type: Clothing
-    sprite: _SV/Clothing/Ears/Headsets/R&D.rsi
+    sprite: _SV/Clothing/Ears/Headsets/rnd_headset.rsi
 
-# Over-ear variant - lower profile, for covert Field Agents / discreet wear.
 - type: entity
-  parent: [ ClothingHeadsetAlt, BaseCentcommContraband ]
+  parent: [ ClothingHeadsetAlt, BaseRnDContraband ]
   id: ClothingHeadsetAltRnD
   name: R&D over-ear headset
   description: A discreet over-ear headset used by the Directorate of Research & Development.
@@ -34,8 +32,8 @@
       key_slots:
       - EncryptionKeyRnD
       - EncryptionKeyCommon
-      - EncryptionKeyHailing #Sector Vestige
+      - EncryptionKeyHailing
   - type: Sprite
-    sprite: _SV/Clothing/Ears/Headsets/R&D.rsi
+    sprite: _SV/Clothing/Ears/Headsets/rnd_headset.rsi
   - type: Clothing
-    sprite: _SV/Clothing/Ears/Headsets/R&D.rsi
+    sprite: _SV/Clothing/Ears/Headsets/rnd_headset.rsi

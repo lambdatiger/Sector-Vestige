@@ -12,8 +12,8 @@
   description: A protective hardsuit worn by the recovery and containment team.
   components:
   - type: Sprite
-    sprite: _SV/Clothing/OuterClothing/Hardsuits/RCT.rsi
+    sprite: _SV/Clothing/OuterClothing/Hardsuits/rnd_rct_hardsuit.rsi
   - type: Clothing
-    sprite: _SV/Clothing/OuterClothing/Hardsuits/RCT.rsi
+    sprite: _SV/Clothing/OuterClothing/Hardsuits/rnd_rct_hardsuit.rsi
   - type: ToggleableClothing
     clothingPrototype: ClothingHeadHelmetHardsuitRCT

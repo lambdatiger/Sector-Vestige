@@ -12,6 +12,18 @@ job-description-rctleader = Lead the Recovery & Containment Team in the field. R
 job-name-rct = RCT Operative
 job-description-rct = Deploy with the Recovery & Containment Team to secure assets and contain disasters. Follow the team leader, preserve the asset, and remember that interference is merely an inefficiency.
 
+# NT R&D - Directorate research staff
+job-name-fieldresearcher = Field Researcher
+job-description-fieldresearcher = Deploy with the Directorate to study recovered assets in the field. Document the anomaly, keep the specimen stable, and report to the Directors - the data outlives the venue.
+
+# NT R&D - Directorate command
+job-name-firstdirector = First Director
+job-description-firstdirector = Command NanoTrasen's Directorate of Research & Development. Set the objectives, authorise asset recovery, and answer only to Central Command.
+job-name-seconddirector = Second Director
+job-description-seconddirector = Second in the Directorate's chain of command. Oversee research operations and deputise for the First Director.
+job-name-thirddirector = Third Director
+job-description-thirddirector = Junior member of the Directorate's command council. Coordinate field research teams and run day-to-day operations.
+
 # R&D supervisor
 job-supervisors-directorate = the Directorate
 
@@ -20,3 +32,7 @@ JobSeniorCourier = Senior Courier
 JobSVMagistrate = Magistrate
 JobRCTLeader = RCT Leader
 JobRCTMember = RCT Operative
+JobFieldResearcher = Field Researcher
+JobFirstDirector = First Director
+JobSecondDirector = Second Director
+JobThirdDirector = Third Director

@@ -39,95 +39,52 @@
 
 # --- Starting gear ---
 
-# Leader, overt (no hardsuit) - house tone openly worn
-- type: startingGear
-  id: RCTLeaderGear
-  equipment:
-    jumpsuit: ClothingUniformJumpsuitCentcomOfficer
-    back: ClothingBackpack
-    shoes: ClothingShoesBootsCombatFilled
-    eyes: ClothingEyesGlassesCommand
-    gloves: ClothingHandsGlovesCombat
-    ears: ClothingHeadsetRnD
-    id: RCTLeaderPDA
-    belt: ClothingBeltMilitaryWebbing
-    neck: ClothingNeckBronzeheart
-  storage:
-    back:
-    - WeaponEnergyMagnum # TODO: replace with experimental tesla suite (Arc Caster / Tesla Cannon) once built
-    - WeaponDisabler
-    - Stunbaton
-    - Handcuffs
-    - FlashlightSeclite
-
-# Leader, armed EVA (hardsuit) - the loadout the job actually spawns with
-- type: startingGear
-  id: RCTLeaderGearEVA
-  equipment:
-    jumpsuit: ClothingUniformJumpsuitCentcomOfficer
-    back: ClothingBackpack
-    shoes: ClothingShoesBootsCombatFilled
-    mask: ClothingMaskGasERT
-    eyes: ClothingEyesHudMedSec
-    gloves: ClothingHandsGlovesCombat
-    ears: ClothingHeadsetRnD
-    id: RCTLeaderPDA
-    outerClothing: ClothingOuterHardsuitRCT
-    belt: ClothingBeltMilitaryWebbing
-    neck: ClothingNeckBronzeheart
-    suitstorage: WeaponEnergyMagnum # TODO: replace with experimental tesla suite (Arc Caster / Tesla Cannon) once built
-  storage:
-    back:
-    - WeaponDisabler
-    - Stunbaton
-    - Handcuffs
-    - Handcuffs
-    - DoubleEmergencyOxygenTankFilled
-    - MedkitCombatFilled
-    - PowerCellHigh
-    - FlashlightSeclite
-
-# Operative, overt (no hardsuit)
+# Operative, overt (no hardsuit) - the baseline kit every RCT member carries.
+# The leader and EVA sets below inherit this and only add their tier extras.
 - type: startingGear
   id: RCTMemberGear
   equipment:
-    jumpsuit: ClothingUniformJumpsuitOperative
-    back: ClothingBackpack
+    jumpsuit: ClothingUniformJumpsuitRnDRCT
+    back: ClothingBackpackRnD
     shoes: ClothingShoesBootsCombatFilled
-    eyes: ClothingEyesHudMedSec
+    eyes: ClothingEyesGogglesRnDRCT
     gloves: ClothingHandsGlovesCombat
     ears: ClothingHeadsetRnD
     id: RCTPDA
-    belt: ClothingBeltMilitaryWebbing
+    belt: ClothingBeltMilitaryWebbingRCT
+    suitstorage: WeaponSubMachineGunLocust # TODO: replace with experimental tesla suite (Arc Caster) once built
   storage:
-    back:
-    - WeaponLaserGun # TODO: replace with experimental tesla suite (Arc Caster) once built
-    - WeaponDisabler
+    belt:
+    - MagazineLocust
+    - MagazineLocust
+    - MagazineLocust
+    - MagazineLocust
     - Stunbaton
     - Handcuffs
     - FlashlightSeclite
 
-# Operative, armed EVA (hardsuit) - the loadout the job actually spawns with
+# Operative, armed EVA (hardsuit) - the loadout the job actually spawns with.
+# Adds hardsuit + gas mask + EVA survival; inherits the rest from RCTMemberGear.
 - type: startingGear
   id: RCTMemberGearEVA
+  parent: RCTMemberGear
   equipment:
-    jumpsuit: ClothingUniformJumpsuitOperative
-    back: ClothingBackpack
-    shoes: ClothingShoesBootsCombatFilled
-    mask: ClothingMaskGasERT
-    eyes: ClothingEyesHudMedSec
-    gloves: ClothingHandsGlovesCombat
-    ears: ClothingHeadsetRnD
-    id: RCTPDA
+    mask: ClothingMaskGasRnDRCT
     outerClothing: ClothingOuterHardsuitRCT
-    belt: ClothingBeltMilitaryWebbing
-    suitstorage: WeaponLaserGun # TODO: replace with experimental tesla suite (Arc Caster) once built
-  storage:
-    back:
-    - WeaponDisabler
-    - Stunbaton
-    - Handcuffs
-    - DoubleEmergencyOxygenTankFilled
-    - MedkitCombatFilled
-    - PowerCellHigh
-    - FlashlightSeclite
+
+# Leader, overt (no hardsuit) - house tone openly worn.
+# Same kit as a member, distinguished only by the leader's PDA and mantle.
+- type: startingGear
+  id: RCTLeaderGear
+  parent: RCTMemberGear
+  equipment:
+    id: RCTLeaderPDA
+    neck: ClothingNeckMantleRnDRCTLeader
+
+# Leader, armed EVA (hardsuit) - the loadout the job actually spawns with.
+- type: startingGear
+  id: RCTLeaderGearEVA
+  parent: RCTMemberGearEVA
+  equipment:
+    id: RCTLeaderPDA
+    neck: ClothingNeckMantleRnDRCTLeader

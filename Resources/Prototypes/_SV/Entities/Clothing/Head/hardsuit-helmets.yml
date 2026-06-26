@@ -12,9 +12,9 @@
   description: A special hardsuit helmet worn by members of an recovery and containment team.
   components:
   - type: Sprite
-    sprite: _SV/Clothing/Head/Hardsuits/RCThelmets/RCT-default.rsi
+    sprite: _SV/Clothing/Head/Hardsuits/rnd_rct_helmets/rnd_rct_helmet_default.rsi
   - type: Clothing
-    sprite: _SV/Clothing/Head/Hardsuits/RCThelmets/RCT-default.rsi
+    sprite: _SV/Clothing/Head/Hardsuits/rnd_rct_helmets/rnd_rct_helmet_default.rsi
   - type: PointLight
     color: "#addbff"
   - type: Armor
