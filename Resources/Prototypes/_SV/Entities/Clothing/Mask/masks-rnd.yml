@@ -6,7 +6,7 @@
 
 # NanoTrasen R&D - Recovery & Containment Team gas mask
 - type: entity
-  parent: [ ClothingMaskGas, ShowSecurityIcons, BaseRnDContraband ]
+  parent: [ ClothingMaskGas, BaseRnDContraband ]
   id: ClothingMaskGasRnDRCT
   name: RCT gas mask
   description: A reinforced gas mask issued to NanoTrasen's Recovery & Containment Teams.
@@ -23,8 +23,6 @@
     - Hair
     - Snout
     hideOnToggle: true
-  - type: FlashImmunity
-  - type: EyeProtection
   - type: Armor
     modifiers:
       coefficients:
