@@ -74,6 +74,8 @@
     containers:
       rmc-vehicle-pilot: !type:ContainerSlot
   - type: Damageable
+  - type: Injurable
+    damageContainer: Inorganic
   - type: Strap
   - type: Destructible
     thresholds:
