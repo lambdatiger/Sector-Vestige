@@ -58,6 +58,7 @@ using Robust.Shared.Physics.Components;
 using Robust.Shared.Physics.Events;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Utility;
+using Content.Shared._RMC14.Buckle;
 
 namespace Content.Shared.Buckle;
 
@@ -221,8 +222,11 @@ public abstract partial class SharedBuckleSystem
 
     private void OnBuckleUpdateCanMove(EntityUid uid, BuckleComponent component, UpdateCanMoveEvent args)
     {
-        if (component.Buckled &&
-            !HasComp<VehicleComponent>(component.BuckledTo)) // buckle+vehicle shitcode
+        // RMC14 buckled movement system
+        if (HasComp<RMCAllowStrapMovementComponent>(component.BuckledTo))
+            return;
+        // RMC14 end
+        if (component.Buckled)
             args.Cancel();
     }
 
