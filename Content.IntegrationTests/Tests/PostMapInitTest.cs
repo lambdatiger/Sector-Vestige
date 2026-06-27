@@ -69,6 +69,17 @@ namespace Content.IntegrationTests.Tests
             {"/Maps/Shuttles/ShuttleEvent/syndie_evacpod.yml", ["RubberStampSyndicate"]},
             {"/Maps/Shuttles/ShuttleEvent/cruiser.yml", ["ShuttleGunPerforator"]},
             {"/Maps/Shuttles/ShuttleEvent/instigator.yml", ["ShuttleGunFriendship"]},
+            // SV - Begin
+            {"/Maps/Misc/terminal.yml", ["RubberStampCentcom"]},
+            {"/Maps/_SV/cluster.yml", ["RubberStampMime"]},
+            {"/Maps/_Harmony/Nonstations/listening-outpost.yml", [
+                "RubberStampCaptain", "RubberStampCE", "RubberStampChaplain", "RubberStampClown",
+                "RubberStampCMO", "RubberStampDetective", "RubberStampHop", "RubberStampHos",
+                "RubberStampMime", "RubberStampPsychologist", "RubberStampQm", "RubberStampRd",
+                "RubberStampSyndicate", "RubberStampWarden"]},
+            {"/Maps/_LateStation/shuttles/avenger.yml", ["ShuttleGunDuster", "ShuttleGunSvalinnMachineGun"]},
+            {"/Maps/_SV/Shuttles/Syndicate/big/Mamba.yml", ["ShuttleGunDuster", "ShuttleGunDusterCircuitboard", "RubberStampSyndicate"]},
+            // SV - End
         };
 
         /// <summary>
