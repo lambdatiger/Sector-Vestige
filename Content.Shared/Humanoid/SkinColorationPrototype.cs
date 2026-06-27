@@ -368,8 +368,7 @@ public sealed partial class HueNodeClampedHsvColoration : ISkinColorationStrateg
     {
         // Sector Vestige - start: skin colors are stored as 8-bit RGB (HumanoidCharacterAppearance.ClampColor), which
         // perturbs the recovered HSV channels. Saturation precision loss scales with 1/value, so the original fixed
-        // epsilon below was too tight for low-value species (Vulpkanin, value floor 0.2) and intermittently rejected
-        // colors ClosestSkinColor had just produced - this was the EnsureValidRandomSpecies("Vulpkanin") heisenbug.
+        // epsilon below was too tight for dark tones and would reject colors ClosestSkinColor had just produced.
         // Verifying against ClosestSkinColor's own output (within quantization distance) sidesteps that entirely.
         //
         // Original upstream implementation:

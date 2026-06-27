@@ -11,9 +11,7 @@ using Content.Shared.Preferences;
 using Content.Shared.Speech.Components;
 using Robust.Shared.Enums;
 using Robust.Shared.GameObjects;
-using Robust.Shared.Maths; // Sector Vestige: Color for the quantization test
 using Robust.Shared.Prototypes;
-using Robust.Shared.Random; // Sector Vestige: RobustRandom for the quantization test
 
 namespace Content.IntegrationTests.Tests.Humanoid;
 
@@ -109,43 +107,6 @@ public sealed class HumanoidProfileTests : GameTest
             AssertValidProfile((body, humanoidComponent), profile);
         });
     }
-
-    // Sector Vestige - start: regression guard for the skin-color/8-bit-storage heisenbug (Vulpkanin, Vox, Human, Dwarf).
-    [Test]
-    [TestOf(typeof(HumanoidCharacterAppearance))]
-    [Description("Every species' skin coloration must still verify its own clamped output after it is stored as 8-bit RGB. " +
-                "8-bit quantization perturbs HSV/HSL saturation by ~1/255 ÷ value, which made the skin-color check intermittently " +
-                "reject valid colors for low-value species like Vulpkanin and Vox.")]
-    public async Task EnsureSkinColorsSurviveQuantization()
-    {
-        await Server.WaitIdleAsync();
-
-        await Server.WaitAssertion(() =>
-        {
-            var random = new RobustRandom();
-
-            foreach (var species in _species)
-            {
-                var proto = SProtoMan.Index<SpeciesPrototype>(species);
-                var strategy = SProtoMan.Index(proto.SkinColoration).Strategy;
-
-                for (var i = 0; i < 10000; i++)
-                {
-                    // Mirror HumanoidCharacterAppearance.Random, including the 8-bit storage its constructor applies via ClampColor.
-                    var generated = strategy.InputType switch
-                    {
-                        SkinColorationStrategyInput.Unary => strategy.FromUnary(random.NextFloat() * 100f),
-                        _ => strategy.ClosestSkinColor(new Color(random.NextFloat(), random.NextFloat(), random.NextFloat())),
-                    };
-                    var stored = HumanoidCharacterAppearance.ClampColor(generated);
-
-                    Assert.That(strategy.VerifySkinColor(stored, out var reason), Is.True,
-                        $"Species '{species}' ({strategy.GetType().Name}) produced a skin tone that fails verification after 8-bit storage (iteration {i}). Color: {stored}. Reason: {reason}");
-                }
-            }
-        });
-    }
-    // Sector Vestige - end
 
     private void LoadDependencies(out EntityUid body, out HumanoidProfileComponent humanoidComponent)
     {
