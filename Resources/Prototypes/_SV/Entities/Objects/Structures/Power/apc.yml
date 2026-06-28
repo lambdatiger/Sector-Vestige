@@ -14,7 +14,7 @@
   components:
   - type: Construction
     graph: APC
-    node: BrokenAPC
+    node: apcBroken
   - type: Sprite
     drawdepth: WallMountedItems
     sprite: Structures/Power/apc.rsi
