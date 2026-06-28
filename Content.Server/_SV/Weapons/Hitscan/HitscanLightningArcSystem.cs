@@ -15,9 +15,9 @@ namespace Content.Server._SV.Weapons.Hitscan;
 /// fires a lightning beam at it and chains to nearby targets. Mirrors HitscanBasicDamageSystem,
 /// which listens for the same <see cref="HitscanRaycastFiredEvent"/>.
 /// </summary>
-public sealed class HitscanLightningArcSystem : EntitySystem
+public sealed partial class HitscanLightningArcSystem : EntitySystem
 {
-    [Dependency] private readonly LightningSystem _lightning = default!;
+    [Dependency] private LightningSystem _lightning = default!;
 
     public override void Initialize()
     {
