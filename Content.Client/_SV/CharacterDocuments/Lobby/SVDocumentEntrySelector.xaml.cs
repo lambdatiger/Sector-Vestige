@@ -43,7 +43,7 @@ public sealed partial class SVDocumentEntrySelector : Control
                 DocContent = string.Empty,
                 DocStamps = new List<CharacterDocumentStamp>(),
             });
-            _editPopup.Open();
+            _editPopup.OpenCentered();
         };
 
         EditButton.OnPressed += _ =>
@@ -55,7 +55,7 @@ public sealed partial class SVDocumentEntrySelector : Control
                 return;
             _editingDocId = _entries[idx].DocID;
             _editPopup.SetContents(_docType, _entries[idx]);
-            _editPopup.Open();
+            _editPopup.OpenCentered();
         };
 
         RemoveButton.OnPressed += _ =>

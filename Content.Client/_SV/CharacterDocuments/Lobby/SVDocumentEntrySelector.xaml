@@ -1,10 +1,10 @@
 <Control xmlns="https://spacestation14.io"
          xmlns:paper="clr-namespace:Content.Client.Paper.UI">
     <BoxContainer Orientation="Horizontal" HorizontalExpand="True" VerticalExpand="True">
-        <!-- Left: list + buttons. Wider than the natural button-strip width so the
-             list dominates the layout — otherwise the preview pane on the right
-             feels disproportionately large when no document is selected. -->
-        <BoxContainer Orientation="Vertical" MinWidth="420" MaxWidth="420" VerticalExpand="True">
+        <!-- Left: list + buttons. Kept narrow so the preview can match the in-world
+             console width within the same overall footprint; the button strip
+             (Add/Edit/Remove/Up/Down) still fits comfortably at this width. -->
+        <BoxContainer Orientation="Vertical" MinWidth="300" MaxWidth="300" VerticalExpand="True">
             <ItemList Name="EntrySelector" HorizontalExpand="True" VerticalExpand="True" MinSize="0 200"/>
             <BoxContainer Orientation="Horizontal">
                 <Button Name="AddButton" StyleClasses="OpenBoth" Text="{Loc 'sv-document-lobby-add'}"/>
@@ -15,8 +15,10 @@
                 <Button Name="DownButton" HorizontalAlignment="Right" StyleClasses="OpenBoth" Text="{Loc 'sv-document-lobby-down'}"/>
             </BoxContainer>
         </BoxContainer>
-        <!-- Right: read-only preview pane — width matches the in-world console paper (460). -->
-        <BoxContainer Orientation="Vertical" MinWidth="460" MaxWidth="460" VerticalExpand="True" Margin="8 0 0 0">
+        <!-- Right: read-only preview pane — width matches the in-world console document
+             pane (580, see CharacterDocumentConsoleWindow.xaml) so authored layouts
+             (dividers, [head] boxes, block-art) wrap identically to the console. -->
+        <BoxContainer Orientation="Vertical" MinWidth="580" MaxWidth="580" VerticalExpand="True" Margin="8 0 0 0">
             <Label Name="PreviewTitleLabel" Text="{Loc 'sv-document-lobby-preview-empty'}" StyleClasses="LabelHeading"/>
             <BoxContainer Orientation="Horizontal" Margin="0 0 0 4">
                 <Label Text="{Loc 'sv-document-lobby-edit-popup-author-label'}" Margin="0 0 4 0"/>
