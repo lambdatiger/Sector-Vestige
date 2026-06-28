@@ -14,19 +14,25 @@
   - type: Item
     size: Large
   - type: Clothing
-    sprite: Objects/Weapons/Guns/Battery/tesla_gun.rsi
+    sprite: _SV/Objects/Weapons/Guns/Experimental/arc_caster.rsi
     quickEquip: false
     slots:
     - Back
     - suitStorage
   - type: Sprite
-    sprite: Objects/Weapons/Guns/Battery/tesla_gun.rsi
+    sprite: _SV/Objects/Weapons/Guns/Experimental/arc_caster.rsi
     layers:
-      - state: base
+      - state: icon
         map: ["enum.GunVisualLayers.Base"]
       - state: mag-unshaded-4
         map: ["enum.GunVisualLayers.MagUnshaded"]
         shader: unshaded
+  # Drives the four mag-unshaded charge states off the inserted cell's charge.
+  # steps: 5 + zeroVisible: false cycles mag-unshaded-1..4 and hides the layer at empty (no mag-unshaded-0 sprite).
+  - type: MagazineVisuals
+    magState: mag
+    steps: 5
+    zeroVisible: false
   - type: Gun
     fireRate: 2
     projectileSpeed: 35
@@ -72,8 +78,8 @@
     deleteOnCollide: true
     damage:
       types:
-        Piercing: 14
-        Shock: 5
+        Piercing: 5
+        Shock: 14
   - type: StaminaDamageOnCollide
     damage: 15
   - type: Tag

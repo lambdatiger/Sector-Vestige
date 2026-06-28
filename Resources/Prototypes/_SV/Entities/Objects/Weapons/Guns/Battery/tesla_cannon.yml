@@ -15,8 +15,9 @@
   components:
   - type: Item
     size: Huge
+  # PLACEHOLDER art - dedicated tesla_cannon.rsi copied from the laser cannon, awaiting final sprites.
   - type: Sprite
-    sprite: Objects/Weapons/Guns/Battery/tesla_gun.rsi
+    sprite: _SV/Objects/Weapons/Guns/Experimental/tesla_cannon.rsi
     layers:
       - state: base
         map: ["enum.GunVisualLayers.Base"]

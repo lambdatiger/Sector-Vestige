@@ -56,13 +56,11 @@
     ears: ClothingHeadsetRnD
     id: RCTPDA
     belt: ClothingBeltMilitaryWebbingRCT
-    suitstorage: WeaponSubMachineGunLocust # TODO: replace with experimental tesla suite (Arc Caster) once built
+    suitstorage: WeaponArcCaster # experimental tesla suite - hurls shock-stun lightning bolts, fed by a self-recharging anomalous cell
   storage:
     belt:
-    - MagazineLocust
-    - MagazineLocust
-    - MagazineLocust
-    - MagazineLocust
+    - PowerCellAnomaly # spare cell for hot-swapping during sustained fire (each self-recharges to full in ~1 min)
+    - PowerCellAnomaly
     - Stunbaton
     - Handcuffs
     - FlashlightSeclite
@@ -72,6 +70,30 @@
 - type: startingGear
   id: RCTMemberGearEVA
   parent: RCTMemberGear
+  equipment:
+    mask: ClothingMaskGasRnDRCT
+    outerClothing: ClothingOuterHardsuitRCT
+
+# Heavy, overt (no hardsuit) - the fire-support variant of the operative kit.
+# Swaps the standard backpack for the tesla cannon's reactor pack (which IS the cannon's
+# ammo source) and carries the cannon in suit storage instead of the arc caster.
+# The belt drops the arc caster's spare cells - the cannon is fed entirely by the back pack.
+- type: startingGear
+  id: RCTMemberGearHeavy
+  parent: RCTMemberGear
+  equipment:
+    back: ClothingBackpackTeslaCannon
+    suitstorage: WeaponTeslaCannon
+  storage:
+    belt:
+    - Stunbaton
+    - Handcuffs
+    - FlashlightSeclite
+
+# Heavy, armed EVA (hardsuit) - the loadout the heavy ghost role actually spawns with.
+- type: startingGear
+  id: RCTMemberGearHeavyEVA
+  parent: RCTMemberGearHeavy
   equipment:
     mask: ClothingMaskGasRnDRCT
     outerClothing: ClothingOuterHardsuitRCT

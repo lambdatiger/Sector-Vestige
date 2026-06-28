@@ -172,6 +172,42 @@
     - type: RandomHumanoidSpawner
       settings: RCTOperativeEVA
 
+# Heavy operative - NOT a separate role: it's the Operative above with a different kit.
+# Inherits the Operative's ghost-role identity and RC-code naming and only swaps the
+# loadout - dropping the arc caster for the experimental tesla cannon + back-mounted
+# reactor pack (hitscan lightning that arcs between targets). Still an RCT Operative.
+- type: randomHumanoidSettings
+  id: RCTOperativeHeavy
+  parent: RCTOperative
+  components:
+    - type: Loadout
+      prototypes: [ RCTMemberGearHeavy ]
+      roleLoadout: [ RoleSurvivalMilitaryDouble ]
+
+- type: randomHumanoidSettings
+  id: RCTOperativeHeavyEVA
+  parent: RCTOperative
+  components:
+    - type: Loadout
+      prototypes: [ RCTMemberGearHeavyEVA ]
+      roleLoadout: [ RoleSurvivalMilitaryDouble ]
+
+- type: entity
+  id: RandomHumanoidSpawnerRCTOperativeHeavy
+  parent: RandomHumanoidSpawnerRCTOperative
+  suffix: RCTRole, Operative, Heavy
+  components:
+    - type: RandomHumanoidSpawner
+      settings: RCTOperativeHeavy
+
+- type: entity
+  id: RandomHumanoidSpawnerRCTOperativeHeavyEVA
+  parent: RandomHumanoidSpawnerRCTOperativeHeavy
+  suffix: RCTRole, Operative, Heavy, EVA
+  components:
+    - type: RandomHumanoidSpawner
+      settings: RCTOperativeHeavyEVA
+
 # =========================================================================
 # Proctor - optional 4th member when the risk is political: enforces
 # discipline, blocks unilateral destroy-calls. Command tier (RCT Leader job).
