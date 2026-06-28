@@ -12,6 +12,9 @@
   placement:
     mode: SnapgridCenter
   components:
+  - type: Construction
+    graph: APC
+    node: BrokenAPC
   - type: Sprite
     drawdepth: WallMountedItems
     sprite: Structures/Power/apc.rsi

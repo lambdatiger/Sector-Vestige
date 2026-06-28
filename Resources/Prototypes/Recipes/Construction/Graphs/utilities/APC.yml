@@ -45,3 +45,17 @@
           steps:
             - tool: Prying
               doAfter: 4
+
+    #SV: Begin - Broken APC
+    - node: apcBroken
+      entity: BrokenAPC
+      edges:
+      - to: start
+        completed:
+        - !type:GivePrototype
+          prototype: SheetSteel1
+        - !type:DeleteEntity
+        steps:
+          - tool: Welding
+            doAfter: 4
+    #SV: End - Broken APC
