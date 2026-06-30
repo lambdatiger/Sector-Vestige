@@ -1897,3 +1897,11 @@ Entries:
       message: Updated internal wheelchair functionality to be less buggy
   id: 261
   time: '2026-06-30T07:04:57.0000000+00:00'
+- author: OnyxTheBrave
+  changes:
+    - type: Fix
+      message: You can now deconstruct broken APCs.
+    - type: Tweak
+      message: APCs will now turn into broken APCs when damaged.
+  id: 262
+  time: '2026-06-30T07:06:23.0000000+00:00'
