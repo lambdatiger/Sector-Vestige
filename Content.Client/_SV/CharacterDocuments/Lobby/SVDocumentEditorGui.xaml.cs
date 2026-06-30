@@ -100,6 +100,10 @@ public sealed partial class SVDocumentEditorGui : Control
             ? new List<CharacterDocument>()
             : profile.SVCharacterDocuments.Select(Clone).ToList();
 
+        // Imported docs all arrive with DocID == 0, and every editor operation (edit, delete,
+        // reorder, re-select) keys on DocID — so without unique IDs, deleting one imported doc would nuke them all which is not ideal
+        _nextTempId = CharacterDocumentIds.AssignTempIds(_allDocs, _nextTempId);
+
         _general = profile?.SVCharacterDocumentGeneral == null
             ? CharacterDocumentGeneral.Default()
             : new CharacterDocumentGeneral(profile.SVCharacterDocumentGeneral);
