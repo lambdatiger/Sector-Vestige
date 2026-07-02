@@ -295,25 +295,13 @@ public sealed partial class AdminCharacterDocumentsEui : BaseEui
     }
 
     /// <summary>
-    ///     If the target character is currently spawned, replace their in-memory
-    ///     document dict and broadcast a refresh so any open consoles re-render.
-    ///     Without this, admins editing online players' docs would only show up
-    ///     after the player reconnects.
+    ///     If the target character's documents are loaded in-round, replace the record's
+    ///     document set in the store and broadcast a refresh so any open consoles re-render.
+    ///     Without this, admins editing online players' docs would only show up after the
+    ///     player reconnects. No-op if the profile isn't loaded in-round.
     /// </summary>
     private void SyncLiveSession(AdminSVProfileEntry entry)
     {
-        var query = _entMan.EntityQueryEnumerator<CharacterDocumentComponent>();
-        while (query.MoveNext(out var uid, out var comp))
-        {
-            if (comp.ProfileId != entry.ProfileId)
-                continue;
-
-            comp.Documents.Clear();
-            foreach (var doc in entry.Documents)
-                comp.Documents[doc.DocID] = doc;
-
-            _entMan.EventBus.RaiseEvent(EventSource.Local, new CharacterDocumentEditedEvent());
-            return; // at most one live entity per profile
-        }
+        _entMan.System<CharacterDocumentSystem>().ReplaceRecordDocuments(entry.ProfileId, entry.Documents);
     }
 }

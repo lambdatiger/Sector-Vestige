@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Content.Server.Administration.Logs;
 using Content.Shared.Database;
 using Content.Shared._SV.CharacterDocuments.Components;
@@ -99,34 +100,27 @@ public sealed partial class CharacterDocumentConsoleSystem : EntitySystem
     /// </summary>
     public void RefreshConsole(EntityUid uid, CharacterDocumentConsoleComponent comp)
     {
-        var station = _sharedStationSystem.GetOwningStation(uid);
-        // Cross-map consoles (e.g. CentComm) may not have an owning station entity
-        // at all if their map isn't registered as a station, so we still let them
-        // through and `BuildPlayerListing` aggregates from every CharacterDocumentStation.
-        if (station == null && !HasComp<CrossMapDocumentAccessComponent>(uid)) return;
-
-        if (!TryGetStationOrCrossMap(uid, station, out var stationComponent))
+        if (!TryGetConsoleStation(uid, out var stationComponent))
             return;
 
         var netPlayerEntities = BuildPlayerListing(uid, stationComponent);
 
-        var player = GetEntity(comp.SelectedPlayer);
-        if (TryComp<CharacterDocumentComponent>(player, out var docComp))
+        if (TryGetListedRecord(netPlayerEntities, comp.SelectedPlayer, out var record))
         {
-            var filteredDocs = BuildVisibleDocs(uid, comp, docComp);
+            var filteredDocs = BuildVisibleDocs(uid, comp, record);
 
             // Re-resolve the console's selected document against the freshly mutated
             // store: an edit swaps it for the updated copy, a delete drops it. Passing
             // a blanket null here used to wipe the reader pane on every edit.
             if (comp.SelectedDocument != null)
             {
-                comp.SelectedDocument = docComp.Documents.TryGetValue(comp.SelectedDocument.DocID, out var refreshedDoc)
+                comp.SelectedDocument = record.Documents.TryGetValue(comp.SelectedDocument.DocID, out var refreshedDoc)
                     ? refreshedDoc
                     : null;
             }
 
             bool paperinserted = comp.PaperSlot.ContainerSlot?.ContainedEntity != null;
-            var state = new CharacterDocumentConsoleState(netPlayerEntities, comp.SelectedPlayer, filteredDocs, comp.SelectedDocument, paperinserted, comp.DocumentType, additionalDocumentTypes: comp.AdditionalDocumentTypes, selectedPlayerGeneral: docComp.CharacterDocumentGeneral);
+            var state = new CharacterDocumentConsoleState(netPlayerEntities, comp.SelectedPlayer, filteredDocs, comp.SelectedDocument, paperinserted, comp.DocumentType, additionalDocumentTypes: comp.AdditionalDocumentTypes, selectedPlayerGeneral: record.General);
             PushState(uid, state);
         }
         else
@@ -144,37 +138,30 @@ public sealed partial class CharacterDocumentConsoleSystem : EntitySystem
 
     public void OnBuiOpened(EntityUid uid, CharacterDocumentConsoleComponent comp, BoundUIOpenedEvent args)
     {
-        var station = _sharedStationSystem.GetOwningStation(uid);
-        // Cross-map consoles (e.g. CentComm) may not have an owning station entity
-        // at all if their map isn't registered as a station, so we still let them
-        // through and `BuildPlayerListing` aggregates from every CharacterDocumentStation.
-        if (station == null && !HasComp<CrossMapDocumentAccessComponent>(uid)) return;
-
-        if (!TryGetStationOrCrossMap(uid, station, out var stationComponent))
+        if (!TryGetConsoleStation(uid, out var stationComponent))
             return;
 
         var netPlayerEntities = BuildPlayerListing(uid, stationComponent);
         bool paperinserted = comp.PaperSlot.ContainerSlot?.ContainedEntity != null;
 
-        var player = GetEntity(comp.SelectedPlayer);
-        if (TryComp<CharacterDocumentComponent>(player, out var docComp))
+        if (TryGetListedRecord(netPlayerEntities, comp.SelectedPlayer, out var record))
         {
-            var filteredDocs = BuildVisibleDocs(uid, comp, docComp);
+            var filteredDocs = BuildVisibleDocs(uid, comp, record);
 
             // Re-resolve the selected document against the current store in case it was
             // edited/removed while the console sat open with no viewers.
             if (comp.SelectedDocument != null)
             {
-                comp.SelectedDocument = docComp.Documents.TryGetValue(comp.SelectedDocument.DocID, out var refreshedDoc)
+                comp.SelectedDocument = record.Documents.TryGetValue(comp.SelectedDocument.DocID, out var refreshedDoc)
                     ? refreshedDoc
                     : null;
             }
 
             var (secStatus, secReason) = comp.DocumentType == DocumentType.Security
-                ? GetCriminalStatus(uid, docComp)
+                ? GetCriminalStatus(uid, record)
                 : (SecurityStatus.None, null);
 
-            var state = new CharacterDocumentConsoleState(netPlayerEntities, comp.SelectedPlayer, filteredDocs, comp.SelectedDocument, paperinserted, comp.DocumentType, secStatus, secReason, additionalDocumentTypes: comp.AdditionalDocumentTypes, selectedPlayerGeneral: docComp.CharacterDocumentGeneral);
+            var state = new CharacterDocumentConsoleState(netPlayerEntities, comp.SelectedPlayer, filteredDocs, comp.SelectedDocument, paperinserted, comp.DocumentType, secStatus, secReason, additionalDocumentTypes: comp.AdditionalDocumentTypes, selectedPlayerGeneral: record.General);
             PushState(uid, state);
         }
         else
@@ -192,12 +179,7 @@ public sealed partial class CharacterDocumentConsoleSystem : EntitySystem
         comp.SelectedPlayer = default;
         comp.SelectedDocument = null;
 
-        var station = _sharedStationSystem.GetOwningStation(uid);
-
-        if (station == null && !HasComp<CrossMapDocumentAccessComponent>(uid))
-            return;
-
-        if (!TryGetStationOrCrossMap(uid, station, out var stationComponent))
+        if (!TryGetConsoleStation(uid, out var stationComponent))
             return;
 
         var netPlayerEntities = BuildPlayerListing(uid, stationComponent);
@@ -209,74 +191,64 @@ public sealed partial class CharacterDocumentConsoleSystem : EntitySystem
 
     public void OnSelectedPlayer(EntityUid uid, CharacterDocumentConsoleComponent comp, SelectCharacterDocumentPlayer args)
     {
-        var station = _sharedStationSystem.GetOwningStation(uid);
-        // Cross-map consoles (e.g. CentComm) may not have an owning station entity
-        // at all if their map isn't registered as a station, so we still let them
-        // through and `BuildPlayerListing` aggregates from every CharacterDocumentStation.
-        if (station == null && !HasComp<CrossMapDocumentAccessComponent>(uid)) return;
-
-        if (!TryGetStationOrCrossMap(uid, station, out var stationComponent))
-            return;
-
-        var player = GetEntity(args.Player);
-        if (!TryComp<CharacterDocumentComponent>(player, out var documentComponent))
+        if (!TryGetConsoleStation(uid, out var stationComponent))
             return;
 
         var netPlayerEntities = BuildPlayerListing(uid, stationComponent);
+        if (!TryGetListedRecord(netPlayerEntities, args.ProfileId, out var record))
+            return;
 
-        var filteredDocs = BuildVisibleDocs(uid, comp, documentComponent);
+        var filteredDocs = BuildVisibleDocs(uid, comp, record);
 
-        comp.SelectedPlayer = args.Player;
+        comp.SelectedPlayer = args.ProfileId;
         bool paperinserted = comp.PaperSlot.ContainerSlot?.ContainedEntity != null;
 
         var (secStatus, secReason) = comp.DocumentType == DocumentType.Security
-            ? GetCriminalStatus(uid, documentComponent)
+            ? GetCriminalStatus(uid, record)
             : (SecurityStatus.None, null);
 
-        var characterDocumentConsoleState = new CharacterDocumentConsoleState(netPlayerEntities, args.Player, filteredDocs, null, paperinserted, comp.DocumentType, secStatus, secReason, additionalDocumentTypes: comp.AdditionalDocumentTypes, selectedPlayerGeneral: documentComponent.CharacterDocumentGeneral);
+        var characterDocumentConsoleState = new CharacterDocumentConsoleState(netPlayerEntities, args.ProfileId, filteredDocs, null, paperinserted, comp.DocumentType, secStatus, secReason, additionalDocumentTypes: comp.AdditionalDocumentTypes, selectedPlayerGeneral: record.General);
         PushState(uid, characterDocumentConsoleState);
     }
 
     public void OnSelectedDocument(EntityUid uid, CharacterDocumentConsoleComponent comp, SelectCharacterDocument args)
     {
-        var station = _sharedStationSystem.GetOwningStation(uid);
-        // Cross-map consoles (e.g. CentComm) may not have an owning station entity
-        // at all if their map isn't registered as a station, so we still let them
-        // through and `BuildPlayerListing` aggregates from every CharacterDocumentStation.
-        if (station == null && !HasComp<CrossMapDocumentAccessComponent>(uid)) return;
-
-        if (!TryGetStationOrCrossMap(uid, station, out var stationComponent))
+        if (!TryGetConsoleStation(uid, out var stationComponent))
             return;
 
-        var player = GetEntity(args.Player);
-        if (!TryComp<CharacterDocumentComponent>(player, out var documentComponent))
+        var netPlayerEntities = BuildPlayerListing(uid, stationComponent);
+        if (!TryGetListedRecord(netPlayerEntities, args.ProfileId, out var record))
             return;
 
-        documentComponent.Documents.TryGetValue(args.DocID, out var selecteddoc);
+        record.Documents.TryGetValue(args.DocID, out var selecteddoc);
         // A binned doc may only be opened on a bin-access (Central Command) console;
         // ignore the selection otherwise so a forged client can't peek at the bin.
         if (selecteddoc is { DeletedAt: not null } && !CanAccessBin(uid))
             selecteddoc = null;
         comp.SelectedDocument = selecteddoc;
 
-        var netPlayerEntities = BuildPlayerListing(uid, stationComponent);
-
-        var filteredDocs = BuildVisibleDocs(uid, comp, documentComponent);
+        var filteredDocs = BuildVisibleDocs(uid, comp, record);
 
         bool paperinserted = comp.PaperSlot.ContainerSlot?.ContainedEntity != null;
 
         var (secStatus, secReason) = comp.DocumentType == DocumentType.Security
-            ? GetCriminalStatus(uid, documentComponent)
+            ? GetCriminalStatus(uid, record)
             : (SecurityStatus.None, null);
 
-        var characterDocumentConsoleState = new CharacterDocumentConsoleState(netPlayerEntities, args.Player, filteredDocs, selecteddoc, paperinserted, comp.DocumentType, secStatus, secReason, additionalDocumentTypes: comp.AdditionalDocumentTypes, selectedPlayerGeneral: documentComponent.CharacterDocumentGeneral);
+        var characterDocumentConsoleState = new CharacterDocumentConsoleState(netPlayerEntities, args.ProfileId, filteredDocs, selecteddoc, paperinserted, comp.DocumentType, secStatus, secReason, additionalDocumentTypes: comp.AdditionalDocumentTypes, selectedPlayerGeneral: record.General);
         PushState(uid, characterDocumentConsoleState);
     }
 
     public async void OnDocumentScanned(EntityUid uid, CharacterDocumentConsoleComponent comp, CharacterDocumentScan args)
     {
+        if (!TryGetConsoleStation(uid, out var stationComponent))
+            return;
+
+        var listing = BuildPlayerListing(uid, stationComponent);
+        if (!TryGetListedRecord(listing, args.ProfileId, out _))
+            return;
+
         var paper = comp.PaperSlot.ContainerSlot?.ContainedEntity;
-        var player = GetEntity(args.Player);
 
         if (!TryComp<PaperComponent>(paper, out var paperComponent))
             return;
@@ -317,7 +289,7 @@ public sealed partial class CharacterDocumentConsoleSystem : EntitySystem
         };
 
         _audio.PlayPvs(comp.SuccessSound, uid);
-        await _characterDocumentSystem.AddDocument(player, providedDocument);
+        await _characterDocumentSystem.AddDocument(args.ProfileId, providedDocument);
     }
 
     private string GetActorIdentity(EntityUid actor)
@@ -331,7 +303,13 @@ public sealed partial class CharacterDocumentConsoleSystem : EntitySystem
 
     public async void OnDocumentDelete(EntityUid uid, CharacterDocumentConsoleComponent comp, CharacterDocumentDelete args)
     {
-        var player = GetEntity(args.Player);
+        if (!TryGetConsoleStation(uid, out var stationComponent))
+            return;
+
+        var listing = BuildPlayerListing(uid, stationComponent);
+        if (!TryGetListedRecord(listing, args.ProfileId, out var record))
+            return;
+
         if (args.CharacterDocument == null)
         {
             _audio.PlayPvs(comp.ErrorSound, uid);
@@ -339,10 +317,10 @@ public sealed partial class CharacterDocumentConsoleSystem : EntitySystem
         }
 
         _adminLogger.Add(LogType.CharacterDocument, LogImpact.High,
-            $"{args.Actor:actor} sent character document '{args.CharacterDocument.DocTitle}' (#{args.CharacterDocument.DocID}) belonging to {player:subject} to the recycling bin via {uid:console}");
+            $"{args.Actor:actor} sent character document '{args.CharacterDocument.DocTitle}' (#{args.CharacterDocument.DocID}) belonging to {record.Name} (profile #{args.ProfileId}) to the recycling bin via {uid:console}");
 
         _audio.PlayPvs(comp.SuccessSound, uid);
-        await _characterDocumentSystem.DeleteDocument(player, args.CharacterDocument);
+        await _characterDocumentSystem.DeleteDocument(args.ProfileId, args.CharacterDocument);
     }
 
     public async void OnDocumentRestore(EntityUid uid, CharacterDocumentConsoleComponent comp, CharacterDocumentRestore args)
@@ -355,15 +333,18 @@ public sealed partial class CharacterDocumentConsoleSystem : EntitySystem
             return;
         }
 
-        var player = GetEntity(args.Player);
-        if (!HasComp<CharacterDocumentComponent>(player))
+        if (!TryGetConsoleStation(uid, out var stationComponent))
+            return;
+
+        var listing = BuildPlayerListing(uid, stationComponent);
+        if (!TryGetListedRecord(listing, args.ProfileId, out _))
         {
             _audio.PlayPvs(comp.ErrorSound, uid);
             return;
         }
 
         _audio.PlayPvs(comp.SuccessSound, uid);
-        await _characterDocumentSystem.RestoreDocument(player, args.DocID);
+        await _characterDocumentSystem.RestoreDocument(args.ProfileId, args.DocID);
     }
 
     public async void OnDocumentPurge(EntityUid uid, CharacterDocumentConsoleComponent comp, CharacterDocumentPurge args)
@@ -377,19 +358,22 @@ public sealed partial class CharacterDocumentConsoleSystem : EntitySystem
             return;
         }
 
-        var player = GetEntity(args.Player);
-        if (!TryComp<CharacterDocumentComponent>(player, out var purgeDocComp))
+        if (!TryGetConsoleStation(uid, out var stationComponent))
+            return;
+
+        var listing = BuildPlayerListing(uid, stationComponent);
+        if (!TryGetListedRecord(listing, args.ProfileId, out var record))
         {
             _audio.PlayPvs(comp.ErrorSound, uid);
             return;
         }
 
-        var purgeTitle = purgeDocComp.Documents.TryGetValue(args.DocID, out var purgeDoc) ? purgeDoc.DocTitle : "<unknown>";
+        var purgeTitle = record.Documents.TryGetValue(args.DocID, out var purgeDoc) ? purgeDoc.DocTitle : "<unknown>";
         _adminLogger.Add(LogType.CharacterDocument, LogImpact.High,
-            $"{args.Actor:actor} permanently deleted binned character document '{purgeTitle}' (#{args.DocID}) belonging to {player:subject} via {uid:console}");
+            $"{args.Actor:actor} permanently deleted binned character document '{purgeTitle}' (#{args.DocID}) belonging to {record.Name} (profile #{args.ProfileId}) via {uid:console}");
 
         _audio.PlayPvs(comp.SuccessSound, uid);
-        await _characterDocumentSystem.PurgeDocument(player, args.DocID);
+        await _characterDocumentSystem.PurgeDocument(args.ProfileId, args.DocID);
     }
 
     public async void OnEmptyBin(EntityUid uid, CharacterDocumentConsoleComponent comp, CharacterDocumentEmptyBin args)
@@ -400,19 +384,22 @@ public sealed partial class CharacterDocumentConsoleSystem : EntitySystem
             return;
         }
 
-        var player = GetEntity(args.Player);
-        if (!TryComp<CharacterDocumentComponent>(player, out var emptyBinDocComp))
+        if (!TryGetConsoleStation(uid, out var stationComponent))
+            return;
+
+        var listing = BuildPlayerListing(uid, stationComponent);
+        if (!TryGetListedRecord(listing, args.ProfileId, out var record))
         {
             _audio.PlayPvs(comp.ErrorSound, uid);
             return;
         }
 
-        var binnedCount = emptyBinDocComp.Documents.Count(d => d.Value.DeletedAt != null);
+        var binnedCount = record.Documents.Count(d => d.Value.DeletedAt != null);
         _adminLogger.Add(LogType.CharacterDocument, LogImpact.High,
-            $"{args.Actor:actor} emptied the recycling bin ({binnedCount} document(s)) of {player:subject} via {uid:console}");
+            $"{args.Actor:actor} emptied the recycling bin ({binnedCount} document(s)) of {record.Name} (profile #{args.ProfileId}) via {uid:console}");
 
         _audio.PlayPvs(comp.SuccessSound, uid);
-        await _characterDocumentSystem.EmptyBin(player);
+        await _characterDocumentSystem.EmptyBin(args.ProfileId);
     }
 
     public void OnDocumentPrint(EntityUid uid, CharacterDocumentConsoleComponent comp, CharacterDocumentPrint args)
@@ -473,8 +460,6 @@ public sealed partial class CharacterDocumentConsoleSystem : EntitySystem
         if (args.CharacterDocument == null)
             return;
 
-        var player = GetEntity(args.Player);
-
         CharacterDocument oldCharacterDoc = comp.SelectedDocument;
 
         var newCharacterDoc = new CharacterDocument()
@@ -490,29 +475,22 @@ public sealed partial class CharacterDocumentConsoleSystem : EntitySystem
         };
         _audio.PlayPvs(comp.SuccessSound, uid);
 
-        var station = _sharedStationSystem.GetOwningStation(uid);
-        // Cross-map consoles (e.g. CentComm) may not have an owning station entity
-        // at all if their map isn't registered as a station, so we still let them
-        // through and `BuildPlayerListing` aggregates from every CharacterDocumentStation.
-        if (station == null && !HasComp<CrossMapDocumentAccessComponent>(uid)) return;
-
-        if (!TryGetStationOrCrossMap(uid, station, out var stationComponent))
-            return;
-
-        if (!TryComp<CharacterDocumentComponent>(player, out var documentComponent))
+        if (!TryGetConsoleStation(uid, out var stationComponent))
             return;
 
         var netPlayerEntities = BuildPlayerListing(uid, stationComponent);
+        if (!TryGetListedRecord(netPlayerEntities, args.ProfileId, out var record))
+            return;
 
-        await _characterDocumentSystem.UpdateDocument(player, newCharacterDoc);
-        comp.SelectedDocument = documentComponent.Documents.TryGetValue(newCharacterDoc.DocID, out var reloadedDoc)
+        await _characterDocumentSystem.UpdateDocument(args.ProfileId, newCharacterDoc);
+        comp.SelectedDocument = record.Documents.TryGetValue(newCharacterDoc.DocID, out var reloadedDoc)
             ? reloadedDoc
             : newCharacterDoc;
 
-        var filteredDocs = BuildVisibleDocs(uid, comp, documentComponent);
+        var filteredDocs = BuildVisibleDocs(uid, comp, record);
 
         bool paperinserted = comp.PaperSlot.ContainerSlot?.ContainedEntity != null;
-        var characterDocumentConsoleState = new CharacterDocumentConsoleState(netPlayerEntities, args.Player, filteredDocs, newCharacterDoc, paperinserted, comp.DocumentType, additionalDocumentTypes: comp.AdditionalDocumentTypes, selectedPlayerGeneral: documentComponent.CharacterDocumentGeneral);
+        var characterDocumentConsoleState = new CharacterDocumentConsoleState(netPlayerEntities, args.ProfileId, filteredDocs, newCharacterDoc, paperinserted, comp.DocumentType, additionalDocumentTypes: comp.AdditionalDocumentTypes, selectedPlayerGeneral: record.General);
         PushState(uid, characterDocumentConsoleState);
     }
 
@@ -530,13 +508,7 @@ public sealed partial class CharacterDocumentConsoleSystem : EntitySystem
 
     private void RefreshSlotState(EntityUid uid, CharacterDocumentConsoleComponent comp)
     {
-        var station = _sharedStationSystem.GetOwningStation(uid);
-        // Cross-map consoles (e.g. CentComm) may not have an owning station entity
-        // at all if their map isn't registered as a station, so we still let them
-        // through and `BuildPlayerListing` aggregates from every CharacterDocumentStation.
-        if (station == null && !HasComp<CrossMapDocumentAccessComponent>(uid)) return;
-
-        if (!TryGetStationOrCrossMap(uid, station, out var stationComponent))
+        if (!TryGetConsoleStation(uid, out var stationComponent))
             return;
 
         var netPlayerEntities = BuildPlayerListing(uid, stationComponent);
@@ -545,13 +517,11 @@ public sealed partial class CharacterDocumentConsoleSystem : EntitySystem
         if (isPaperInserted)
             _itemSlotsSystem.SetLock(uid, comp.PaperSlot, false);
 
-        var player = GetEntity(comp.SelectedPlayer);
-
-        if (TryComp<CharacterDocumentComponent>(player, out var docComp))
+        if (TryGetListedRecord(netPlayerEntities, comp.SelectedPlayer, out var record))
         {
-            var filteredDocs = BuildVisibleDocs(uid, comp, docComp);
+            var filteredDocs = BuildVisibleDocs(uid, comp, record);
 
-            var state = new CharacterDocumentConsoleState(netPlayerEntities, comp.SelectedPlayer, filteredDocs, comp.SelectedDocument, isPaperInserted, comp.DocumentType, additionalDocumentTypes: comp.AdditionalDocumentTypes, selectedPlayerGeneral: docComp.CharacterDocumentGeneral);
+            var state = new CharacterDocumentConsoleState(netPlayerEntities, comp.SelectedPlayer, filteredDocs, comp.SelectedDocument, isPaperInserted, comp.DocumentType, additionalDocumentTypes: comp.AdditionalDocumentTypes, selectedPlayerGeneral: record.General);
             PushState(uid, state);
         }
         else
@@ -564,7 +534,6 @@ public sealed partial class CharacterDocumentConsoleSystem : EntitySystem
     /// Security area
     public void OnSecurityStatusChange(EntityUid uid, CharacterDocumentConsoleComponent comp, CharacterDocumentSecurityStatus args)
     {
-        var player = GetEntity(args.Player);
         var station = _stationSystem.GetOwningStation(uid);
         if (station == null)
             return;
@@ -572,11 +541,15 @@ public sealed partial class CharacterDocumentConsoleSystem : EntitySystem
         if (!TryComp<StationRecordsComponent>(station, out var stationRecords))
             return;
 
-        if (!TryComp<CharacterDocumentComponent>(player, out var docComp))
+        if (!TryComp<CharacterDocumentStationComponent>(station, out var stationComp))
             return;
 
-        var listing = _stationRecords.BuildListing((station.Value, stationRecords), null);
-        var recordKey = listing.FirstOrDefault(x => x.Value == docComp.ProfileName);
+        var listing = BuildPlayerListing(uid, stationComp);
+        if (!TryGetListedRecord(listing, args.ProfileId, out var record))
+            return;
+
+        var recordListing = _stationRecords.BuildListing((station.Value, stationRecords), null);
+        var recordKey = recordListing.FirstOrDefault(x => x.Value == record.Name);
         if (recordKey.Value == null)
             return;
 
@@ -586,33 +559,30 @@ public sealed partial class CharacterDocumentConsoleSystem : EntitySystem
 
         var statusMsg = args.Status switch
         {
-            SecurityStatus.Wanted => $"{docComp.ProfileName} is now wanted: {args.Reason}",
-            SecurityStatus.Suspected => $"{docComp.ProfileName} is now suspected: {args.Reason}",
-            SecurityStatus.Hostile => $"{docComp.ProfileName} is now hostile: {args.Reason}",
-            SecurityStatus.Detained => $"{docComp.ProfileName} has been detained.",
-            SecurityStatus.Paroled => $"{docComp.ProfileName} has been released on parole.",
-            SecurityStatus.Discharged => $"{docComp.ProfileName} has been discharged.",
-            SecurityStatus.Eliminated => $"{docComp.ProfileName} has been eliminated.",
-            SecurityStatus.None => $"{docComp.ProfileName} criminal status has been cleared.",
-            _ => $"{docComp.ProfileName} status changed to {args.Status}."
+            SecurityStatus.Wanted => $"{record.Name} is now wanted: {args.Reason}",
+            SecurityStatus.Suspected => $"{record.Name} is now suspected: {args.Reason}",
+            SecurityStatus.Hostile => $"{record.Name} is now hostile: {args.Reason}",
+            SecurityStatus.Detained => $"{record.Name} has been detained.",
+            SecurityStatus.Paroled => $"{record.Name} has been released on parole.",
+            SecurityStatus.Discharged => $"{record.Name} has been discharged.",
+            SecurityStatus.Eliminated => $"{record.Name} has been eliminated.",
+            SecurityStatus.None => $"{record.Name} criminal status has been cleared.",
+            _ => $"{record.Name} status changed to {args.Status}."
         };
         _radio.SendRadioMessage(uid, statusMsg, SecurityChannel, uid);
 
         // Refresh UI so the status label updates immediately
-        if (TryComp<CharacterDocumentStationComponent>(station, out var stationComp))
-        {
-            var netPlayerEntities = BuildPlayerListing(uid, stationComp);
+        var netPlayerEntities = BuildPlayerListing(uid, stationComp);
 
-            var filteredDocs = BuildVisibleDocs(uid, comp, docComp);
+        var filteredDocs = BuildVisibleDocs(uid, comp, record);
 
-            var (newStatus, newReason) = GetCriminalStatus(uid, docComp);
-            bool paperInserted = comp.PaperSlot.ContainerSlot?.ContainedEntity != null;
-            var refreshState = new CharacterDocumentConsoleState(netPlayerEntities, args.Player, filteredDocs, comp.SelectedDocument, paperInserted, comp.DocumentType, newStatus, newReason, additionalDocumentTypes: comp.AdditionalDocumentTypes, selectedPlayerGeneral: docComp.CharacterDocumentGeneral);
-            PushState(uid, refreshState);
-        }
+        var (newStatus, newReason) = GetCriminalStatus(uid, record);
+        bool paperInserted = comp.PaperSlot.ContainerSlot?.ContainedEntity != null;
+        var refreshState = new CharacterDocumentConsoleState(netPlayerEntities, args.ProfileId, filteredDocs, comp.SelectedDocument, paperInserted, comp.DocumentType, newStatus, newReason, additionalDocumentTypes: comp.AdditionalDocumentTypes, selectedPlayerGeneral: record.General);
+        PushState(uid, refreshState);
     }
 
-    private (SecurityStatus status, string? reason) GetCriminalStatus(EntityUid consoleUid, CharacterDocumentComponent docComp)
+    private (SecurityStatus status, string? reason) GetCriminalStatus(EntityUid consoleUid, CharacterDocumentRecord record)
     {
         var station = _stationSystem.GetOwningStation(consoleUid);
         if (station == null)
@@ -622,22 +592,17 @@ public sealed partial class CharacterDocumentConsoleSystem : EntitySystem
             return (SecurityStatus.None, null);
 
         var listing = _stationRecords.BuildListing((station.Value, stationRecords), null);
-        var recordKey = listing.FirstOrDefault(x => x.Value == docComp.ProfileName);
+        var recordKey = listing.FirstOrDefault(x => x.Value == record.Name);
         if (recordKey.Value == null)
             return (SecurityStatus.None, null);
 
         var key = new StationRecordKey(recordKey.Key, station.Value);
-        if (!_stationRecords.TryGetRecord<CriminalRecord>(key, out var record, stationRecords))
+        if (!_stationRecords.TryGetRecord<CriminalRecord>(key, out var criminalRecord, stationRecords))
             return (SecurityStatus.None, null);
 
-        return (record.Status, record.Reason);
+        return (criminalRecord.Status, criminalRecord.Reason);
     }
 
-    /// <summary>
-    ///     True if this console can display documents of the given type — either its primary
-    ///     DocumentType or any of the AdditionalDocumentTypes (used by multi-type consoles
-    ///     like Central Command).
-    /// </summary>
     /// <summary>
     ///     True if this console may view and restore binned (soft-deleted) documents.
     ///     Gated to Central Command terminals, which already carry
@@ -661,10 +626,10 @@ public sealed partial class CharacterDocumentConsoleSystem : EntitySystem
     ///     docs hidden. Bin-access consoles receive binned docs too; the client window only
     ///     surfaces them when its bin view is toggled on.
     /// </summary>
-    private Dictionary<int, CharacterDocument> BuildVisibleDocs(EntityUid consoleUid, CharacterDocumentConsoleComponent comp, CharacterDocumentComponent docComp)
+    private Dictionary<int, CharacterDocument> BuildVisibleDocs(EntityUid consoleUid, CharacterDocumentConsoleComponent comp, CharacterDocumentRecord record)
     {
         var canBin = CanAccessBin(consoleUid);
-        return docComp.Documents
+        return record.Documents
             .Where(d => ConsoleHandles(comp, d.Value.DocType) && (canBin || d.Value.DeletedAt == null))
             .ToDictionary(d => d.Key, d => d.Value);
     }
@@ -682,23 +647,23 @@ public sealed partial class CharacterDocumentConsoleSystem : EntitySystem
     }
 
     /// <summary>
-    ///     Build the (NetEntity → name) crew listing this console should expose.
+    ///     Build the (ProfileId → name) crew listing this console should expose.
     ///     Consoles with <see cref="CrossMapDocumentAccessComponent"/> aggregate
     ///     every station's roster (so CentComm terminals see main-station crew
     ///     even though they're on a different map). Everyone else gets only
     ///     their owning station's roster.
     /// </summary>
-    private Dictionary<NetEntity, string> BuildPlayerListing(EntityUid consoleUid, CharacterDocumentStationComponent? ownStation)
+    private Dictionary<int, string> BuildPlayerListing(EntityUid consoleUid, CharacterDocumentStationComponent? ownStation)
     {
-        var listing = new Dictionary<NetEntity, string>();
+        var listing = new Dictionary<int, string>();
 
         if (HasComp<CrossMapDocumentAccessComponent>(consoleUid))
         {
             var query = EntityQueryEnumerator<CharacterDocumentStationComponent>();
             while (query.MoveNext(out _, out var anyStation))
             {
-                foreach (var (playerUid, name) in anyStation.PlayerEntities)
-                    listing[GetNetEntity(playerUid)] = name;
+                foreach (var (profileId, name) in anyStation.RosterByProfile)
+                    listing[profileId] = name;
             }
             return listing;
         }
@@ -706,20 +671,39 @@ public sealed partial class CharacterDocumentConsoleSystem : EntitySystem
         if (ownStation == null)
             return listing;
 
-        foreach (var (playerUid, name) in ownStation.PlayerEntities)
-            listing[GetNetEntity(playerUid)] = name;
+        foreach (var (profileId, name) in ownStation.RosterByProfile)
+            listing[profileId] = name;
         return listing;
     }
 
     /// <summary>
-    ///     Returns true if the console can proceed with serving a request.
-    ///     For normal consoles that means the owning station must carry a
-    ///     <see cref="CharacterDocumentStationComponent"/>. Cross-map consoles
-    ///     bypass that requirement since they aggregate from every station.
+    ///     Resolves a requested ProfileId to its in-round record, but only if that profile is
+    ///     present in the given console's crew listing. The membership gate stops a forged
+    ///     client from pulling documents for a profile the console isn't allowed to see.
     /// </summary>
-    private bool TryGetStationOrCrossMap(EntityUid consoleUid, EntityUid? station, out CharacterDocumentStationComponent? stationComp)
+    private bool TryGetListedRecord(Dictionary<int, string> listing, int profileId, [NotNullWhen(true)] out CharacterDocumentRecord? record)
+    {
+        record = null;
+        return profileId != 0
+            && listing.ContainsKey(profileId)
+            && _characterDocumentSystem.TryGetRecord(profileId, out record);
+    }
+
+    /// <summary>
+    ///     Resolves the station roster context for a console. For normal consoles the owning
+    ///     station must carry a <see cref="CharacterDocumentStationComponent"/>; cross-map
+    ///     consoles (CentComm) bypass that and aggregate from every station in
+    ///     <see cref="BuildPlayerListing"/>, so they pass with a null station component.
+    /// </summary>
+    private bool TryGetConsoleStation(EntityUid consoleUid, out CharacterDocumentStationComponent? stationComp)
     {
         stationComp = null;
+        var station = _sharedStationSystem.GetOwningStation(consoleUid);
+        // Cross-map consoles may not have an owning station entity at all if their map isn't
+        // registered as a station, so we still let them through.
+        if (station == null && !HasComp<CrossMapDocumentAccessComponent>(consoleUid))
+            return false;
+
         if (station != null)
             TryComp(station.Value, out stationComp);
         return stationComp != null || HasComp<CrossMapDocumentAccessComponent>(consoleUid);

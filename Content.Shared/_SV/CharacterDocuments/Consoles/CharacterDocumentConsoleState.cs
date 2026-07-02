@@ -7,8 +7,10 @@ namespace Content.Shared._SV.CharacterDocuments.Consoles;
 [Serializable, NetSerializable]
 public sealed class CharacterDocumentConsoleState : BoundUserInterfaceState
 {
-    public Dictionary<NetEntity, string> PlayerList = new();
-    public NetEntity? SelectedPlayer;
+    /// <summary>Crew roster shown by the console, keyed by stable ProfileId → character name.</summary>
+    public Dictionary<int, string> PlayerList = new();
+    /// <summary>Currently-selected player's ProfileId, or null if none selected.</summary>
+    public int? SelectedPlayer;
     public Dictionary<int, CharacterDocument>? SelectedPlayerDocuments;
     public CharacterDocument? SelectedDocument;
     public bool PaperInserted;
@@ -34,7 +36,7 @@ public sealed class CharacterDocumentConsoleState : BoundUserInterfaceState
     /// </summary>
     public bool CanAccessBin;
 
-    public CharacterDocumentConsoleState(Dictionary<NetEntity, string> playerlist, NetEntity? selectedplayer,
+    public CharacterDocumentConsoleState(Dictionary<int, string> playerlist, int? selectedplayer,
         Dictionary<int, CharacterDocument>? selectedplayerdocuments, CharacterDocument? selecteddocument, bool paperinserted,
         DocumentType documentType = DocumentType.Employment,
         SecurityStatus securityStatus = SecurityStatus.None, string? securityReason = null,

@@ -29,10 +29,10 @@ public sealed partial class CharacterDocumentConsoleWindow : DefaultWindow
             if (_isPopulating)
                 return;
 
-            if (CrewListing[args.ItemIndex].Metadata is not NetEntity uid)
+            if (CrewListing[args.ItemIndex].Metadata is not int profileId)
                 return;
 
-            OnPlayerSelected?.Invoke(uid);
+            OnPlayerSelected?.Invoke(profileId);
         };
 
         CrewListing.OnItemDeselected += args =>
@@ -336,7 +336,7 @@ public sealed partial class CharacterDocumentConsoleWindow : DefaultWindow
             _selectedPlayer = state.SelectedPlayer.Value;
             for (var i = 0; i < CrewListing.Count; i++)
             {
-                if (CrewListing[i].Metadata is NetEntity uid && uid == state.SelectedPlayer.Value)
+                if (CrewListing[i].Metadata is int profileId && profileId == state.SelectedPlayer.Value)
                 {
                     CrewListing[i].Selected = true;
                     break;
@@ -584,8 +584,8 @@ public sealed partial class CharacterDocumentConsoleWindow : DefaultWindow
         _isPopulating = false;
     }
 
-    private NetEntity _selectedPlayer;
-    private Dictionary<NetEntity, string> _cachedPlayerList = new();
+    private int _selectedPlayer;
+    private Dictionary<int, string> _cachedPlayerList = new();
     private CharacterDocument? _selectedDocument;
     private bool _confirmingDelete;
     private bool _confirmingPurge;
@@ -607,16 +607,16 @@ public sealed partial class CharacterDocumentConsoleWindow : DefaultWindow
     private CharacterDocumentGeneral? _cachedGeneral;
     /// <summary>Console's primary type — used as the fallback active type when no tab strip is shown.</summary>
     private DocumentType _consolePrimaryType;
-    public Action<NetEntity>? OnPlayerSelected;
-    public Action<NetEntity, int>? OnDocumentSelected;
-    public Action<NetEntity, string, DocumentType?>? OnButtonScanPressed;
-    public Action<NetEntity, CharacterDocument>? OnButtonPrintPressed;
-    public Action<NetEntity, CharacterDocument>? OnButtonDeletePressed;
-    public Action<NetEntity, int>? OnButtonRestorePressed;
-    public Action<NetEntity, int>? OnButtonPurgePressed;
-    public Action<NetEntity>? OnButtonEmptyBinPressed;
-    public Action<NetEntity, CharacterDocument>? OnButtonEditPressed;
-    public Action<NetEntity>? OnStatusButtonPressed;
+    public Action<int>? OnPlayerSelected;
+    public Action<int, int>? OnDocumentSelected;
+    public Action<int, string, DocumentType?>? OnButtonScanPressed;
+    public Action<int, CharacterDocument>? OnButtonPrintPressed;
+    public Action<int, CharacterDocument>? OnButtonDeletePressed;
+    public Action<int, int>? OnButtonRestorePressed;
+    public Action<int, int>? OnButtonPurgePressed;
+    public Action<int>? OnButtonEmptyBinPressed;
+    public Action<int, CharacterDocument>? OnButtonEditPressed;
+    public Action<int>? OnStatusButtonPressed;
     public Action? OnDocumentDeselected;
     bool _isPopulating;
 }

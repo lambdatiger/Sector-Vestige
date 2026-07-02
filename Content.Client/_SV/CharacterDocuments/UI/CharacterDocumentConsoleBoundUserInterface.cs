@@ -19,26 +19,26 @@ public sealed class CharacterDocumentConsoleBoundUserInterface : BoundUserInterf
         base.Open();
 
         _window = this.CreateWindow<CharacterDocumentConsoleWindow>();
-        _window.OnPlayerSelected += player => SendMessage(new SelectCharacterDocumentPlayer { Player = player });
-        _window.OnDocumentSelected += (player, docId) => SendMessage(new SelectCharacterDocument { Player = player, DocID = docId });
+        _window.OnPlayerSelected += player => SendMessage(new SelectCharacterDocumentPlayer { ProfileId = player });
+        _window.OnDocumentSelected += (player, docId) => SendMessage(new SelectCharacterDocument { ProfileId = player, DocID = docId });
         _window.OnButtonScanPressed += (player, title, docType) => SendMessage(new CharacterDocumentScan
         {
-            Player = player,
+            ProfileId = player,
             DocTitle = title,
             DocType = docType.HasValue ? (int)docType.Value : null,
         });
-        _window.OnButtonPrintPressed += (player, doc) => SendMessage(new CharacterDocumentPrint { Player = player, CharacterDocument = doc });
-        _window.OnButtonDeletePressed += (player, doc) => SendMessage(new CharacterDocumentDelete { Player = player, CharacterDocument = doc });
-        _window.OnButtonRestorePressed += (player, docId) => SendMessage(new CharacterDocumentRestore { Player = player, DocID = docId });
-        _window.OnButtonPurgePressed += (player, docId) => SendMessage(new CharacterDocumentPurge { Player = player, DocID = docId });
-        _window.OnButtonEmptyBinPressed += player => SendMessage(new CharacterDocumentEmptyBin { Player = player });
-        _window.OnButtonEditPressed += (player, doc) => SendMessage(new CharacterDocumentEdit { Player = player, CharacterDocument = doc });
+        _window.OnButtonPrintPressed += (player, doc) => SendMessage(new CharacterDocumentPrint { ProfileId = player, CharacterDocument = doc });
+        _window.OnButtonDeletePressed += (player, doc) => SendMessage(new CharacterDocumentDelete { ProfileId = player, CharacterDocument = doc });
+        _window.OnButtonRestorePressed += (player, docId) => SendMessage(new CharacterDocumentRestore { ProfileId = player, DocID = docId });
+        _window.OnButtonPurgePressed += (player, docId) => SendMessage(new CharacterDocumentPurge { ProfileId = player, DocID = docId });
+        _window.OnButtonEmptyBinPressed += player => SendMessage(new CharacterDocumentEmptyBin { ProfileId = player });
+        _window.OnButtonEditPressed += (player, doc) => SendMessage(new CharacterDocumentEdit { ProfileId = player, CharacterDocument = doc });
         _window.OnDocumentDeselected += () => SendMessage(new CharacterDocumentDeselect());
         _window.OnStatusButtonPressed += player =>
         {
             var popup = new CharacterDocumentStatusPopup();
             popup.OnConfirmed += (status, reason) =>
-                SendMessage(new CharacterDocumentSecurityStatus { Player = player, Status = status, Reason = reason });
+                SendMessage(new CharacterDocumentSecurityStatus { ProfileId = player, Status = status, Reason = reason });
             popup.OpenCentered();
         };
 

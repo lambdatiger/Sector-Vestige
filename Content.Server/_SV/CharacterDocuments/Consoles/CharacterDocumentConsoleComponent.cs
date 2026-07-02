@@ -20,8 +20,9 @@ public sealed partial class CharacterDocumentConsoleComponent : Component
     [DataField, ViewVariables(VVAccess.ReadOnly)]
     public List<DocumentType> AdditionalDocumentTypes = new();
 
+    /// <summary>Selected player's stable ProfileId, or 0 for no selection.</summary>
     [ViewVariables(VVAccess.ReadOnly)]
-    public NetEntity SelectedPlayer;
+    public int SelectedPlayer;
 
     [DataField, ViewVariables(VVAccess.ReadOnly)]
     public CharacterDocument? SelectedDocument;

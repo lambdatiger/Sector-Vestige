@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -31,14 +32,38 @@ public sealed partial class CharacterDocumentSystem : EntitySystem
     [Dependency] private IServerPreferencesManager _prefs = default!;
     [Dependency] private IConfigurationManager _cfg = default!;
 
+    /// <summary>
+    ///     Authoritative in-round document store, keyed by ProfileId. Replaces the body
+    ///     component as the runtime source of truth so documents survive gibbing. Cleared
+    ///     on round restart.
+    /// </summary>
+    private readonly Dictionary<int, CharacterDocumentRecord> _records = new();
+
     public override void Initialize()
     {
         base.Initialize();
 
         SubscribeLocalEvent<PlayerSpawnCompleteEvent>(OnPlayerSpawn, after: [typeof(StationRecordsSystem)]);
         SubscribeLocalEvent<PlayerJoinedLobbyEvent>(OnPlayerJoinedLobby);
-        // Empty the soft-delete bin of anything older than the retention window once per round.
         SubscribeLocalEvent<RoundStartingEvent>(OnRoundStarting);
+        SubscribeLocalEvent<RoundRestartCleanupEvent>(OnCleanup);
+    }
+
+    private void OnCleanup(RoundRestartCleanupEvent ev)
+    {
+        // The store is per-round; drop everything so a new round starts fresh and stale
+        // profiles from the previous round can't leak onto new consoles.
+        _records.Clear();
+    }
+
+    /// <summary>
+    ///     Looks up the in-round record for a profile. Returns false for the sentinel
+    ///     ProfileId 0 (no selection) and for profiles that never loaded.
+    /// </summary>
+    public bool TryGetRecord(int profileId, [NotNullWhen(true)] out CharacterDocumentRecord? record)
+    {
+        record = null;
+        return profileId != 0 && _records.TryGetValue(profileId, out record);
     }
 
     private void OnRoundStarting(RoundStartingEvent ev)
@@ -102,10 +127,10 @@ public sealed partial class CharacterDocumentSystem : EntitySystem
                 comp.PlayerUsername = session.Name;
         }
 
-        _ = LoadPlayerDocumentsAsync(player, args.Profile.Name);
+        _ = LoadPlayerDocumentsAsync(player, args.Station, args.Profile.Name);
     }
 
-    private async Task LoadPlayerDocumentsAsync(EntityUid uid, string characterName)
+    private async Task LoadPlayerDocumentsAsync(EntityUid uid, EntityUid station, string characterName)
     {
         _playerManager.TryGetSessionByEntity(uid, out var session);
         if (session == null) return;
@@ -127,56 +152,66 @@ public sealed partial class CharacterDocumentSystem : EntitySystem
             return;
         }
 
-        if (!TryComp<CharacterDocumentComponent>(uid, out var docComp))
-            return;
+        // Link the live body to its profile so world-side systems (station roster,
+        // parent-change) can find the record without going through the session.
+        if (TryComp<CharacterDocumentComponent>(uid, out var docComp))
+            docComp.ProfileId = profile.Id;
 
-        docComp.ProfileId = profile.Id;
+        var record = new CharacterDocumentRecord
+        {
+            ProfileId = profile.Id,
+            Name = characterName,
+            Username = docComp?.PlayerUsername is { Length: > 0 } captured ? captured : playerName,
+            UserId = netUserId,
+        };
+
         var result = await _db.GetSVCharacterDocumentsAsync(profile.Id);
-        if (result == null)
-            return;
-
-        docComp.Documents.Clear();
-        foreach (var doc in result.Value.Documents)
+        if (result != null)
         {
-            var characterDoc = new CharacterDocument
+            foreach (var doc in result.Value.Documents)
             {
-                DocID = doc.DocID,
-                DocType = doc.DocType,
-                DocTitle = doc.DocTitle,
-                DocAuthor = doc.DocAuthor,
-                DocLastEditedBy = doc.DocLastEditedBy,
-                DocDateLastEdited = doc.DocDateLastEdited,
-                DocContent = doc.DocContent,
-                DocStamps = CharacterDocumentDeserializer.DeserializeStamps(doc.DocStamps),
-                DeletedAt = doc.DeletedAt
-            };
-            docComp.Documents[doc.DocID] = characterDoc;
-        }
-
-        // SV: hydrate the General flavour block from the DB JSON column (piggybacked in tuple slot 1).
-        if (result.Value.SerializedDocument != null)
-        {
-            try
-            {
-                docComp.CharacterDocumentGeneral =
-                    System.Text.Json.JsonSerializer.Deserialize<CharacterDocumentGeneral>(result.Value.SerializedDocument)
-                    ?? new CharacterDocumentGeneral();
-                docComp.CharacterDocumentGeneral.EnsureValid();
+                record.Documents[doc.DocID] = new CharacterDocument
+                {
+                    DocID = doc.DocID,
+                    DocType = doc.DocType,
+                    DocTitle = doc.DocTitle,
+                    DocAuthor = doc.DocAuthor,
+                    DocLastEditedBy = doc.DocLastEditedBy,
+                    DocDateLastEdited = doc.DocDateLastEdited,
+                    DocContent = doc.DocContent,
+                    DocStamps = CharacterDocumentDeserializer.DeserializeStamps(doc.DocStamps),
+                    DeletedAt = doc.DeletedAt
+                };
             }
-            catch
+
+            // SV: hydrate the General flavour block from the DB JSON column (piggybacked in tuple slot 1).
+            if (result.Value.SerializedDocument != null)
             {
-                docComp.CharacterDocumentGeneral = new CharacterDocumentGeneral();
+                try
+                {
+                    record.General =
+                        System.Text.Json.JsonSerializer.Deserialize<CharacterDocumentGeneral>(result.Value.SerializedDocument)
+                        ?? new CharacterDocumentGeneral();
+                    record.General.EnsureValid();
+                }
+                catch
+                {
+                    record.General = new CharacterDocumentGeneral();
+                }
             }
         }
-        else
-        {
-            docComp.CharacterDocumentGeneral = new CharacterDocumentGeneral();
-        }
+
+        _records[profile.Id] = record;
+
+        // ProfileId is now known, so the station roster can register this crew member and
+        // open consoles can be refreshed. Membership registration lives in
+        // CharacterDocumentStationSystem (faction filtering) and keys off the same ProfileId.
+        RaiseLocalEvent(new CharacterDocumentProfileReadyEvent(uid, station, profile.Id, characterName));
     }
 
-    public async Task AddDocument(EntityUid uid, CharacterDocument characterDocument)
+    public async Task AddDocument(int profileId, CharacterDocument characterDocument)
     {
-        if (!TryComp<CharacterDocumentComponent>(uid, out var docComp))
+        if (!TryGetRecord(profileId, out var record))
             return;
 
         // Rebalance the user-authored markup before it is persisted so stored content (and the
@@ -184,27 +219,14 @@ public sealed partial class CharacterDocumentSystem : EntitySystem
         // rich-text renderer.
         characterDocument.DocContent = CharacterDocumentMarkup.Balance(characterDocument.DocContent);
 
-        _playerManager.TryGetSessionByEntity(uid, out var session);
-        var playerName = ResolvePlayerName(docComp, session);
+        var session = GetSession(record);
+        var playerName = ResolvePlayerName(record, session);
 
-        var id = docComp.Documents.Count == 0 ? 1 : docComp.Documents.Keys.Max() + 1;
+        var id = record.Documents.Count == 0 ? 1 : record.Documents.Keys.Max() + 1;
         characterDocument.DocID = id;
-        docComp.Documents.Add(id, characterDocument);
+        record.Documents.Add(id, characterDocument);
 
-        var dbDocs = docComp.Documents.Values.Select(doc => new SVModel.CharacterDocument
-        {
-            DocTitle = doc.DocTitle,
-            DocAuthor = doc.DocAuthor,
-            DocLastEditedBy = doc.DocLastEditedBy,
-            DocContent = doc.DocContent,
-            DocDateLastEdited = doc.DocDateLastEdited,
-            DocStamps = CharacterDocumentSerializer.SerializeStamp(doc.DocStamps),
-            DocType = doc.DocType,
-            DeletedAt = doc.DeletedAt,
-            ProfileId = docComp.ProfileId
-        }).ToList();
-
-        await _db.SaveSVCharacterDocumentsAsync(docComp.ProfileId, playerName, docComp.ProfileName, dbDocs);
+        await PersistRecordAsync(record, playerName);
         await NotifyDocumentChangedAsync(session);
     }
 
@@ -220,38 +242,25 @@ public sealed partial class CharacterDocumentSystem : EntitySystem
             await _prefs.RefreshPreferencesForUserAsync(session);
     }
 
-    public async Task DeleteDocument(EntityUid uid, CharacterDocument characterDocument)
+    public async Task DeleteDocument(int profileId, CharacterDocument characterDocument)
     {
-        if (!TryComp<CharacterDocumentComponent>(uid, out var docComp))
+        if (!TryGetRecord(profileId, out var record))
             return;
 
-        _playerManager.TryGetSessionByEntity(uid, out var session);
-        var playerName = ResolvePlayerName(docComp, session);
+        var session = GetSession(record);
+        var playerName = ResolvePlayerName(record, session);
 
         // Soft delete: the doc is hidden from normal listings but kept in the store with a
         // deletion timestamp so Central Command / admins can still review or restore it.
         // A background sweep purges it permanently once it outlives the retention window.
         // We keep it in the in-memory dict (carrying DeletedAt) so the replace-all save below
         // writes it back binned rather than dropping it.
-        if (docComp.Documents.TryGetValue(characterDocument.DocID, out var stored))
+        if (record.Documents.TryGetValue(characterDocument.DocID, out var stored))
             stored.DeletedAt = DateTime.UtcNow;
         else
             return;
 
-        var dbDocs = docComp.Documents.Values.Select(doc => new SVModel.CharacterDocument
-        {
-            DocTitle = doc.DocTitle,
-            DocAuthor = doc.DocAuthor,
-            DocLastEditedBy = doc.DocLastEditedBy,
-            DocContent = doc.DocContent,
-            DocDateLastEdited = doc.DocDateLastEdited,
-            DocStamps = CharacterDocumentSerializer.SerializeStamp(doc.DocStamps),
-            DocType = doc.DocType,
-            DeletedAt = doc.DeletedAt,
-            ProfileId = docComp.ProfileId
-        }).ToList();
-
-        await _db.SaveSVCharacterDocumentsAsync(docComp.ProfileId, playerName, docComp.ProfileName, dbDocs);
+        await PersistRecordAsync(record, playerName);
         await NotifyDocumentChangedAsync(session);
     }
 
@@ -260,33 +269,20 @@ public sealed partial class CharacterDocumentSystem : EntitySystem
     ///     deletion timestamp. Only reachable from privileged flows (Central Command console,
     ///     admin EUI) — see the access check in the console handler.
     /// </summary>
-    public async Task RestoreDocument(EntityUid uid, int docId)
+    public async Task RestoreDocument(int profileId, int docId)
     {
-        if (!TryComp<CharacterDocumentComponent>(uid, out var docComp))
+        if (!TryGetRecord(profileId, out var record))
             return;
 
-        if (!docComp.Documents.TryGetValue(docId, out var stored) || stored.DeletedAt == null)
+        if (!record.Documents.TryGetValue(docId, out var stored) || stored.DeletedAt == null)
             return;
 
-        _playerManager.TryGetSessionByEntity(uid, out var session);
-        var playerName = ResolvePlayerName(docComp, session);
+        var session = GetSession(record);
+        var playerName = ResolvePlayerName(record, session);
 
         stored.DeletedAt = null;
 
-        var dbDocs = docComp.Documents.Values.Select(doc => new SVModel.CharacterDocument
-        {
-            DocTitle = doc.DocTitle,
-            DocAuthor = doc.DocAuthor,
-            DocLastEditedBy = doc.DocLastEditedBy,
-            DocContent = doc.DocContent,
-            DocDateLastEdited = doc.DocDateLastEdited,
-            DocStamps = CharacterDocumentSerializer.SerializeStamp(doc.DocStamps),
-            DocType = doc.DocType,
-            DeletedAt = doc.DeletedAt,
-            ProfileId = docComp.ProfileId
-        }).ToList();
-
-        await _db.SaveSVCharacterDocumentsAsync(docComp.ProfileId, playerName, docComp.ProfileName, dbDocs);
+        await PersistRecordAsync(record, playerName);
         await NotifyDocumentChangedAsync(session);
     }
 
@@ -296,22 +292,22 @@ public sealed partial class CharacterDocumentSystem : EntitySystem
     ///     sent to the bin first. Irreversible. Only reachable from privileged flows
     ///     (Central Command console, admin EUI) — see the access check in the handlers.
     /// </summary>
-    public async Task PurgeDocument(EntityUid uid, int docId)
+    public async Task PurgeDocument(int profileId, int docId)
     {
-        if (!TryComp<CharacterDocumentComponent>(uid, out var docComp))
+        if (!TryGetRecord(profileId, out var record))
             return;
 
         // Guard: only binned docs can be permanently deleted, matching the UI which only
         // offers the control from the bin view. Refuse to purge a live document.
-        if (!docComp.Documents.TryGetValue(docId, out var stored) || stored.DeletedAt == null)
+        if (!record.Documents.TryGetValue(docId, out var stored) || stored.DeletedAt == null)
             return;
 
-        _playerManager.TryGetSessionByEntity(uid, out var session);
-        var playerName = ResolvePlayerName(docComp, session);
+        var session = GetSession(record);
+        var playerName = ResolvePlayerName(record, session);
 
-        docComp.Documents.Remove(docId);
+        record.Documents.Remove(docId);
 
-        await PersistAllDocumentsAsync(docComp, playerName);
+        await PersistRecordAsync(record, playerName);
         await NotifyDocumentChangedAsync(session);
     }
 
@@ -320,12 +316,12 @@ public sealed partial class CharacterDocumentSystem : EntitySystem
     ///     "empty the recycling bin" action. Live documents are left untouched. Irreversible.
     ///     Only reachable from privileged flows — see the access check in the handlers.
     /// </summary>
-    public async Task EmptyBin(EntityUid uid)
+    public async Task EmptyBin(int profileId)
     {
-        if (!TryComp<CharacterDocumentComponent>(uid, out var docComp))
+        if (!TryGetRecord(profileId, out var record))
             return;
 
-        var binnedIds = docComp.Documents
+        var binnedIds = record.Documents
             .Where(kv => kv.Value.DeletedAt != null)
             .Select(kv => kv.Key)
             .ToList();
@@ -333,53 +329,58 @@ public sealed partial class CharacterDocumentSystem : EntitySystem
         if (binnedIds.Count == 0)
             return;
 
-        _playerManager.TryGetSessionByEntity(uid, out var session);
-        var playerName = ResolvePlayerName(docComp, session);
+        var session = GetSession(record);
+        var playerName = ResolvePlayerName(record, session);
 
         foreach (var id in binnedIds)
-            docComp.Documents.Remove(id);
+            record.Documents.Remove(id);
 
-        await PersistAllDocumentsAsync(docComp, playerName);
+        await PersistRecordAsync(record, playerName);
         await NotifyDocumentChangedAsync(session);
     }
 
-    /// <summary>
-    ///     Writes the player's full in-memory document set back to the DB. The DB save is a
-    ///     replace-all, so removing entries from <see cref="CharacterDocumentComponent.Documents"/>
-    ///     before calling this permanently drops them.
-    /// </summary>
-    private async Task PersistAllDocumentsAsync(CharacterDocumentComponent docComp, string playerName)
+    public async Task UpdateDocument(int profileId, CharacterDocument characterDocument)
     {
-        var dbDocs = docComp.Documents.Values.Select(doc => new SVModel.CharacterDocument
-        {
-            DocTitle = doc.DocTitle,
-            DocAuthor = doc.DocAuthor,
-            DocLastEditedBy = doc.DocLastEditedBy,
-            DocContent = doc.DocContent,
-            DocDateLastEdited = doc.DocDateLastEdited,
-            DocStamps = CharacterDocumentSerializer.SerializeStamp(doc.DocStamps),
-            DocType = doc.DocType,
-            DeletedAt = doc.DeletedAt,
-            ProfileId = docComp.ProfileId
-        }).ToList();
-
-        await _db.SaveSVCharacterDocumentsAsync(docComp.ProfileId, playerName, docComp.ProfileName, dbDocs);
-    }
-
-    public async Task UpdateDocument(EntityUid uid, CharacterDocument characterDocument)
-    {
-        if (!TryComp<CharacterDocumentComponent>(uid, out var docComp))
+        if (!TryGetRecord(profileId, out var record))
             return;
 
         // Rebalance the user-authored markup before it is persisted (see AddDocument).
         characterDocument.DocContent = CharacterDocumentMarkup.Balance(characterDocument.DocContent);
 
-        _playerManager.TryGetSessionByEntity(uid, out var session);
-        var playerName = ResolvePlayerName(docComp, session);
+        var session = GetSession(record);
+        var playerName = ResolvePlayerName(record, session);
 
-        docComp.Documents[characterDocument.DocID] = characterDocument;
+        record.Documents[characterDocument.DocID] = characterDocument;
 
-        var dbDocs = docComp.Documents.Values.Select(doc => new SVModel.CharacterDocument
+        await PersistRecordAsync(record, playerName);
+        await NotifyDocumentChangedAsync(session);
+    }
+
+    /// <summary>
+    ///     Replaces an existing record's live document set from an out-of-band edit (the admin
+    ///     documents browser) and broadcasts a console refresh. No-op if the profile isn't
+    ///     loaded in-round. Persistence is handled by the caller.
+    /// </summary>
+    public void ReplaceRecordDocuments(int profileId, IEnumerable<CharacterDocument> documents)
+    {
+        if (!TryGetRecord(profileId, out var record))
+            return;
+
+        record.Documents.Clear();
+        foreach (var doc in documents)
+            record.Documents[doc.DocID] = doc;
+
+        RaiseLocalEvent(new CharacterDocumentEditedEvent());
+    }
+
+    /// <summary>
+    ///     Writes the record's full in-memory document set back to the DB. The DB save is a
+    ///     replace-all, so removing entries from the record before calling this permanently
+    ///     drops them. Persistence remains keyed by ProfileId — the DB format is unchanged.
+    /// </summary>
+    private async Task PersistRecordAsync(CharacterDocumentRecord record, string playerName)
+    {
+        var dbDocs = record.Documents.Values.Select(doc => new SVModel.CharacterDocument
         {
             DocTitle = doc.DocTitle,
             DocAuthor = doc.DocAuthor,
@@ -389,25 +390,57 @@ public sealed partial class CharacterDocumentSystem : EntitySystem
             DocStamps = CharacterDocumentSerializer.SerializeStamp(doc.DocStamps),
             DocType = doc.DocType,
             DeletedAt = doc.DeletedAt,
-            ProfileId = docComp.ProfileId
+            ProfileId = record.ProfileId
         }).ToList();
 
-        await _db.SaveSVCharacterDocumentsAsync(docComp.ProfileId, playerName, docComp.ProfileName, dbDocs);
-        await NotifyDocumentChangedAsync(session);
+        await _db.SaveSVCharacterDocumentsAsync(record.ProfileId, playerName, record.Name, dbDocs);
+    }
+
+    /// <summary>
+    ///     Resolves the owning player's session by their account id. Unlike the old
+    ///     entity-based lookup this still works after the body is gone (ghosted / gibbed);
+    ///     returns null if they're fully disconnected, in which case the DB write still
+    ///     happens and only the live prefs push is skipped.
+    /// </summary>
+    private ICommonSession? GetSession(CharacterDocumentRecord record)
+    {
+        _playerManager.TryGetSessionById(record.UserId, out var session);
+        return session;
     }
 
     /// <summary>
     ///     Resolves the account username to persist as <c>SVProfile.PlayerName</c>.
-    ///     Prefers the username captured on the component at spawn (stable for the
+    ///     Prefers the username captured on the record at spawn (stable for the
     ///     whole round, regardless of ghosting). Falls back to the live session if
-    ///     that's somehow empty, and finally to "Unknown" — which should now be
-    ///     genuinely unreachable for normally-spawned players.
+    ///     that's somehow empty, and finally to "Unknown".
     /// </summary>
-    private static string ResolvePlayerName(CharacterDocumentComponent docComp, ICommonSession? session)
+    private static string ResolvePlayerName(CharacterDocumentRecord record, ICommonSession? session)
     {
-        if (!string.IsNullOrEmpty(docComp.PlayerUsername))
-            return docComp.PlayerUsername;
+        if (!string.IsNullOrEmpty(record.Username))
+            return record.Username;
         return session?.Name ?? "Unknown";
     }
 }
+
 public sealed class CharacterDocumentEditedEvent : EntityEventArgs;
+
+/// <summary>
+///     Raised once a player's documents have finished loading from the DB and their record
+///     exists in the store (so ProfileId is known). The station roster system listens for
+///     this to register crew membership by ProfileId and refresh open consoles.
+/// </summary>
+public sealed class CharacterDocumentProfileReadyEvent : EntityEventArgs
+{
+    public readonly EntityUid Mob;
+    public readonly EntityUid Station;
+    public readonly int ProfileId;
+    public readonly string Name;
+
+    public CharacterDocumentProfileReadyEvent(EntityUid mob, EntityUid station, int profileId, string name)
+    {
+        Mob = mob;
+        Station = station;
+        ProfileId = profileId;
+        Name = name;
+    }
+}

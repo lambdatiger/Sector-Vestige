@@ -6,20 +6,20 @@ namespace Content.Shared._SV.CharacterDocuments.Consoles;
 [Serializable, NetSerializable]
 public sealed class SelectCharacterDocumentPlayer : BoundUserInterfaceMessage
 {
-    public NetEntity Player;
+    public int ProfileId;
 }
 
 [Serializable, NetSerializable]
 public sealed class SelectCharacterDocument : BoundUserInterfaceMessage
 {
-    public NetEntity Player;
+    public int ProfileId;
     public int DocID;
 }
 
 [Serializable, NetSerializable]
 public sealed class CharacterDocumentScan : BoundUserInterfaceMessage
 {
-    public NetEntity Player;
+    public int ProfileId;
     public string DocTitle = string.Empty;
     /// <summary>
     /// Doc type to tag the scanned document as. Null = use the console's primary type.
@@ -32,7 +32,7 @@ public sealed class CharacterDocumentScan : BoundUserInterfaceMessage
 [Serializable, NetSerializable]
 public sealed class CharacterDocumentDelete : BoundUserInterfaceMessage
 {
-    public NetEntity Player;
+    public int ProfileId;
     public CharacterDocument? CharacterDocument;
 }
 
@@ -48,7 +48,7 @@ public sealed class CharacterDocumentDeselect : BoundUserInterfaceMessage
 [Serializable, NetSerializable]
 public sealed class CharacterDocumentRestore : BoundUserInterfaceMessage
 {
-    public NetEntity Player;
+    public int ProfileId;
     public int DocID;
 }
 
@@ -60,7 +60,7 @@ public sealed class CharacterDocumentRestore : BoundUserInterfaceMessage
 [Serializable, NetSerializable]
 public sealed class CharacterDocumentPurge : BoundUserInterfaceMessage
 {
-    public NetEntity Player;
+    public int ProfileId;
     public int DocID;
 }
 
@@ -72,27 +72,27 @@ public sealed class CharacterDocumentPurge : BoundUserInterfaceMessage
 [Serializable, NetSerializable]
 public sealed class CharacterDocumentEmptyBin : BoundUserInterfaceMessage
 {
-    public NetEntity Player;
+    public int ProfileId;
 }
 
 [Serializable, NetSerializable]
 public sealed class CharacterDocumentPrint : BoundUserInterfaceMessage
 {
-    public NetEntity Player;
+    public int ProfileId;
     public CharacterDocument? CharacterDocument;
 }
 
 [Serializable, NetSerializable]
 public sealed class CharacterDocumentEdit : BoundUserInterfaceMessage
 {
-    public NetEntity Player;
+    public int ProfileId;
     public CharacterDocument? CharacterDocument;
 }
 
 [Serializable, NetSerializable]
 public sealed class CharacterDocumentSecurityStatus : BoundUserInterfaceMessage
 {
-    public NetEntity Player;
+    public int ProfileId;
     public SecurityStatus Status;
     public string? Reason;
 }
