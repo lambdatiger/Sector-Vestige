@@ -33,6 +33,9 @@
   - type: ApcPowerReceiver
     needsPower: false
     powerLoad: 0
+  - type: ContainerContainer
+    containers:
+      microwave_entity_container: !type:Container
 
 - type: entity
   id: MicrowaveHealingBonfire
