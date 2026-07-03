@@ -1905,3 +1905,9 @@ Entries:
       message: APCs will now turn into broken APCs when damaged.
   id: 262
   time: '2026-06-30T07:06:23.0000000+00:00'
+- author: HexReject
+  changes:
+    - type: Add
+      message: R&D has been given gear to make them stand out
+  id: 263
+  time: '2026-07-03T14:07:18.0000000+00:00'
