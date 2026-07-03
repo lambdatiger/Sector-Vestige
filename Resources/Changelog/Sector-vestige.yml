@@ -1911,3 +1911,9 @@ Entries:
       message: R&D has been given gear to make them stand out
   id: 263
   time: '2026-07-03T14:07:18.0000000+00:00'
+- author: OnyxTheBrave
+  changes:
+    - type: Add
+      message: Added a bonfire that can be used as a microwave
+  id: 264
+  time: '2026-07-03T15:11:04.0000000+00:00'
