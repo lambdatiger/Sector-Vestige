@@ -206,24 +206,38 @@ namespace Content.Server.Database
 
         public async Task<Preference> InitPrefsAsync(NetUserId userId, HumanoidCharacterProfile defaultProfile)
         {
-            await using var db = await GetDb();
-
-            var profile = ConvertProfiles((HumanoidCharacterProfile) defaultProfile, 0);
-            var prefs = new Preference
+            // SV changes start
+            try
             {
-                UserId = userId.UserId,
-                SelectedCharacterSlot = 0,
-                AdminOOCColor = Color.Red.ToHex(),
-                ConstructionFavorites = [],
-            };
+                await using var db = await GetDb();
 
-            prefs.Profiles.Add(profile);
+                var profile = ConvertProfiles((HumanoidCharacterProfile) defaultProfile, 0);
+                var prefs = new Preference
+                {
+                    UserId = userId.UserId,
+                    SelectedCharacterSlot = 0,
+                    AdminOOCColor = Color.Red.ToHex(),
+                    ConstructionFavorites = [],
+                };
 
-            db.DbContext.Preference.Add(prefs);
+                prefs.Profiles.Add(profile);
 
-            await db.DbContext.SaveChangesAsync();
+                db.DbContext.Preference.Add(prefs);
 
-            return prefs;
+                await db.DbContext.SaveChangesAsync();
+
+                return prefs;
+            }
+            catch (DbUpdateException)
+            {
+                // SV: Two load paths can race to create the same user's prefs on first join
+                var existing = await GetPlayerPreferencesAsync(userId);
+                if (existing == null)
+                    throw;
+
+                return existing;
+            }
+            // SV changes End
         }
 
         // SV changes start - Admin character documents browser

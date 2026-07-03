@@ -494,7 +494,7 @@ namespace Content.Server.Preferences.Managers
         /// </summary>
         public async Task RefreshPreferencesForUserAsync(ICommonSession session)
         {
-            if (!_cachedPlayerPrefs.TryGetValue(session.UserId, out var prefsData))
+            if (!_cachedPlayerPrefs.TryGetValue(session.UserId, out var prefsData) || !prefsData.PrefsLoaded)
                 return;
 
             var prefs = await GetOrCreatePreferencesAsync(session.UserId, CancellationToken.None);
