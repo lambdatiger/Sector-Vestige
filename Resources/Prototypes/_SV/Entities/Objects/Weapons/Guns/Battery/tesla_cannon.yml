@@ -8,7 +8,7 @@
 # A two-handed backpack-fed weapon: it has NO ammo of its own.
 
 - type: entity
-  name: tesla cannon
+  name: X-7 Tesla cannon
   parent: [BaseItem, BaseGunWieldable, BaseRnDContraband]
   id: WeaponTeslaCannon
   description: An experimental R&D heavy directed-energy cannon. It has no internal cell - it draws power from a tesla cannon pack worn on the back, and must be braced in both hands to fire.

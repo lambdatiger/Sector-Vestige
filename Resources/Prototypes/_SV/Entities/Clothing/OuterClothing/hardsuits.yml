@@ -17,3 +17,13 @@
     sprite: _SV/Clothing/OuterClothing/Hardsuits/rnd_rct_hardsuit.rsi
   - type: ToggleableClothing
     clothingPrototype: ClothingHeadHelmetHardsuitRCT
+  - type: SupermatterImmune
+  - type: Armor
+    modifiers:
+      coefficients:
+        Blunt: 0.4
+        Slash: 0.4
+        Piercing: 0.3
+        Heat: 0.5
+        Radiation: 0
+        Caustic: 0.4

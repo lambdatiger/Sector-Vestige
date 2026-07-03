@@ -385,6 +385,7 @@
     tags:
     - Hardsuit
     - WhitelistChameleon
+  - type: SupermatterImmune
 
 #Chief Medical Officer's Hardsuit
 - type: entity

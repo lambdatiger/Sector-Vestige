@@ -6,7 +6,7 @@
 
 # NT R&D experimental tesla weaponry - the Arc Caster.
 - type: entity
-  name: arc caster
+  name: X-5 Arc caster
   parent: [BaseWeaponPowerCell, BaseGunWieldable, BaseRnDContraband]
   id: WeaponArcCaster
   description: An experimental R&D directed-energy weapon that hurls fast bolts of contained lightning, shocking and stunning whatever they strike.
@@ -34,7 +34,7 @@
     steps: 5
     zeroVisible: false
   - type: Gun
-    fireRate: 2
+    fireRate: 1.3
     projectileSpeed: 35
     selectedMode: SemiAuto
     availableModes:
@@ -78,8 +78,9 @@
     deleteOnCollide: true
     damage:
       types:
-        Piercing: 5
-        Shock: 14
+        Piercing: 4
+        Shock: 4
+        Heat: 10
   - type: StaminaDamageOnCollide
     damage: 15
   - type: Tag

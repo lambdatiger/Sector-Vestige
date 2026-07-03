@@ -9,7 +9,7 @@
 # WeaponTeslaCannon forwards every shot to this pack's BatteryAmmoProvider via the connected
 # container. Slowly recharges itself from contained electrical-anomaly energy.
 - type: entity
-  name: tesla cannon power pack
+  name: XB-7 Power pack
   parent: [Clothing, BaseRnDContraband]
   id: ClothingBackpackTeslaCannon
   description: A heavy back-mounted reactor pack that feeds the tesla cannon. It hums with contained electrical-anomaly energy and slowly recharges itself.
