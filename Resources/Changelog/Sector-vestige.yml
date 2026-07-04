@@ -1887,3 +1887,39 @@ Entries:
       message: Added a HealNearby component for map makers and GMs.
   id: 260
   time: '2026-06-24T11:36:40.0000000+00:00'
+- author: Anzuneth
+  changes:
+    - type: Tweak
+      message: Leg paralysis now allows very slow movement via crawling
+    - type: Tweak
+      message: Wheelchairs now allow you to use both hands
+    - type: Fix
+      message: Updated internal wheelchair functionality to be less buggy
+  id: 261
+  time: '2026-06-30T07:04:57.0000000+00:00'
+- author: OnyxTheBrave
+  changes:
+    - type: Fix
+      message: You can now deconstruct broken APCs.
+    - type: Tweak
+      message: APCs will now turn into broken APCs when damaged.
+  id: 262
+  time: '2026-06-30T07:06:23.0000000+00:00'
+- author: HexReject
+  changes:
+    - type: Add
+      message: R&D has been given gear to make them stand out
+  id: 263
+  time: '2026-07-03T14:07:18.0000000+00:00'
+- author: OnyxTheBrave
+  changes:
+    - type: Add
+      message: Added a bonfire that can be used as a microwave
+  id: 264
+  time: '2026-07-03T15:11:04.0000000+00:00'
+- author: OnyxTheBrave
+  changes:
+    - type: Tweak
+      message: Updated event map.
+  id: 265
+  time: '2026-07-04T11:07:04.0000000+00:00'
