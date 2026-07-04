@@ -55,7 +55,6 @@ public sealed class StationPowerTests : GameTest
             "Cluster", // Sector Vestige, remade by Rebound
             "Packed_SM", // Sector Vestige, edits by Lambda.Tiger
             "Amber", // Sector Vestige, edits by Lambda.Tiger
-            "AmberEvent", // Sector Vestige, event map, edits by Lambda.Tiger
     ];
 
     public override PoolSettings PoolSettings => new ()
