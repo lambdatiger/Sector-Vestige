@@ -94,7 +94,7 @@ public sealed partial class ChatSystem
         bool ignoreActionBlocker = false
         )
     {
-        if (!_actionBlocker.CanSpeak(source) && !ignoreActionBlocker)
+        if (!_actionBlocker.CanSpeak(source, isWhisper: true) && !ignoreActionBlocker) // SV pass isWhisper is true so that the Hypophoniasystem works #355
             return;
 
         var message = TransformSpeech(source, FormattedMessage.RemoveMarkupOrThrow(originalMessage));
