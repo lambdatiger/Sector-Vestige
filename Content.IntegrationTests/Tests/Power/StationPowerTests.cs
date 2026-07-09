@@ -33,7 +33,7 @@ public sealed class StationPowerTests : GameTest
             // "Oasis", // Vestige: Derotated Map
             "Plasma",
             "Elkridge",
-            "Snowball",
+            // "Snowball", // Vestige: Derotated Map
             // "Relic", // Vestige: Derotated Map
             // "Exo", // Vestige: Derotated Map
             // "Vanquish", // LateStation Map by Lachri
