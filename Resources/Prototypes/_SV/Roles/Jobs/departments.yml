@@ -27,4 +27,5 @@
   - FirstDirector
   - SecondDirector
   - ThirdDirector
+  editorHidden: true
   weight: 115
