@@ -10,11 +10,11 @@ using Content.Shared.Popups;
 using Content.Shared.Power.EntitySystems;
 using Content.Shared.Remotes.Components;
 using Content.Shared.Tag;
-using Content.Shared.Verbs;
+using Content.Shared.Verbs; // SV changes: Door remote alt verb
 using Robust.Shared.Audio.Systems;
 using Robust.Shared.Serialization;
 using Robust.Shared.Timing;
-using Robust.Shared.Utility;
+using Robust.Shared.Utility; // SV changes: Door remote alt verb
 
 namespace Content.Shared.Remotes.EntitySystems;
 
@@ -35,10 +35,10 @@ public abstract partial class SharedDoorRemoteSystem : EntitySystem
     public override void Initialize()
     {
         SubscribeLocalEvent<DoorRemoteComponent, DoorRemoteModeChangeMessage>(OnDoorRemoteModeChange);
-        SubscribeLocalEvent<DoorRemoteComponent, GetVerbsEvent<AlternativeVerb>>(OnAddSwitchModeVerb);
+        SubscribeLocalEvent<DoorRemoteComponent, GetVerbsEvent<AlternativeVerb>>(OnAddSwitchModeVerb); // SV changes: Door remote alt verb
         SubscribeLocalEvent<DoorRemoteComponent, BeforeRangedInteractEvent>(OnBeforeInteract);
     }
-
+    // Begin SV changes: Door remote alt verb, based on other examples such as t-ray (mainly) and eshotgun (secondary)
     private void OnAddSwitchModeVerb(Entity<DoorRemoteComponent> remote, ref GetVerbsEvent<AlternativeVerb> args)
     {
         if (!args.CanAccess || !args.CanInteract || !args.Using.HasValue)
@@ -53,8 +53,7 @@ public abstract partial class SharedDoorRemoteSystem : EntitySystem
             Impact = LogImpact.Low
         };
         args.Verbs.Add(verb);
-    }
-
+    } // end SV Changes: Door remote alt verb
     private void OnDoorRemoteModeChange(Entity<DoorRemoteComponent> ent, ref DoorRemoteModeChangeMessage args)
     {
         ent.Comp.Mode = args.Mode;
