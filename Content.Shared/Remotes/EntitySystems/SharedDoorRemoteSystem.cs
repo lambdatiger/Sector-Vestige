@@ -45,7 +45,7 @@ public abstract partial class SharedDoorRemoteSystem : EntitySystem
             return;
 
         var user = args.User;
-        AlternativeVerb verb = new()
+        AlternativeVerb verb = new() // alt verb definition based on t-ray scanner implementation
         {
             Text = Loc.GetString("door-remote-switch-mode"),
             Icon = new SpriteSpecifier.Texture(new ResPath("/Textures/Interface/VerbIcons/settings.svg.192dpi.png")),
