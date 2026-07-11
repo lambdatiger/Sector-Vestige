@@ -10,9 +10,11 @@ using Content.Shared.Popups;
 using Content.Shared.Power.EntitySystems;
 using Content.Shared.Remotes.Components;
 using Content.Shared.Tag;
+using Content.Shared.Verbs;
 using Robust.Shared.Audio.Systems;
 using Robust.Shared.Serialization;
 using Robust.Shared.Timing;
+using Robust.Shared.Utility;
 
 namespace Content.Shared.Remotes.EntitySystems;
 
@@ -33,13 +35,45 @@ public abstract partial class SharedDoorRemoteSystem : EntitySystem
     public override void Initialize()
     {
         SubscribeLocalEvent<DoorRemoteComponent, DoorRemoteModeChangeMessage>(OnDoorRemoteModeChange);
+        SubscribeLocalEvent<DoorRemoteComponent, GetVerbsEvent<AlternativeVerb>>(OnAddSwitchModeVerb);
         SubscribeLocalEvent<DoorRemoteComponent, BeforeRangedInteractEvent>(OnBeforeInteract);
+    }
+
+    private void OnAddSwitchModeVerb(Entity<DoorRemoteComponent> remote, ref GetVerbsEvent<AlternativeVerb> args)
+    {
+        if (!args.CanAccess || !args.CanInteract || !args.Using.HasValue)
+            return;
+
+        var user = args.User;
+        AlternativeVerb verb = new()
+        {
+            Text = Loc.GetString("door-remote-switch-mode"),
+            Icon = new SpriteSpecifier.Texture(new ResPath("/Textures/Interface/VerbIcons/settings.svg.192dpi.png")),
+            Act = () => SwitchMode(remote, user),
+            Impact = LogImpact.Low
+        };
+        args.Verbs.Add(verb);
     }
 
     private void OnDoorRemoteModeChange(Entity<DoorRemoteComponent> ent, ref DoorRemoteModeChangeMessage args)
     {
         ent.Comp.Mode = args.Mode;
         Dirty(ent);
+    }
+
+    private void SwitchMode(Entity<DoorRemoteComponent> remote, EntityUid? userUid)
+    {
+        if (!userUid.HasValue)
+            return;
+        // Could add a delay/hold-off here to avoid a ton of network events if someone changes quickly
+        remote.Comp.Mode = remote.Comp.Mode switch // Clockwise rotation on the menu
+        {
+            OperatingMode.ToggleEmergencyAccess => OperatingMode.ToggleBolts,
+            OperatingMode.ToggleBolts => OperatingMode.OpenClose,
+            OperatingMode.OpenClose => OperatingMode.ToggleEmergencyAccess,
+            _ => OperatingMode.OpenClose
+        };
+        Dirty(remote);
     }
 
     private void OnBeforeInteract(Entity<DoorRemoteComponent> entity, ref BeforeRangedInteractEvent args)
