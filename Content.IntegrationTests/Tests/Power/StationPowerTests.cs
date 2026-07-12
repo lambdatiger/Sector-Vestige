@@ -9,7 +9,6 @@
 // SPDX-FileCopyrightText: 2025 slarticodefast <161409025+slarticodefast@users.noreply.github.com>
 // SPDX-FileCopyrightText: 2026 ReboundQ3 <22770594+ReboundQ3@users.noreply.github.com>
 // SPDX-FileCopyrightText: 2026 lambdatiger <11843718+lambdatiger@users.noreply.github.com>
-// SPDX-FileCopyrightText: 2026 lambdatiger <spam.stnuocca.sl@gmail.com>
 //
 // SPDX-License-Identifier: MIT
 
@@ -48,7 +47,7 @@ public sealed class StationPowerTests : GameTest
             // "Oasis", // Vestige: Derotated Map
             "Plasma",
             "Elkridge",
-            "Snowball",
+            // "Snowball", // Vestige: Derotated Map
             // "Relic", // Vestige: Derotated Map
             // "Exo", // Vestige: Derotated Map
             // "Vanquish", // LateStation Map by Lachri

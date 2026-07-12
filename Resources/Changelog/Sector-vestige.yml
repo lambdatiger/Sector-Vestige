@@ -1929,3 +1929,9 @@ Entries:
       message: Hypohonia is fixed again.
   id: 266
   time: '2026-07-08T23:30:17.0000000+00:00'
+- author: ReboundQ3
+  changes:
+    - type: Tweak
+      message: Removed snowball from rotation.
+  id: 267
+  time: '2026-07-11T22:39:31.0000000+00:00'
