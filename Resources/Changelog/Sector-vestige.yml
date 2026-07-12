@@ -1935,3 +1935,9 @@ Entries:
       message: Removed snowball from rotation.
   id: 267
   time: '2026-07-11T22:39:31.0000000+00:00'
+- author: lambdatiger
+  changes:
+    - type: Add
+      message: Amber back into map pool.
+  id: 268
+  time: '2026-07-12T13:09:13.0000000+00:00'
