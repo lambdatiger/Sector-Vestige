@@ -1941,3 +1941,9 @@ Entries:
       message: Amber back into map pool.
   id: 268
   time: '2026-07-12T13:09:13.0000000+00:00'
+- author: lambdatiger
+  changes:
+    - type: Add
+      message: In-hand alternate interaction to cycle door remote.
+  id: 269
+  time: '2026-07-12T13:11:45.0000000+00:00'
