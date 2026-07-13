@@ -140,7 +140,7 @@
   name: Urist McRat
   components:
   - type: Hunger
-    baseDecayRate: 0.075
+    baseDecayRate: 0.025
   - type: Thirst
   - type: Icon
     sprite: _CD/Mobs/Species/Rodentia/parts.rsi
