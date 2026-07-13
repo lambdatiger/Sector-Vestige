@@ -1947,3 +1947,9 @@ Entries:
       message: In-hand alternate interaction to cycle door remote.
   id: 269
   time: '2026-07-12T13:11:45.0000000+00:00'
+- author: qu4drivium
+  changes:
+    - type: Tweak
+      message: Rodentia starve at a slower rate.
+  id: 270
+  time: '2026-07-13T16:52:15.0000000+00:00'
